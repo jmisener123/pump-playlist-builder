@@ -4,6 +4,8 @@ import random
 from streamlit import empty
 import base64
 from io import StringIO
+import os
+import io
 
 # You can optionally load these from Streamlit secrets or env vars
 
@@ -12,12 +14,12 @@ st.set_page_config(page_title="Pump Playlist Builder", layout="wide")
 # Load and clean the data
 @st.cache_data
 def load_data():
-    # Load base64 string from secrets
-    encoded = st.secrets["csv_data"]
-    decoded = base64.b64decode(encoded)
-    
-    # Convert to DataFrame
-    df = pd.read_csv(StringIO(decoded.decode("utf-8")))
+    if "csv_data" in st.secrets:
+        encoded = st.secrets["csv_data"]
+        decoded = base64.b64decode(encoded)
+        df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
+    else:
+        df = pd.read_csv("BPdata_89_Current.csv")  # fallback for local dev
 
     def sort_key(x):
         if x == "United":
@@ -175,6 +177,9 @@ with release_placeholder:
 with checkbox_placeholder:
     use_recent = st.checkbox("10 most recent releases only", key="global_recent", help="Limit song selection to only the most recent 10 Pump releases")
 
+# Add friendly scroll message
+st.markdown('<div style="text-align:center; font-size:1.2rem; color:#667eea; margin-bottom:1.5rem;">⬇️ <strong>Scroll down to build your playlist!</strong> ⬇️</div>', unsafe_allow_html=True)
+
 st.markdown("<hr>", unsafe_allow_html=True)
 
 # Two main sections for playlist types
@@ -189,6 +194,8 @@ with col_left:
     """, unsafe_allow_html=True)
     
     generate_random = st.button("🎲 Build My Random Playlist", type="primary", use_container_width=True)
+    # Add scroll message after button
+    st.markdown('<div style="text-align:center; font-size:1.1rem; color:#667eea; margin-bottom:1rem;">⬇️ Scroll down to see your playlist ⬇️</div>', unsafe_allow_html=True)
 
 with col_right:
     st.markdown(f"""
@@ -423,23 +430,6 @@ if 'playlist_df' in st.session_state:
         for _, row in playlist_df.iterrows():
             copy_text += f"{row['Release']} - {row['Track No#']}: {row['Song Title']} — {row['Artist']} ({row['Duration']})\n"
         st.code(copy_text, language=None)
-        st.markdown("""
-            <button id="copy-btn" style="margin-top:8px; padding:6px 16px; background:#667eea; color:white; border:none; border-radius:6px; font-size:1rem; cursor:pointer;">Copy to Clipboard</button>
-            <script>
-            const btn = document.getElementById('copy-btn');
-            if (btn) {
-                btn.onclick = function() {
-                    const codeBlock = btn.previousElementSibling;
-                    if (codeBlock) {
-                        const text = codeBlock.innerText;
-                        navigator.clipboard.writeText(text);
-                        btn.innerText = 'Copied!';
-                        setTimeout(() => { btn.innerText = 'Copy to Clipboard'; }, 1200);
-                    }
-                }
-            }
-            </script>
-        """, unsafe_allow_html=True)
 
 # Add footer disclaimer
 st.markdown("<br><br>", unsafe_allow_html=True)
