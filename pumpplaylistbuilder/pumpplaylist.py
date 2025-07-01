@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import random
 from streamlit import empty
+import base64
+from io import StringIO
 
 # You can optionally load these from Streamlit secrets or env vars
 
@@ -10,7 +12,12 @@ st.set_page_config(page_title="Pump Playlist Builder", layout="wide")
 # Load and clean the data
 @st.cache_data
 def load_data():
-    df = pd.read_csv("BPdata_89_Current.csv")
+    # Load base64 string from secrets
+    encoded = st.secrets["csv_data"]
+    decoded = base64.b64decode(encoded)
+    
+    # Convert to DataFrame
+    df = pd.read_csv(StringIO(decoded.decode("utf-8")))
 
     def sort_key(x):
         if x == "United":
