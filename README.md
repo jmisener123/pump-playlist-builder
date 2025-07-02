@@ -10,4 +10,4 @@ This tool is not affiliated with, endorsed by, or officially connected to Les Mi
 - ✨ Tag-based emoji support for quick visual scanning
 - 🔁 Alternate suggestions if a track doesn’t match your vibe
 - 📋 Copy/paste playlist selections
-- ⚡ Built with Cursor and Streamlit
+- ⚡ Built with Cursor and Streamlit —> Deployed on Render
