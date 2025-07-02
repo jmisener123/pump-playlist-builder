@@ -11,6 +11,15 @@ import io
 
 st.set_page_config(page_title="Pump Playlist Builder", layout="wide")
 
+import os
+import shutil
+
+# Copy Render's mounted secret file to where Streamlit expects it
+if os.path.exists("/etc/secrets/secrets.toml"):
+    os.makedirs(os.path.expanduser("~/.streamlit"), exist_ok=True)
+    shutil.copy("/etc/secrets/secrets.toml", os.path.expanduser("~/.streamlit/secrets.toml"))
+
+
 # Load and clean the data
 @st.cache_data
 def load_data():
