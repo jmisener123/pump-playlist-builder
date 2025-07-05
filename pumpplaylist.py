@@ -19,7 +19,27 @@ if os.path.exists("/etc/secrets/secrets.toml"):
     os.makedirs(os.path.expanduser("~/.streamlit"), exist_ok=True)
     shutil.copy("/etc/secrets/secrets.toml", os.path.expanduser("~/.streamlit/secrets.toml"))
 
+# Force light mode
+st.markdown(
+    """
+    <style>
+    html, body, [data-testid="stAppViewContainer"] {
+        color-scheme: light !important;
+        background-color: white !important;
+        color: black !important;
+    }
 
+    .stMarkdown, .stText, .stDataFrame {
+        color: black !important;
+    }
+
+    .css-1cpxqw2 {
+        color: black !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 # Load and clean the data
 @st.cache_data
 def load_data():
