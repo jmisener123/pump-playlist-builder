@@ -19,7 +19,7 @@ if os.path.exists("/etc/secrets/secrets.toml"):
     os.makedirs(os.path.expanduser("~/.streamlit"), exist_ok=True)
     shutil.copy("/etc/secrets/secrets.toml", os.path.expanduser("~/.streamlit/secrets.toml"))
 
-# Force light mode
+# Force light mode and fix button styling
 st.markdown(
     """
     <style>
@@ -35,6 +35,21 @@ st.markdown(
 
     .css-1cpxqw2 {
         color: black !important;
+    }
+
+    /* 🔘 Button override to match light mode */
+    .stButton > button {
+        background-color: #f0f0f0 !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+        border-radius: 6px !important;
+        padding: 0.5rem 1rem !important;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .stButton > button:hover {
+        background-color: #e0e0e0 !important;
+        border-color: #aaa !important;
     }
     </style>
     """,
