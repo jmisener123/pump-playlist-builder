@@ -202,7 +202,7 @@ checkbox_placeholder = st.empty()
 
 with release_placeholder:
     available_releases = df['Release'].unique().tolist()
-    early_release = st.selectbox("", available_releases, key="global_release", help="Only releases from this point forward will be included in your playlists")
+    early_release = st.selectbox("Release filter", available_releases, label_visibility="collapsed", key="global_release", help="Only releases from this point forward will be included in your playlists")
 with checkbox_placeholder:
     use_recent = st.checkbox("10 most recent releases only", key="global_recent", help="Limit song selection to only the most recent 10 Pump releases")
 
