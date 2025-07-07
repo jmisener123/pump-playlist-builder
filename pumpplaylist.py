@@ -9,7 +9,7 @@ import io
 
 # You can optionally load these from Streamlit secrets or env vars
 
-st.set_page_config(page_title="Pump Playlist Builder", layout="wide")
+st.set_page_config(page_title="Pump Playlist Builder", page_icon="favicon.png", layout="wide")
 
 import os
 import shutil
