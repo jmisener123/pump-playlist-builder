@@ -42,6 +42,17 @@ st.markdown("""
         background-color: #e0e0e0 !important;
         border-color: #aaa !important;
     }
+    /* Reduce top whitespace for mobile */
+    @media (max-width: 600px) {{
+        .header-gradient {{
+            padding-top: 0.4rem !important;
+            padding-bottom: 0.7rem !important;
+        }}
+        .step1-gradient {{
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.7rem !important;
+        }}
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -52,9 +63,9 @@ accent_color = "#ff6b6b"
 text_color = "#22223b"
 
 st.markdown(f"""
-    <div style="text-align:center; padding:2rem; background:linear-gradient(135deg, {primary_color}, {secondary_color}); color:white; border-radius:1rem;">
-        <h1>🎵 Pump Playlist Builder <span style='pointer-events:none;'>💪</span></h1>
-        <p>Create your perfect Pump class lineup</p>
+    <div class="header-gradient" style="text-align:center; padding:0.7rem 0.5rem 1.2rem 0.5rem; background:linear-gradient(135deg, {primary_color}, {secondary_color}); color:white; border-radius:1rem;">
+        <h1 style='margin-bottom:0.5rem;'>🎵 Pump Playlist Builder <span style='pointer-events:none;'>💪</span></h1>
+        <p style='margin-top:0;'>Create your perfect Pump class lineup</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -189,8 +200,9 @@ def playlist_copy_export(playlist_df):
 
 # Step 1 UI
 st.markdown(f"""
-    <div style=\"background:linear-gradient(135deg, #ffecd2, {accent_color}); padding:2rem; border-radius:15px; margin-top:2rem; margin-bottom:2rem; box-shadow:0 4px 15px rgba(255,107,107,0.15);\">
-        <h3 style=\"color:{primary_color}; margin-top:0; font-size:1.4rem;\">Feeling uninspired? Let's get you pumped! 🎵</h3>
+    <div class="step1-gradient" style="background:linear-gradient(135deg, #ffecd2, {accent_color}); padding:1.2rem 0.7rem 1.2rem 0.7rem; border-radius:15px; margin-top:1.2rem; margin-bottom:1.2rem; box-shadow:0 4px 15px rgba(255,107,107,0.15);">
+        <h3 style="color:{primary_color}; margin-top:0; font-size:1.2rem;">Feeling uninspired? Let's get you pumped! 🎵</h3>
+        <div style='color:#333; font-size:1.05rem; margin-top:0.3rem; margin-bottom:0.2rem;'>Tell us about your back catalog and we'll help you build the perfect mix.</div>
     </div>
 """, unsafe_allow_html=True)
 st.markdown("### Step 1: What's the earliest release you own?")
