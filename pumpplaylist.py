@@ -170,7 +170,7 @@ def display_playlist(playlist_df):
             </div>
         """, unsafe_allow_html=True)
 
-    with st.expander("📋 Copy/Paste Version"):
+    with st.expander("📋 Ready to teach it? Click to get a copy/paste version of your playlist."):
         copy_text = f"Pump Playlist - Total Time: {min_}:{str(sec).zfill(2)}\n"
         for _, row in playlist_df.iterrows():
             copy_text += f"**{row['Release']}** - {row['Track No#']}: {row['Song Title']} — {row['Artist']} ({row['Duration']})\n"
@@ -181,7 +181,7 @@ def display_playlist(playlist_df):
 def playlist_copy_export(playlist_df):
     total_sec = playlist_df['Duration'].apply(duration_to_sec).sum()
     min_, sec = divmod(total_sec, 60)
-    with st.expander("📋 Copy/Paste Version"):
+    with st.expander("📋 Ready to teach it? Click to get a copy/paste version of your playlist."):
         copy_text = f"Pump Playlist - Total Time: {min_}:{str(sec).zfill(2)}\n"
         for _, row in playlist_df.iterrows():
             copy_text += f"{row['Release']} - {row['Track No#']}: {row['Song Title']} — {row['Artist']} ({row['Duration']})\n"
@@ -193,21 +193,21 @@ st.markdown(f"""
         <h3 style=\"color:{primary_color}; margin-top:0; font-size:1.4rem;\">Feeling uninspired? Let's get you pumped! 🎵</h3>
     </div>
 """, unsafe_allow_html=True)
-st.markdown("## Step 1: What's the earliest release you own?")
+st.markdown("### Step 1: What's the earliest release you own?")
 
 available_releases = df['Release'].unique().tolist()
 early_release = st.selectbox("Select below, then move to Step 2", available_releases)
 use_recent = st.checkbox("Use only the 10 most recent releases")
 
 # Step 2 UI
-st.markdown("## Step 2: Build your playlist (3 options below)")
+st.markdown("### Step 2: Pick your method and build your playlist")
 tab1, tab2, tab3 = st.tabs(["🎲 Random", "👻 Theme", "🛠️ Custom"])
 
 playlist_df = None
 
 # Tab 1: Random
 with tab1:
-    st.markdown("With one click, generate a completely random playlist from your library.")
+    st.markdown("Generate a full playlist in one click, totally randomized from your library.")
     if 'random_playlist' not in st.session_state:
         st.session_state['random_playlist'] = None
     generate_random = st.button("🎲 Build My Random Playlist")
