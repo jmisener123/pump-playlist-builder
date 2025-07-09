@@ -25,23 +25,23 @@ if os.path.exists("/etc/secrets/secrets.toml"):
 # --- Light mode and styling ---
 st.markdown("""
     <style>
-    html, body, [data-testid="stAppViewContainer"] {
+    html, body, [data-testid="stAppViewContainer"] {{
         color-scheme: light !important;
         background-color: white !important;
         color: black !important;
-    }
-    .stButton > button {
+    }}
+    .stButton > button {{
         background-color: #f0f0f0 !important;
         color: black !important;
         border: 1px solid #ccc !important;
         border-radius: 6px !important;
         padding: 0.5rem 1rem !important;
         transition: all 0.2s ease-in-out;
-    }
-    .stButton > button:hover {
+    }}
+    .stButton > button:hover {{
         background-color: #e0e0e0 !important;
         border-color: #aaa !important;
-    }
+    }}
     /* Reduce top whitespace for mobile */
     @media (max-width: 600px) {{
         .header-gradient {{
@@ -53,6 +53,41 @@ st.markdown("""
             padding-bottom: 0.7rem !important;
         }}
     }}
+    /* --- DARK MODE FIXES --- */
+    [data-theme="dark"] body, [data-theme="dark"] [data-testid="stAppViewContainer"] {{
+        background-color: #18191a !important;
+        color: #f5f6fa !important;
+    }}
+    [data-theme="dark"] .playlist-card {{
+        background: #23272f !important;
+        color: #f5f6fa !important;
+    }}
+    [data-theme="dark"] .playlist-card strong, [data-theme="dark"] .playlist-card em, [data-theme="dark"] .playlist-card span, [data-theme="dark"] .playlist-card div {{
+        color: #f5f6fa !important;
+    }}
+    [data-theme="dark"] .playlist-card a {{
+        color: #7eb8e6 !important;
+    }}
+    /* Light mode for playlist card */
+    .playlist-card {{
+        background: #f9f9f9 !important;
+        color: #22223b !important;
+    }}
+    .playlist-card strong, .playlist-card em, .playlist-card span, .playlist-card div {{
+        color: #22223b !important;
+    }}
+    .playlist-card a {{
+        color: #2563eb !important;
+    }}
+    /* Place release number color rules at the end for highest specificity */
+    .playlist-card span.release-number {
+        color: #2563eb !important;
+        font-weight: bold !important;
+    }
+    [data-theme="dark"] .playlist-card span.release-number {
+        color: #4ecdc4 !important;
+        font-weight: bold !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -174,9 +209,9 @@ def display_playlist(playlist_df):
             tag_html += f"<span style='background-color:{pill_color}; color:#222; padding:0.2rem 0.5rem; margin-right:5px; border-radius:10px; font-size:0.8rem'>{emoji} {tag}</span>"
 
         st.markdown(f"""
-            <div style="background:#f9f9f9;padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px">
+            <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px">
                 <strong>{row['Track No#']} - {row['Song Title']}</strong> by {row['Artist']}<br>
-                <em><span>Release: <strong style='color:#2563eb; font-size:1.1em'>{row['Release']}</strong></span> | Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
+                <em><span>Release: <span class='release-number' style='font-size:1.1em'>{row['Release']}</span></span> | Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
                 {tag_html}
             </div>
         """, unsafe_allow_html=True)
@@ -281,9 +316,9 @@ with tab1:
                         pill_color = "#ffeaa7"  # default
                     tag_html += f"<span style='background-color:{pill_color}; color:#222; padding:0.2rem 0.5rem; margin-right:5px; border-radius:10px; font-size:0.8rem'>{emoji} {tag}</span>"
                 st.markdown(f"""
-                    <div style='background:#f9f9f9;padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px'>
+                    <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px">
                         <strong>{row['Track No#']} - {row['Song Title']}</strong> by {row['Artist']}<br>
-                        <em><span>Release: <strong style='color:#2563eb; font-size:1.1em'>{row['Release']}</strong></span> | Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
+                        <em><span>Release: <span class='release-number' style='font-size:1.1em'>{row['Release']}</span></span> | Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
                         {tag_html}
                     </div>
                 """, unsafe_allow_html=True)
@@ -407,9 +442,9 @@ with tab2:
                         pill_color = "#ffeaa7"  # default
                     tag_html += f"<span style='background-color:{pill_color}; color:#222; padding:0.2rem 0.5rem; margin-right:5px; border-radius:10px; font-size:0.8rem'>{emoji} {tag}</span>"
                 st.markdown(f"""
-                    <div style='background:#f9f9f9;padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px'>
+                    <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px">
                         <strong>{row['Track No#']} - {row['Song Title']}</strong> by {row['Artist']}<br>
-                        <em><span>Release: <strong style='color:#2563eb; font-size:1.1em'>{row['Release']}</strong></span> | Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
+                        <em><span>Release: <span class='release-number' style='font-size:1.1em'>{row['Release']}</span></span> | Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
                         {tag_html}
                     </div>
                 """, unsafe_allow_html=True)
@@ -450,7 +485,7 @@ with tab2:
 
 # Tab 3: Custom
 with tab3:
-    st.markdown("Browse all available options for each track and build your playlist.")
+    st.markdown("Browse all your available options for each track and build your playlist manually.")
     manual_selection = {}
     selected_sort = df[df['Release'] == early_release]['SortKey'].iloc[0]
     if use_recent:
