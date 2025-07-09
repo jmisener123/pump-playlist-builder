@@ -69,16 +69,27 @@ st.markdown("""
         color: #7eb8e6 !important;
     }}
     /* Light mode for playlist card */
-    .playlist-card {{
+    .playlist-card {
         background: #f9f9f9 !important;
         color: #22223b !important;
-    }}
+    }
+    [data-theme="dark"] .playlist-card {
+        background: #23272f !important;
+        color: #f5f6fa !important;
+    }
     .playlist-card strong, .playlist-card em, .playlist-card span, .playlist-card div {{
         color: #22223b !important;
     }}
     .playlist-card a {{
         color: #2563eb !important;
     }}
+    /* Restore playlist card background for both modes */
+    .playlist-card {
+        background: #f9f9f9 !important;
+    }
+    [data-theme="dark"] .playlist-card {
+        background: #23272f !important;
+    }
     /* Place release number color rules at the end for highest specificity */
     .playlist-card span.release-number {
         color: #2563eb !important;
