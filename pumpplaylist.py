@@ -555,3 +555,8 @@ st.markdown(f"""
         It is <strong>not affiliated with, endorsed by, or associated with Les Mills or the BodyPump program</strong>.
     </div>
 """, unsafe_allow_html=True)
+st.markdown("""
+    <div style="text-align:center; padding:0.5rem;">
+        <a href="https://github.com/jmisener123/pump-playlist-builder/" target="_blank" style="color:#2563eb; font-size:0.8rem; text-decoration:underline;">GitHub</a>
+    </div>
+""", unsafe_allow_html=True)
