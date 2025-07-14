@@ -370,6 +370,8 @@ with tab2:
         st.session_state['theme_playlist'] = None
     if 'theme_filtered_df' not in st.session_state:
         st.session_state['theme_filtered_df'] = None
+    if 'theme_release_filtered_df' not in st.session_state:
+        st.session_state['theme_release_filtered_df'] = None
     
     if generate_tags:
         selected_sort = df[df['Release'] == early_release]['SortKey'].iloc[0]
@@ -377,6 +379,10 @@ with tab2:
         if use_recent:
             top_10 = df['SortKey'].drop_duplicates().nlargest(10)
             release_filtered_df = release_filtered_df[release_filtered_df['SortKey'].isin(top_10)]
+        
+        # Store release_filtered_df in session state
+        st.session_state['theme_release_filtered_df'] = release_filtered_df.copy()
+        
         filtered_df = release_filtered_df.copy()
         if selected_tags:
             filtered_df = filtered_df[filtered_df['Tags'].apply(lambda x: any(tag in str(x) for tag in selected_tags))]
@@ -413,6 +419,18 @@ with tab2:
         playlist_df = st.session_state['theme_playlist']
         filtered_df = st.session_state.get('theme_filtered_df', df)
         random_fallbacks = st.session_state.get('theme_random_fallbacks', [])
+        
+        # Recreate release_filtered_df if it doesn't exist in session state
+        if st.session_state['theme_release_filtered_df'] is None:
+            selected_sort = df[df['Release'] == early_release]['SortKey'].iloc[0]
+            release_filtered_df = df[df['SortKey'] >= selected_sort]
+            if use_recent:
+                top_10 = df['SortKey'].drop_duplicates().nlargest(10)
+                release_filtered_df = release_filtered_df[release_filtered_df['SortKey'].isin(top_10)]
+            st.session_state['theme_release_filtered_df'] = release_filtered_df.copy()
+        else:
+            release_filtered_df = st.session_state['theme_release_filtered_df']
+        
         if random_fallbacks:
             st.warning(f"No tagged track found for: {', '.join(random_fallbacks)}. A random track of that category was slotted in.")
         
@@ -493,7 +511,6 @@ with tab2:
                     else:
                         st.button(f"No alternatives", key=swap_button_key, disabled=True)
         playlist_copy_export(playlist_df)
-
 # Tab 3: Custom
 with tab3:
     st.markdown("Browse all your available options for each track and build your playlist manually.")
