@@ -99,18 +99,18 @@ st.markdown("""
         color: #4ecdc4 !important;
         font-weight: bold !important;
     }
-    /* Force selectbox dropdowns to open downward on mobile */
+    /* Force selectbox and multiselect dropdowns to open downward on mobile */
     @media (max-width: 600px) {
-        /* Streamlit uses .stSelectbox and .st-bx for selectbox popover */
-        .stSelectbox [data-baseweb="popover"] {
+        .stSelectbox [data-baseweb="popover"],
+        .stMultiSelect [data-baseweb="popover"] {
             top: 100% !important;
             bottom: auto !important;
             left: 0 !important;
             right: auto !important;
             transform: none !important;
         }
-        /* Try to force the popover to always open downward */
-        .stSelectbox [data-baseweb="popover"] > div[role="dialog"] {
+        .stSelectbox [data-baseweb="popover"] > div[role="dialog"],
+        .stMultiSelect [data-baseweb="popover"] > div[role="dialog"] {
             top: 100% !important;
             bottom: auto !important;
             left: 0 !important;
@@ -409,7 +409,7 @@ with tab2:
             top_10 = df['SortKey'].drop_duplicates().nlargest(10)
             release_filtered_df = release_filtered_df[release_filtered_df['SortKey'].isin(top_10)]
         if avoid_current_release:
-            release_filtered_df = release_filtered_df[release_filtered_df['Release'] != 133]
+            release_filtered_df = release_filtered_df[release_filtered_df['Release'].astype(str) != "133"]
         # Store release_filtered_df in session state
         st.session_state['theme_release_filtered_df'] = release_filtered_df.copy()
         
@@ -422,11 +422,15 @@ with tab2:
         random_fallbacks = []
         for track in track_types:
             track_df = filtered_df[filtered_df['Track No#'] == track]
+            if avoid_current_release:
+                track_df = track_df[track_df['Release'].astype(str) != "133"]
             if not track_df.empty:
                 playlist.append(track_df.sample(1))
             else:
                 # Fallback: slot in a random track of that category from release_filtered_df (earliest release and forward, not filtered by tags/genres)
                 fallback_df = release_filtered_df[release_filtered_df['Track No#'] == track]
+                if avoid_current_release:
+                    fallback_df = fallback_df[fallback_df['Release'].astype(str) != "133"]
                 if not fallback_df.empty:
                     playlist.append(fallback_df.sample(1))
                     random_fallbacks.append(track)
@@ -458,7 +462,7 @@ with tab2:
                 top_10 = df['SortKey'].drop_duplicates().nlargest(10)
                 release_filtered_df = release_filtered_df[release_filtered_df['SortKey'].isin(top_10)]
             if avoid_current_release:
-                release_filtered_df = release_filtered_df[release_filtered_df['Release'] != 133]
+                release_filtered_df = release_filtered_df[release_filtered_df['Release'].astype(str) != "133"]
             st.session_state['theme_release_filtered_df'] = release_filtered_df.copy()
         else:
             release_filtered_df = st.session_state['theme_release_filtered_df']
@@ -513,6 +517,8 @@ with tab2:
                 # If this track was a random fallback, show a swap button for a new random track
                 if random_fallbacks and track_no in random_fallbacks:
                     fallback_pool = release_filtered_df[(release_filtered_df['Track No#'] == track_no) & (release_filtered_df['Song Title'] != row['Song Title'])]
+                    if avoid_current_release:
+                        fallback_pool = fallback_pool[fallback_pool['Release'].astype(str) != "133"]
                     swap_label = f"Swap {muscle_group} for new random track"
                     swap_button_key = f"theme_fallback_swap_btn_{i}"
                     if not fallback_pool.empty:
@@ -530,6 +536,8 @@ with tab2:
                         (options_df['Artist'] != row['Artist']) | 
                         (options_df['Release'].astype(str) != str(row['Release']))
                     ]
+                    if avoid_current_release:
+                        swap_options_df = swap_options_df[swap_options_df['Release'].astype(str) != "133"]
                     num_options = len(swap_options_df)
                     option_word = 'option' if num_options == 1 else 'options'
                     swap_label = f"Swap {muscle_group} ({num_options} {option_word})"
