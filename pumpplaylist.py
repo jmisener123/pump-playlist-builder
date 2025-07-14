@@ -99,6 +99,25 @@ st.markdown("""
         color: #4ecdc4 !important;
         font-weight: bold !important;
     }
+    /* Force selectbox dropdowns to open downward on mobile */
+    @media (max-width: 600px) {
+        /* Streamlit uses .stSelectbox and .st-bx for selectbox popover */
+        .stSelectbox [data-baseweb="popover"] {
+            top: 100% !important;
+            bottom: auto !important;
+            left: 0 !important;
+            right: auto !important;
+            transform: none !important;
+        }
+        /* Try to force the popover to always open downward */
+        .stSelectbox [data-baseweb="popover"] > div[role="dialog"] {
+            top: 100% !important;
+            bottom: auto !important;
+            left: 0 !important;
+            right: auto !important;
+            transform: none !important;
+        }
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -254,8 +273,10 @@ st.markdown(f"""
 st.markdown("### Step 1: What's the earliest release you own?")
 
 available_releases = df['Release'].unique().tolist()
-early_release = st.selectbox("Select below, then move to Step 2", available_releases)
-use_recent = st.checkbox("Use only the 10 most recent releases")
+early_release = st.selectbox("Choose a release below to continue to Step 2", available_releases)
+use_recent = st.checkbox("Use only songs from the 10 most recent releases")
+# Add checkbox to avoid most current release (133)
+avoid_current_release = st.checkbox("Exclude songs from the newest release (133)")
 
 # Step 2 UI
 st.markdown("### Step 2: Pick your method and build your playlist")
@@ -275,10 +296,14 @@ with tab1:
         if use_recent:
             top_10 = df['SortKey'].drop_duplicates().nlargest(10)
             filtered_df = filtered_df[filtered_df['SortKey'].isin(top_10)]
+        if avoid_current_release:
+            filtered_df = filtered_df[filtered_df['Release'].astype(str) != "133"]
 
         playlist = []
         for track in track_types:
             track_df = filtered_df[filtered_df['Track No#'] == track]
+            if avoid_current_release:
+                track_df = track_df[track_df['Release'].astype(str) != "133"]
             if not track_df.empty:
                 playlist.append(track_df.sample(1))
             else:
@@ -340,7 +365,11 @@ with tab1:
                     if use_recent:
                         top_10 = df['SortKey'].drop_duplicates().nlargest(10)
                         filtered_df = filtered_df[filtered_df['SortKey'].isin(top_10)]
+                    if avoid_current_release:
+                        filtered_df = filtered_df[filtered_df['Release'].astype(str) != "133"]
                     track_df = filtered_df[filtered_df['Track No#'] == row['Track No#']]
+                    if avoid_current_release:
+                        track_df = track_df[track_df['Release'].astype(str) != "133"]
                     if not track_df.empty:
                         # Exclude current song
                         track_df = track_df[track_df['Song Title'] != row['Song Title']]
@@ -379,7 +408,8 @@ with tab2:
         if use_recent:
             top_10 = df['SortKey'].drop_duplicates().nlargest(10)
             release_filtered_df = release_filtered_df[release_filtered_df['SortKey'].isin(top_10)]
-        
+        if avoid_current_release:
+            release_filtered_df = release_filtered_df[release_filtered_df['Release'] != 133]
         # Store release_filtered_df in session state
         st.session_state['theme_release_filtered_df'] = release_filtered_df.copy()
         
@@ -427,6 +457,8 @@ with tab2:
             if use_recent:
                 top_10 = df['SortKey'].drop_duplicates().nlargest(10)
                 release_filtered_df = release_filtered_df[release_filtered_df['SortKey'].isin(top_10)]
+            if avoid_current_release:
+                release_filtered_df = release_filtered_df[release_filtered_df['Release'] != 133]
             st.session_state['theme_release_filtered_df'] = release_filtered_df.copy()
         else:
             release_filtered_df = st.session_state['theme_release_filtered_df']
@@ -521,7 +553,8 @@ with tab3:
         filtered_df = df[df['SortKey'].isin(top_10)]
     else:
         filtered_df = df.copy()
-
+    if avoid_current_release:
+        filtered_df = filtered_df[filtered_df['Release'].astype(str) != "133"]
     eligible_df = filtered_df[filtered_df['SortKey'] >= selected_sort]
 
     for track in track_types:
