@@ -270,15 +270,14 @@ st.markdown(f"""
         <div style='color:#333; font-size:1.05rem; margin-top:0.3rem; margin-bottom:0.2rem;'>Tell us about your back catalog and we'll help you build the perfect mix.</div>
     </div>
 """, unsafe_allow_html=True)
+
 st.markdown("### Step 1: What's the earliest release you own?")
-
-available_releases = df['Release'].unique().tolist()
-early_release = st.selectbox("Choose a release below to continue to Step 2", available_releases)
+st.markdown("**Filters (optional):**")
 use_recent = st.checkbox("Use only songs from the 10 most recent releases")
-# Add checkbox to avoid most current release (133)
 avoid_current_release = st.checkbox("Exclude songs from the newest release (133)")
+available_releases = df['Release'].unique().tolist()
+early_release = st.selectbox("Select your earliest release", available_releases)
 
-# Step 2 UI
 st.markdown("### Step 2: Pick your method and build your playlist")
 tab1, tab2, tab3 = st.tabs(["🎲 Random", "👻 Theme", "🛠️ Custom"])
 
