@@ -6,6 +6,14 @@ This tool is not affiliated with, endorsed by, or officially connected to Les Mi
 
 Questions/feedback? [Click here to contact me](https://jessicamisener.com/contact)
 
+## What instructors are saying:
+- "GAME CHANGER! This should be a part of Initial Training"
+- "This is fantastic! So clever!"
+- "WOW!! So easy to use and so many forgotten tracks!"
+- "Wishing I had it years ago!"
+- "This is GOLD!"
+- "This is so fun! And a great way to force me to not constantly choose my favourite tracks!"
+
 ## Features
 
 - 🎵 Three methods to build your playlist
