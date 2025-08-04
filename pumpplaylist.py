@@ -137,12 +137,9 @@ st.markdown(f"""
 # Load data
 @st.cache_data
 def load_data():
-    try:
-        encoded = st.secrets["csv_data"]
-        decoded = base64.b64decode(encoded)
-        df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
-    except Exception:
-        df = pd.read_csv("BPdata_89_Current.csv")
+    encoded = st.secrets["csv_data"]
+    decoded = base64.b64decode(encoded)
+    df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
 
     def sort_key(x):
         if x == "United":
