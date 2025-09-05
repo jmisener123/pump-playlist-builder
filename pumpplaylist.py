@@ -41,20 +41,21 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# -------- Data loader --------
 @st.cache_data
 def load_data():
-    # --- Load from Render secrets if available ---
     if "csv_data" in st.secrets:
         encoded = st.secrets["csv_data"]
-        decoded = base64.b64decode(encoded)
-        df = pd.read_csv(io.StringIO(decoded.decode("utf-8")), encoding="utf-8")
-    else:
-        # --- Local fallback for development ---
+        decoded_bytes = base64.b64decode(encoded)
+        # Pass the raw bytes to pandas
         try:
-            df = pd.read_csv("BPdata_89_Current.csv", encoding="cp1252")
+            df = pd.read_csv(io.BytesIO(decoded_bytes), encoding="utf-8")
         except UnicodeDecodeError:
-            df = pd.read_csv("BPdata_89_Current.csv", encoding="latin-1")
+            df = pd.read_csv(io.BytesIO(decoded_bytes), encoding="cp1252")
+    else:
+        try:
+            df = pd.read_csv("BPdata_89_Current.csv", encoding="utf-8")
+        except UnicodeDecodeError:
+            df = pd.read_csv("BPdata_89_Current.csv", encoding="cp1252")
 
     # --- Sorting key for releases ---
     def sort_key(x):
