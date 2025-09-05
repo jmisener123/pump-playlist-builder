@@ -1,5 +1,3 @@
-# pumpplaylist.py - Final version with restored swap logic 🎵
-
 import streamlit as st
 import pandas as pd
 import random
@@ -46,18 +44,21 @@ st.markdown("""
 # -------- Data loader --------
 @st.cache_data
 def load_data():
-    try:
+    # --- Load from Render secrets if available ---
+    if "csv_data" in st.secrets:
         encoded = st.secrets["csv_data"]
         decoded = base64.b64decode(encoded)
-        df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
-    except Exception:
+        df = pd.read_csv(io.StringIO(decoded.decode("utf-8")), encoding="utf-8")
+    else:
+        # --- Local fallback for development ---
         try:
             df = pd.read_csv("BPdata_89_Current.csv", encoding="cp1252")
         except UnicodeDecodeError:
             df = pd.read_csv("BPdata_89_Current.csv", encoding="latin-1")
 
+    # --- Sorting key for releases ---
     def sort_key(x):
-        if x == "United":
+        if str(x) == "United":
             return 113.5
         try:
             return float(x)
@@ -67,8 +68,9 @@ def load_data():
     df["SortKey"] = df["Release"].apply(sort_key)
     df = df[df["SortKey"] >= 89].sort_values("SortKey").reset_index(drop=True)
 
+    # --- Clean tags ---
     def clean_tags(tag_str):
-        if pd.isna(tag_str) or tag_str in ["", "None", None]:
+        if pd.isna(tag_str) or str(tag_str).strip().lower() in ["nan", "none", "-"]:
             return None
         tags = [t.strip() for t in str(tag_str).split(",") if t.strip()]
         replacements = {"Break-up Songs": "Break-Up Songs", "🌈": "✨"}
@@ -77,11 +79,11 @@ def load_data():
 
     df["Tags"] = df["Tags"].apply(clean_tags)
 
+    # --- Normalize text fields to fix accent issues ---
+    import unicodedata
     for col in ["Song Title", "Artist", "Genre", "Tags"]:
         if col in df.columns:
-            df[col] = df[col].apply(
-                lambda x: unicodedata.normalize("NFC", str(x)) if pd.notna(x) else None
-            )
+            df[col] = df[col].apply(lambda x: unicodedata.normalize("NFC", str(x)))
 
     return df
 
