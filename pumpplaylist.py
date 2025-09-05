@@ -1,14 +1,14 @@
-# pumpplaylist.py - Final merged version with design + tab functionality
+# pumpplaylist.py - Final version with restored swap logic 🎵
 
 import streamlit as st
 import pandas as pd
 import random
 import base64
-from io import StringIO
 import os
 import io
 import shutil
 import hashlib
+import unicodedata
 
 def make_track_key(row):
     base = f"{row['Track No#']}_{row['Song Title']}_{row['Artist']}_{row['Release']}"
@@ -22,124 +22,39 @@ if os.path.exists("/etc/secrets/secrets.toml"):
     os.makedirs(os.path.expanduser("~/.streamlit"), exist_ok=True)
     shutil.copy("/etc/secrets/secrets.toml", os.path.expanduser("~/.streamlit/secrets.toml"))
 
-# --- Light mode and styling ---
+# --- Light/Dark mode styling ---
 st.markdown("""
     <style>
-    html, body, [data-testid="stAppViewContainer"] {{
-        color-scheme: light !important;
-        background-color: white !important;
-        color: black !important;
-    }}
-    .stButton > button {{
-        background-color: #f0f0f0 !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
-        border-radius: 6px !important;
-        padding: 0.5rem 1rem !important;
-        transition: all 0.2s ease-in-out;
-    }}
-    .stButton > button:hover {{
-        background-color: #e0e0e0 !important;
-        border-color: #aaa !important;
-    }}
-    /* Reduce top whitespace for mobile */
-    @media (max-width: 600px) {{
-        .header-gradient {{
-            padding-top: 0.4rem !important;
-            padding-bottom: 0.7rem !important;
-        }}
-        .step1-gradient {{
-            padding-top: 0.5rem !important;
-            padding-bottom: 0.7rem !important;
-        }}
-    }}
-    /* --- DARK MODE FIXES --- */
-    [data-theme="dark"] body, [data-theme="dark"] [data-testid="stAppViewContainer"] {{
-        background-color: #18191a !important;
-        color: #f5f6fa !important;
-    }}
-    [data-theme="dark"] .playlist-card {{
-        background: #23272f !important;
-        color: #f5f6fa !important;
-    }}
-    [data-theme="dark"] .playlist-card strong, [data-theme="dark"] .playlist-card em, [data-theme="dark"] .playlist-card span, [data-theme="dark"] .playlist-card div {{
-        color: #f5f6fa !important;
-    }}
-    [data-theme="dark"] .playlist-card a {{
-        color: #7eb8e6 !important;
-    }}
-    /* Light mode for playlist card */
     .playlist-card {
         background: #f9f9f9 !important;
         color: #22223b !important;
     }
-    [data-theme="dark"] .playlist-card {
-        background: #23272f !important;
-        color: #f5f6fa !important;
-    }
-    .playlist-card strong, .playlist-card em, .playlist-card span, .playlist-card div {{
-        color: #22223b !important;
-    }}
-    .playlist-card a {{
-        color: #2563eb !important;
-    }}
-    /* Restore playlist card background for both modes */
-    .playlist-card {
-        background: #f9f9f9 !important;
-    }
-    [data-theme="dark"] .playlist-card {
-        background: #23272f !important;
-    }
-    /* Place release number color rules at the end for highest specificity */
     .playlist-card span.release-number {
         color: #2563eb !important;
         font-weight: bold !important;
     }
+    [data-theme="dark"] .playlist-card {
+        background: #23272f !important;
+        color: #f5f6fa !important;
+    }
     [data-theme="dark"] .playlist-card span.release-number {
         color: #4ecdc4 !important;
-        font-weight: bold !important;
-    }
-    /* Force selectbox and multiselect dropdowns to open downward on mobile */
-    @media (max-width: 600px) {
-        .stSelectbox [data-baseweb="popover"],
-        .stMultiSelect [data-baseweb="popover"] {
-            top: 100% !important;
-            bottom: auto !important;
-            left: 0 !important;
-            right: auto !important;
-            transform: none !important;
-        }
-        .stSelectbox [data-baseweb="popover"] > div[role="dialog"],
-        .stMultiSelect [data-baseweb="popover"] > div[role="dialog"] {
-            top: 100% !important;
-            bottom: auto !important;
-            left: 0 !important;
-            right: auto !important;
-            transform: none !important;
-        }
     }
     </style>
 """, unsafe_allow_html=True)
 
-# UI header
-primary_color = "#667eea"
-secondary_color = "#4ecdc4"
-accent_color = "#ff6b6b"
-text_color = "#22223b"
-
-st.markdown(f"""
-    <div class="header-gradient" style="text-align:center; padding:0.7rem 0.5rem 1.2rem 0.5rem; background:linear-gradient(135deg, {primary_color}, {secondary_color}); color:white; border-radius:1rem;">
-        <h1 style='margin-bottom:0.5rem;'>🎵 Pump Playlist Builder <span style='pointer-events:none;'>💪</span></h1>
-        <p style='margin-top:0;'>Create your perfect Pump class lineup</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# Load data
+# -------- Data loader --------
 @st.cache_data
 def load_data():
-    encoded = st.secrets["csv_data"]
-    decoded = base64.b64decode(encoded)
-    df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
+    try:
+        encoded = st.secrets["csv_data"]
+        decoded = base64.b64decode(encoded)
+        df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
+    except Exception:
+        try:
+            df = pd.read_csv("BPdata_89_Current.csv", encoding="cp1252")
+        except UnicodeDecodeError:
+            df = pd.read_csv("BPdata_89_Current.csv", encoding="latin-1")
 
     def sort_key(x):
         if x == "United":
@@ -149,23 +64,25 @@ def load_data():
         except:
             return 0
 
-    df['SortKey'] = df['Release'].apply(sort_key)
-    df = df[df['SortKey'] >= 89].sort_values("SortKey").reset_index(drop=True)
+    df["SortKey"] = df["Release"].apply(sort_key)
+    df = df[df["SortKey"] >= 89].sort_values("SortKey").reset_index(drop=True)
 
     def clean_tags(tag_str):
-        if pd.isna(tag_str):
-            return tag_str
-        tags = [t.strip() for t in tag_str.split(',')]
+        if pd.isna(tag_str) or tag_str in ["", "None", None]:
+            return None
+        tags = [t.strip() for t in str(tag_str).split(",") if t.strip()]
         replacements = {"Break-up Songs": "Break-Up Songs", "🌈": "✨"}
-        cleaned = []
-        for tag in tags:
-            for k, v in replacements.items():
-                if tag == k:
-                    tag = v
-            cleaned.append(tag)
-        return ', '.join(sorted(set(cleaned)))
+        cleaned = [replacements.get(tag, tag) for tag in tags]
+        return ", ".join(sorted(set(cleaned))) if cleaned else None
 
-    df['Tags'] = df['Tags'].apply(clean_tags)
+    df["Tags"] = df["Tags"].apply(clean_tags)
+
+    for col in ["Song Title", "Artist", "Genre", "Tags"]:
+        if col in df.columns:
+            df[col] = df[col].apply(
+                lambda x: unicodedata.normalize("NFC", str(x)) if pd.notna(x) else None
+            )
+
     return df
 
 df = load_data()
@@ -180,20 +97,11 @@ tag_emojis = {
     "Halloween": "🎃", "Women of Pop": "👩‍🎤", "Break-Up Songs": "💔",
     "Beast Mode": "💪", "Positive Vibes": "✨", "Sing-Along": "🎤",
     "Emo": "🎸", "P!nk": "💗", "New Year's Eve": "🥳", "Valentine's Day": "💘",
-    "Summer": "☀️", "Hard": "💀", "Easy to Learn": "😅"
+    "Summer": "☀️", "Hard": "💀", "Easy to Learn": "😅",
+    "Short (<4:30)": "⏱️", "Long (>6 min)": "⌛"
 }
 
-# Extract tags
-def extract_tags(df):
-    tags = set()
-    for entry in df['Tags'].dropna():
-        for tag in str(entry).split(','):
-            tag = tag.strip()
-            if tag:
-                tags.add(tag)
-    return sorted(tags)
-
-# Duration parser
+# -------- Helpers --------
 def duration_to_sec(dur):
     try:
         m, s = map(int, str(dur).split(":"))
@@ -201,55 +109,36 @@ def duration_to_sec(dur):
     except:
         return 0
 
-# Playlist display
-def display_playlist(playlist_df):
-    total_sec = playlist_df['Duration'].apply(duration_to_sec).sum()
-    min_, sec = divmod(total_sec, 60)
-    st.markdown(f"### 🕒 Total Duration: **{min_}:{str(sec).zfill(2)}**")
-
-    for _, row in playlist_df.iterrows():
-        tag_html = ""
-        tags = []
-        if not pd.isna(row.get("Tags")) and row['Tags'] != "-":
-            tags = [t.strip() for t in row["Tags"].split(',') if t.strip()]
-        for j, tag in enumerate(tags):
+def render_tags(row):
+    tag_html = ""
+    if row.get("Tags") not in [None, "-", "nan", "NaN", "None"] and not pd.isna(row.get("Tags")):
+        tags = [t.strip() for t in str(row["Tags"]).split(",") if t.strip()]
+        for tag in tags:
             emoji = tag_emojis.get(tag, "")
-            # Custom pill colors
             if tag == "Women of Pop":
-                pill_color = "#ffd1e7"  # pale pink
+                pill_color = "#ffd1e7"
             elif tag == "Valentine's Day":
-                pill_color = "#ffb6c1"  # different pink
+                pill_color = "#ffb6c1"
             elif tag == "Halloween":
-                pill_color = "#ffe5b4"  # light orange
+                pill_color = "#ffe5b4"
             elif tag == "Beast Mode":
-                pill_color = "#b3e0ff"  # light blue
+                pill_color = "#b3e0ff"
             elif tag == "Sing-Along":
-                pill_color = "#e0c3fc"  # light purple
+                pill_color = "#e0c3fc"
             elif tag == "New Year's Eve":
-                pill_color = "#b9fbc0"  # light green
+                pill_color = "#b9fbc0"
             elif tag == "Positive Vibes":
-                pill_color = "#b9fbc0"  # light green
+                pill_color = "#b9fbc0"
             elif tag == "Hard":
-                pill_color = "#7eb8e6"  # slightly darker blue
+                pill_color = "#7eb8e6"
+            elif tag == "Short (<4:30)":
+                pill_color = "#c6f6d5"
+            elif tag == "Long (>6 min)":
+                pill_color = "#e2e8f0"
             else:
-                pill_color = "#ffeaa7"  # default
+                pill_color = "#ffeaa7"
             tag_html += f"<span style='background-color:{pill_color}; color:#222; padding:0.2rem 0.5rem; margin-right:5px; border-radius:10px; font-size:0.8rem'>{emoji} {tag}</span>"
-
-        st.markdown(f"""
-            <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px">
-                <strong>{row['Track No#']} - {row['Song Title']}</strong> by {row['Artist']}<br>
-                <em><span>Release: <span class='release-number' style='font-size:1.1em'>{row['Release']}</span></span> | Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
-                {tag_html}
-            </div>
-        """, unsafe_allow_html=True)
-
-    with st.expander("📋 Ready to teach it? Click to get a copy/paste version of your playlist."):
-        copy_text = f"Pump Playlist - Total Time: {min_}:{str(sec).zfill(2)}\n"
-        for _, row in playlist_df.iterrows():
-            copy_text += f"**{row['Release']}** - {row['Track No#']}: {row['Song Title']} — {row['Artist']} ({row['Duration']})\n"
-        st.code(copy_text, language=None)
-
-# 1. Add a helper function for copy/paste export
+    return tag_html
 
 def playlist_copy_export(playlist_df):
     total_sec = playlist_df['Duration'].apply(duration_to_sec).sum()
@@ -260,348 +149,428 @@ def playlist_copy_export(playlist_df):
             copy_text += f"{row['Release']} - {row['Track No#']}: {row['Song Title']} — {row['Artist']} ({row['Duration']})\n"
         st.code(copy_text, language=None)
 
-# Step 1 UI
+# ---------------- Headers ----------------
+primary_color = "#667eea"
+secondary_color = "#4ecdc4"
+accent_color = "#ff6b6b"
+
 st.markdown(f"""
-    <div class="step1-gradient" style="background:linear-gradient(135deg, #ffecd2, {accent_color}); padding:1.2rem 0.7rem 1.2rem 0.7rem; border-radius:15px; margin-top:1.2rem; margin-bottom:1.2rem; box-shadow:0 4px 15px rgba(255,107,107,0.15);">
-        <h3 style="color:{primary_color}; margin-top:0; font-size:1.2rem;">Feeling uninspired? Let's get you pumped! 🎵</h3>
-        <div style='color:#333; font-size:1.05rem; margin-top:0.3rem; margin-bottom:0.2rem;'>Tell us about your back catalog and we'll help you build the perfect mix.</div>
+    <div class="header-gradient" style="text-align:center; padding:0.7rem 0.5rem 1.2rem 0.5rem;
+        background:linear-gradient(135deg, {primary_color}, {secondary_color});
+        color:white; border-radius:1rem;">
+        <h1 style='margin-bottom:0.5rem;'>🎵 Pump Playlist Builder <span style='pointer-events:none;'>💪</span></h1>
+        <p style='margin-top:0;'>Create your perfect Pump class lineup</p>
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown("### Step 1: What's the earliest release you own?")
-st.markdown("**Filters (optional):**")
-use_recent = st.checkbox("Use only songs from the 10 most recent releases")
-avoid_current_release = st.checkbox("Exclude songs from the newest release (133)")
-available_releases = df['Release'].unique().tolist()
-early_release = st.selectbox("Select your earliest release", available_releases)
+st.markdown(f"""
+    <div class="step1-gradient" style="background:linear-gradient(135deg, #ffecd2, {accent_color});
+        padding:1.2rem 0.7rem; border-radius:15px; margin-top:1.2rem; margin-bottom:1.2rem;
+        box-shadow:0 4px 15px rgba(255,107,107,0.15);">
+        <h3 style="color:{primary_color}; margin:0; font-size:1.2rem;">
+            Feeling uninspired? Let's get you pumped! 🎵
+        </h3>
+        <div style='color:#333; font-size:1.05rem; margin-top:0.3rem;'>
+            Tell us about your back catalog and we'll help you build the perfect mix.
+        </div>
+    </div>
+""", unsafe_allow_html=True)
 
+# ---------------- Step 1 ----------------
+current_release = str(df.loc[df['SortKey'].idxmax(), 'Release'])
+
+st.markdown("### Step 1: What's the earliest release you own?")
+avoid_current_release = st.checkbox(
+    f"Exclude songs from the newest release ({current_release})", key="avoid_current_release"
+)
+use_recent = st.checkbox(
+    "Use only songs from the 10 most recent releases", key="use_recent"
+)
+available_releases = df['Release'].astype(str).unique().tolist()
+early_release = st.selectbox("Select your earliest release", available_releases, key="early_release")
+
+# ---------------- Step 2 ----------------
 st.markdown("### Step 2: Pick your method and build your playlist")
 tab1, tab2, tab3 = st.tabs(["🎲 Random", "👻 Theme", "🛠️ Custom"])
 
-playlist_df = None
-
-# Tab 1: Random
+# ---------- Tab 1: Random ----------
 with tab1:
     st.markdown("Generate a full playlist in one click, totally randomized from your library.")
     if 'random_playlist' not in st.session_state:
         st.session_state['random_playlist'] = None
-    generate_random = st.button("🎲 Build My Random Playlist")
-    if generate_random:
-        selected_sort = df[df['Release'] == early_release]['SortKey'].iloc[0]
+    if st.button("🎲 Build My Random Playlist", key="build_random"):
+        selected_sort = df[df['Release'].astype(str) == str(early_release)]['SortKey'].iloc[0]
         filtered_df = df[df['SortKey'] >= selected_sort]
         if use_recent:
             top_10 = df['SortKey'].drop_duplicates().nlargest(10)
             filtered_df = filtered_df[filtered_df['SortKey'].isin(top_10)]
         if avoid_current_release:
-            filtered_df = filtered_df[filtered_df['Release'].astype(str) != "133"]
+            filtered_df = filtered_df[filtered_df['Release'].astype(str) != str(current_release)]
 
         playlist = []
         for track in track_types:
             track_df = filtered_df[filtered_df['Track No#'] == track]
-            if avoid_current_release:
-                track_df = track_df[track_df['Release'].astype(str) != "133"]
             if not track_df.empty:
                 playlist.append(track_df.sample(1))
             else:
                 playlist.append(pd.DataFrame([{
-                    "Track No#": track,
-                    "Song Title": "⚠️ No match found",
-                    "Artist": "-",
-                    "Release": "-",
-                    "Duration": "-",
-                    "Genre": "-",
-                    "Tags": "-"
+                    "Track No#": track, "Song Title": "⚠️ No match found", "Artist": "-",
+                    "Release": "-", "Duration": "-", "Genre": "-", "Tags": "-"
                 }]))
         st.session_state['random_playlist'] = pd.concat(playlist, ignore_index=True)
 
     if st.session_state['random_playlist'] is not None:
-        total_sec = st.session_state['random_playlist']['Duration'].apply(duration_to_sec).sum()
+        playlist_df = st.session_state['random_playlist']
+        total_sec = playlist_df['Duration'].apply(duration_to_sec).sum()
         min_, sec = divmod(total_sec, 60)
         st.markdown(f"### 🕒 Total Duration: **{min_}:{str(sec).zfill(2)}**")
-        for idx, row in st.session_state['random_playlist'].iterrows():
-            col1, col2 = st.columns([6,1])
+
+        for idx, row in playlist_df.iterrows():
+            col1, col2 = st.columns([6, 1])
             with col1:
-                tag_html = ""
-                tags = []
-                if not pd.isna(row.get("Tags")) and row['Tags'] != "-":
-                    tags = [t.strip() for t in row["Tags"].split(',') if t.strip()]
-                for j, tag in enumerate(tags):
-                    emoji = tag_emojis.get(tag, "")
-                    # Custom pill colors
-                    if tag == "Women of Pop":
-                        pill_color = "#ffd1e7"  # pale pink
-                    elif tag == "Valentine's Day":
-                        pill_color = "#ffb6c1"  # different pink
-                    elif tag == "Halloween":
-                        pill_color = "#ffe5b4"  # light orange
-                    elif tag == "Beast Mode":
-                        pill_color = "#b3e0ff"  # light blue
-                    elif tag == "Sing-Along":
-                        pill_color = "#e0c3fc"  # light purple
-                    elif tag == "New Year's Eve":
-                        pill_color = "#b9fbc0"  # light green
-                    elif tag == "Positive Vibes":
-                        pill_color = "#b9fbc0"  # light green
-                    elif tag == "Hard":
-                        pill_color = "#7eb8e6"  # slightly darker blue
-                    else:
-                        pill_color = "#ffeaa7"  # default
-                    tag_html += f"<span style='background-color:{pill_color}; color:#222; padding:0.2rem 0.5rem; margin-right:5px; border-radius:10px; font-size:0.8rem'>{emoji} {tag}</span>"
                 st.markdown(f"""
-                    <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px">
+                    <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;
+                        border-left:5px solid #667eea;border-radius:8px">
                         <strong>{row['Track No#']} - {row['Song Title']}</strong> by {row['Artist']}<br>
-                        <em><span>Release: <span class='release-number' style='font-size:1.1em'>{row['Release']}</span></span> | Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
-                        {tag_html}
+                        <em><span>Release: <span class='release-number'>{row['Release']}</span></span> |
+                        Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
+                        {render_tags(row)}
                     </div>
                 """, unsafe_allow_html=True)
             with col2:
-                if st.button("Swap Track", key=f"swap_{idx}"):
-                    selected_sort = df[df['Release'] == early_release]['SortKey'].iloc[0]
-                    filtered_df = df[df['SortKey'] >= selected_sort]
-                    if use_recent:
-                        top_10 = df['SortKey'].drop_duplicates().nlargest(10)
-                        filtered_df = filtered_df[filtered_df['SortKey'].isin(top_10)]
+                if st.button("Swap for another random track", key=f"swap_random_{idx}"):
+                    selected_sort = df[df['Release'].astype(str) == str(early_release)]['SortKey'].iloc[0]
+                    swap_pool = df[(df['SortKey'] >= selected_sort) & (df['Track No#'] == row['Track No#'])]
                     if avoid_current_release:
-                        filtered_df = filtered_df[filtered_df['Release'].astype(str) != "133"]
-                    track_df = filtered_df[filtered_df['Track No#'] == row['Track No#']]
-                    if avoid_current_release:
-                        track_df = track_df[track_df['Release'].astype(str) != "133"]
-                    if not track_df.empty:
-                        # Exclude current song
-                        track_df = track_df[track_df['Song Title'] != row['Song Title']]
-                        if not track_df.empty:
-                            new_row = track_df.sample(1).iloc[0]
-                            for col in st.session_state['random_playlist'].columns:
-                                st.session_state['random_playlist'].at[idx, col] = new_row[col]
-        playlist_copy_export(st.session_state['random_playlist'])
+                        swap_pool = swap_pool[swap_pool['Release'].astype(str) != str(current_release)]
+                    swap_pool = swap_pool[swap_pool['Song Title'] != row['Song Title']]
+                    if not swap_pool.empty:
+                        new_row = swap_pool.sample(1).iloc[0]
+                        for col in playlist_df.columns:
+                            playlist_df.at[idx, col] = new_row[col]
+                        st.session_state['random_playlist'] = playlist_df
+                        st.rerun()
 
-# Tab 2: Theme
+        st.session_state['random_playlist'] = playlist_df
+        playlist_copy_export(playlist_df)
+
+# ---------- Tab 2: Theme ----------
 with tab2:
-    st.markdown("From Halloween to heartbreak, choose a theme or genre to fit your vibe.")
-    available_tags = extract_tags(df)
-    tag_label_map = {tag: f"{tag_emojis.get(tag, '')} {tag}".strip() for tag in available_tags}
-    label_to_tag = {v: k for k, v in tag_label_map.items()}
-    tag_labels = [tag_label_map[tag] for tag in available_tags]
+    st.markdown("Mix and match themes (like Halloween or Positive Vibes), track difficulty, song length, and genres to create your perfect playlist!")
+    st.markdown("*💡 All filters are optional - pick just one or combine multiple!*")
 
-    selected_tag_labels = st.multiselect("Choose theme tags (optional)", tag_labels)
-    selected_tags = [label_to_tag[label] for label in selected_tag_labels]
-
-    available_genres = sorted(df['Genre'].dropna().unique().tolist())
-    selected_genres = st.multiselect("Or choose genres (optional)", options=available_genres)
-
-    generate_tags = st.button("👻 Build My Themed Playlist", disabled=(len(selected_tags) == 0 and len(selected_genres) == 0))
+    # Separate theme tags from instructor tags
+    all_tags = sorted(set(tag.strip() for tags in df['Tags'].dropna() for tag in tags.split(',') if tag.strip()))
     
+    theme_tags = ["Beast Mode", "Break-Up Songs", "Emo", "Halloween", "New Year's Eve", "P!nk", 
+                  "Positive Vibes", "Sing-Along", "Summer", "Valentine's Day", "Women of Pop"]
+    instructor_tags = ["Easy to Learn", "Hard", "Short (<4:30)", "Long (>6 min)"]
+    
+    # Filter available tags to only show those that exist in the data
+    available_theme_tags = [tag for tag in theme_tags if tag in all_tags]
+    available_instructor_tags = [tag for tag in instructor_tags if tag in all_tags]
+    
+    # Create display options with emojis
+    theme_display_options = [f"{tag_emojis.get(tag, '')} {tag}" for tag in available_theme_tags]
+    instructor_display_options = [f"{tag_emojis.get(tag, '')} {tag}" for tag in available_instructor_tags]
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        selected_theme_display = st.multiselect("Theme tags", options=theme_display_options, key="theme_tags", placeholder="Select themes")
+        # Convert back to original tag names
+        selected_theme_tags = [option.split(' ', 1)[1] for option in selected_theme_display]
+    with col2:
+        selected_instructor_display = st.multiselect("Difficulty & Length", options=instructor_display_options, key="instructor_tags", placeholder="Select details")
+        # Convert back to original tag names
+        selected_instructor_tags = [option.split(' ', 1)[1] for option in selected_instructor_display]
+    
+    # Combine both tag types for filtering
+    selected_tags = selected_theme_tags + selected_instructor_tags
+    
+    available_genres = sorted(df['Genre'].dropna().unique().tolist())
+    selected_genres = st.multiselect("Genres", options=available_genres, key="theme_genres", placeholder="Select genres")
+
     if 'theme_playlist' not in st.session_state:
         st.session_state['theme_playlist'] = None
-    if 'theme_filtered_df' not in st.session_state:
-        st.session_state['theme_filtered_df'] = None
-    if 'theme_release_filtered_df' not in st.session_state:
-        st.session_state['theme_release_filtered_df'] = None
-    
-    if generate_tags:
-        selected_sort = df[df['Release'] == early_release]['SortKey'].iloc[0]
+
+    if st.button("👻 Build My Themed Playlist", key="build_theme"):
+        # Clear used partial tracks when building a new playlist
+        st.session_state['used_partial_tracks'] = set()
+        selected_sort = df[df['Release'].astype(str) == str(early_release)]['SortKey'].iloc[0]
         release_filtered_df = df[df['SortKey'] >= selected_sort]
         if use_recent:
             top_10 = df['SortKey'].drop_duplicates().nlargest(10)
             release_filtered_df = release_filtered_df[release_filtered_df['SortKey'].isin(top_10)]
         if avoid_current_release:
-            release_filtered_df = release_filtered_df[release_filtered_df['Release'].astype(str) != "133"]
-        # Store release_filtered_df in session state
-        st.session_state['theme_release_filtered_df'] = release_filtered_df.copy()
-        
+            release_filtered_df = release_filtered_df[release_filtered_df['Release'].astype(str) != str(current_release)]
+
         filtered_df = release_filtered_df.copy()
-        if selected_tags:
-            filtered_df = filtered_df[filtered_df['Tags'].apply(lambda x: any(tag in str(x) for tag in selected_tags))]
+        if selected_theme_tags or selected_instructor_tags:
+            def has_matching_tags(tag_str):
+                if pd.isna(tag_str) or tag_str in ["", "None", None]:
+                    return False
+                track_tags = [t.strip() for t in str(tag_str).split(",") if t.strip()]
+                
+                # Check if track has at least one theme tag (if any theme tags selected)
+                has_theme_tag = True
+                if selected_theme_tags:
+                    has_theme_tag = any(tag in track_tags for tag in selected_theme_tags)
+                
+                # Check if track has at least one instructor tag (if any instructor tags selected)
+                has_instructor_tag = True
+                if selected_instructor_tags:
+                    has_instructor_tag = any(tag in track_tags for tag in selected_instructor_tags)
+                
+                # Track must have both types if both are selected, or just the selected type
+                return has_theme_tag and has_instructor_tag
+            
+            filtered_df = filtered_df[filtered_df['Tags'].apply(has_matching_tags)]
         if selected_genres:
             filtered_df = filtered_df[filtered_df['Genre'].isin(selected_genres)]
+
         playlist = []
-        random_fallbacks = []
+        used_tracks = set()  # Track which themed tracks we've already used
+        
+        # Initialize used partial tracks in session state
+        if 'used_partial_tracks' not in st.session_state:
+            st.session_state['used_partial_tracks'] = set()
+        
         for track in track_types:
             track_df = filtered_df[filtered_df['Track No#'] == track]
-            if avoid_current_release:
-                track_df = track_df[track_df['Release'].astype(str) != "133"]
             if not track_df.empty:
-                playlist.append(track_df.sample(1))
-            else:
-                # Fallback: slot in a random track of that category from release_filtered_df (earliest release and forward, not filtered by tags/genres)
-                fallback_df = release_filtered_df[release_filtered_df['Track No#'] == track]
-                if avoid_current_release:
-                    fallback_df = fallback_df[fallback_df['Release'].astype(str) != "133"]
-                if not fallback_df.empty:
-                    playlist.append(fallback_df.sample(1))
-                    random_fallbacks.append(track)
+                # Filter out tracks we've already used
+                available_tracks = track_df[~track_df['Song Title'].isin(used_tracks)]
+                if not available_tracks.empty:
+                    selected_track = available_tracks.sample(1)
+                    used_tracks.add(selected_track.iloc[0]['Song Title'])
+                    playlist.append(selected_track)
                 else:
+                    # No unused themed tracks for this position
                     playlist.append(pd.DataFrame([{
-                        "Track No#": track,
-                        "Song Title": "⚠️ No match found",
-                        "Artist": "-",
-                        "Release": "-",
-                        "Duration": "-",
-                        "Genre": "-",
-                        "Tags": "-"
+                        "Track No#": track, "Song Title": "⚠️ No themed track available", "Artist": "-",
+                        "Release": "-", "Duration": "-", "Genre": "-", "Tags": "-"
                     }]))
+            else:
+                # If no themed tracks for this position, show "no themed track available"
+                # Don't reassign tracks from other positions as it breaks workout structure
+                playlist.append(pd.DataFrame([{
+                    "Track No#": track, "Song Title": "⚠️ No themed track available", "Artist": "-",
+                    "Release": "-", "Duration": "-", "Genre": "-", "Tags": "-"
+                }]))
         st.session_state['theme_playlist'] = pd.concat(playlist, ignore_index=True)
-        st.session_state['theme_filtered_df'] = filtered_df.copy()
-        st.session_state['theme_random_fallbacks'] = random_fallbacks
 
-    # Display playlist if it exists
-    if st.session_state['theme_playlist'] is not None:
+    if st.session_state.get('theme_playlist') is not None:
         playlist_df = st.session_state['theme_playlist']
-        filtered_df = st.session_state.get('theme_filtered_df', df)
-        random_fallbacks = st.session_state.get('theme_random_fallbacks', [])
-        
-        # Recreate release_filtered_df if it doesn't exist in session state
-        if st.session_state['theme_release_filtered_df'] is None:
-            selected_sort = df[df['Release'] == early_release]['SortKey'].iloc[0]
-            release_filtered_df = df[df['SortKey'] >= selected_sort]
-            if use_recent:
-                top_10 = df['SortKey'].drop_duplicates().nlargest(10)
-                release_filtered_df = release_filtered_df[release_filtered_df['SortKey'].isin(top_10)]
-            if avoid_current_release:
-                release_filtered_df = release_filtered_df[release_filtered_df['Release'].astype(str) != "133"]
-            st.session_state['theme_release_filtered_df'] = release_filtered_df.copy()
-        else:
-            release_filtered_df = st.session_state['theme_release_filtered_df']
-        
-        if random_fallbacks:
-            st.warning(f"No tagged track found for: {', '.join(random_fallbacks)}. A random track of that category was slotted in.")
-        
         total_sec = playlist_df['Duration'].apply(duration_to_sec).sum()
         min_, sec = divmod(total_sec, 60)
         st.markdown(f"### 🕒 Total Duration: **{min_}:{str(sec).zfill(2)}**")
-        
-        for i, row in playlist_df.iterrows():
-            track_no = row['Track No#']
-            options_df = filtered_df[filtered_df['Track No#'] == track_no]
-            muscle_group = track_no.split(' - ', 1)[1] if ' - ' in track_no else track_no
-            col1, col2 = st.columns([6,2])
+
+        for idx, row in playlist_df.iterrows():
+            col1, col2 = st.columns([6, 2])
             with col1:
-                tag_html = ""
-                tags = []
-                if not pd.isna(row.get("Tags")) and row['Tags'] != "-":
-                    tags = [t.strip() for t in row["Tags"].split(',') if t.strip()]
-                for j, tag in enumerate(tags):
-                    emoji = tag_emojis.get(tag, "")
-                    # Custom pill colors
-                    if tag == "Women of Pop":
-                        pill_color = "#ffd1e7"  # pale pink
-                    elif tag == "Valentine's Day":
-                        pill_color = "#ffb6c1"  # different pink
-                    elif tag == "Halloween":
-                        pill_color = "#ffe5b4"  # light orange
-                    elif tag == "Beast Mode":
-                        pill_color = "#b3e0ff"  # light blue
-                    elif tag == "Sing-Along":
-                        pill_color = "#e0c3fc"  # light purple
-                    elif tag == "New Year's Eve":
-                        pill_color = "#b9fbc0"  # light green
-                    elif tag == "Positive Vibes":
-                        pill_color = "#b9fbc0"  # light green
-                    elif tag == "Hard":
-                        pill_color = "#7eb8e6"  # slightly darker blue
-                    else:
-                        pill_color = "#ffeaa7"  # default
-                    tag_html += f"<span style='background-color:{pill_color}; color:#222; padding:0.2rem 0.5rem; margin-right:5px; border-radius:10px; font-size:0.8rem'>{emoji} {tag}</span>"
                 st.markdown(f"""
-                    <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px">
+                    <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;
+                        border-left:5px solid #667eea;border-radius:8px">
                         <strong>{row['Track No#']} - {row['Song Title']}</strong> by {row['Artist']}<br>
-                        <em><span>Release: <span class='release-number' style='font-size:1.1em'>{row['Release']}</span></span> | Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
-                        {tag_html}
+                        <em><span>Release: <span class='release-number'>{row['Release']}</span></span> |
+                        Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
+                        {render_tags(row)}
                     </div>
                 """, unsafe_allow_html=True)
             with col2:
-                # If this track was a random fallback, show a swap button for a new random track
-                if random_fallbacks and track_no in random_fallbacks:
-                    fallback_pool = release_filtered_df[(release_filtered_df['Track No#'] == track_no) & (release_filtered_df['Song Title'] != row['Song Title'])]
-                    if avoid_current_release:
-                        fallback_pool = fallback_pool[fallback_pool['Release'].astype(str) != "133"]
-                    swap_label = f"Swap {muscle_group} for new random track"
-                    swap_button_key = f"theme_fallback_swap_btn_{i}"
-                    if not fallback_pool.empty:
-                        if st.button(swap_label, key=swap_button_key):
-                            new_row = fallback_pool.sample(1).iloc[0]
-                            for col in playlist_df.columns:
-                                st.session_state['theme_playlist'].at[i, col] = new_row[col]
-                            st.rerun()
-                    else:
-                        st.button(f"No alternatives", key=swap_button_key, disabled=True)
+                # Check if this is a "no themed track available" slot
+                if row['Song Title'] == "⚠️ No themed track available":
+                    st.markdown("**No themed track available**")
+                    
+                    # Create options for partial matches
+                    col_a, col_b = st.columns(2)
+                    
+                    with col_a:
+                        if st.button("🎲 Random track", key=f"slot_random_{idx}"):
+                            # Get a completely random track for this position
+                            selected_sort = df[df['Release'].astype(str) == str(early_release)]['SortKey'].iloc[0]
+                            random_pool = df[(df['SortKey'] >= selected_sort) & (df['Track No#'] == row['Track No#'])]
+                            if use_recent:
+                                top_10 = df['SortKey'].drop_duplicates().nlargest(10)
+                                random_pool = random_pool[random_pool['SortKey'].isin(top_10)]
+                            if avoid_current_release:
+                                random_pool = random_pool[random_pool['Release'].astype(str) != str(current_release)]
+                            
+                            if not random_pool.empty:
+                                new_row = random_pool.sample(1).iloc[0]
+                                for col in playlist_df.columns:
+                                    playlist_df.at[idx, col] = new_row[col]
+                                st.rerun()
+                    
+                    with col_b:
+                        # Check if we have any partial matches (tracks that match at least one tag)
+                        if selected_theme_tags or selected_instructor_tags:
+                            selected_sort = df[df['Release'].astype(str) == str(early_release)]['SortKey'].iloc[0]
+                            partial_pool = df[(df['SortKey'] >= selected_sort) & (df['Track No#'] == row['Track No#'])]
+                            if use_recent:
+                                top_10 = df['SortKey'].drop_duplicates().nlargest(10)
+                                partial_pool = partial_pool[partial_pool['SortKey'].isin(top_10)]
+                            if avoid_current_release:
+                                partial_pool = partial_pool[partial_pool['Release'].astype(str) != str(current_release)]
+                            
+                            # Filter for tracks that match at least one tag (OR logic)
+                            def has_any_matching_tag(tag_str):
+                                if pd.isna(tag_str) or tag_str in ["", "None", None]:
+                                    return False
+                                track_tags = [t.strip() for t in str(tag_str).split(",") if t.strip()]
+                                all_selected_tags = selected_theme_tags + selected_instructor_tags
+                                return any(tag in track_tags for tag in all_selected_tags)
+                            
+                            partial_pool = partial_pool[partial_pool['Tags'].apply(has_any_matching_tag)]
+                            
+                            # Filter out tracks we've already used for partial matches
+                            unused_partial_pool = partial_pool[~partial_pool['Song Title'].isin(st.session_state['used_partial_tracks'])]
+                            
+                            if not unused_partial_pool.empty:
+                                if st.button("🎯 Partial match", key=f"slot_partial_{idx}"):
+                                    new_row = unused_partial_pool.sample(1).iloc[0]
+                                    st.session_state['used_partial_tracks'].add(new_row['Song Title'])
+                                    for col in playlist_df.columns:
+                                        playlist_df.at[idx, col] = new_row[col]
+                                    st.rerun()
+                            elif not partial_pool.empty:
+                                # All partial matches have been used, reset and start over
+                                if st.button("🎯 Reset partial matches", key=f"slot_reset_{idx}"):
+                                    st.session_state['used_partial_tracks'].clear()
+                                    new_row = partial_pool.sample(1).iloc[0]
+                                    st.session_state['used_partial_tracks'].add(new_row['Song Title'])
+                                    for col in playlist_df.columns:
+                                        playlist_df.at[idx, col] = new_row[col]
+                                    st.rerun()
+                            else:
+                                st.button("🎯 No partial matches", key=f"slot_none_{idx}", disabled=True)
+                        else:
+                            st.button("🎯 No tags selected", key=f"slot_none_{idx}", disabled=True)
                 else:
-                    # Existing swap logic for tagged tracks
-                    swap_options_df = options_df[
-                        (options_df['Song Title'] != row['Song Title']) | 
-                        (options_df['Artist'] != row['Artist']) | 
-                        (options_df['Release'].astype(str) != str(row['Release']))
-                    ]
+                    # Recreate the filtered data for swap options
+                    selected_sort = df[df['Release'].astype(str) == str(early_release)]['SortKey'].iloc[0]
+                    release_filtered_df = df[df['SortKey'] >= selected_sort]
+                    if use_recent:
+                        top_10 = df['SortKey'].drop_duplicates().nlargest(10)
+                        release_filtered_df = release_filtered_df[release_filtered_df['SortKey'].isin(top_10)]
                     if avoid_current_release:
-                        swap_options_df = swap_options_df[swap_options_df['Release'].astype(str) != "133"]
-                    num_options = len(swap_options_df)
-                    option_word = 'option' if num_options == 1 else 'options'
-                    swap_label = f"Swap {muscle_group} ({num_options} {option_word})"
-                    swap_button_key = f"theme_swap_btn_{i}"
+                        release_filtered_df = release_filtered_df[release_filtered_df['Release'].astype(str) != str(current_release)]
+
+                    # Apply theme/genre filters
+                    swap_filtered_df = release_filtered_df.copy()
+                    if selected_theme_tags or selected_instructor_tags:
+                        def has_matching_tags(tag_str):
+                            if pd.isna(tag_str) or tag_str in ["", "None", None]:
+                                return False
+                            track_tags = [t.strip() for t in str(tag_str).split(",") if t.strip()]
+                            
+                            # Check if track has at least one theme tag (if any theme tags selected)
+                            has_theme_tag = True
+                            if selected_theme_tags:
+                                has_theme_tag = any(tag in track_tags for tag in selected_theme_tags)
+                            
+                            # Check if track has at least one instructor tag (if any instructor tags selected)
+                            has_instructor_tag = True
+                            if selected_instructor_tags:
+                                has_instructor_tag = any(tag in track_tags for tag in selected_instructor_tags)
+                            
+                            # Track must have both types if both are selected, or just the selected type
+                            return has_theme_tag and has_instructor_tag
+                        
+                        swap_filtered_df = swap_filtered_df[swap_filtered_df['Tags'].apply(has_matching_tags)]
+                    if selected_genres:
+                        swap_filtered_df = swap_filtered_df[swap_filtered_df['Genre'].isin(selected_genres)]
+
+                    swap_pool = swap_filtered_df[swap_filtered_df['Track No#'] == row['Track No#']]
+                    swap_pool = swap_pool[swap_pool['Song Title'] != row['Song Title']]
+
+                    num_options = len(swap_pool)
+                    option_word = "option" if num_options == 1 else "options"
+
                     if num_options > 0:
-                        if st.button(swap_label, key=swap_button_key):
-                            new_row = swap_options_df.sample(1).iloc[0]
+                        swap_label = f"Swap {row['Track No#']} ({num_options} other tracks with your theme)"
+                        options = [f"[{r['Release']}] {r['Song Title']} by {r['Artist']}" for _, r in swap_pool.iterrows()]
+                        current_track = f"[{row['Release']}] {row['Song Title']} by {row['Artist']}"
+                        
+                        # Add current track to the beginning of options if not already there
+                        if current_track not in options:
+                            options = [current_track] + options
+                        
+                        # Initialize session state for this selectbox if not exists
+                        if f"theme_swap_select_{idx}" not in st.session_state:
+                            st.session_state[f"theme_swap_select_{idx}"] = current_track
+                        
+                        selected_option = st.selectbox(
+                            swap_label,
+                            options,
+                            index=options.index(st.session_state[f"theme_swap_select_{idx}"]) if st.session_state[f"theme_swap_select_{idx}"] in options else 0,
+                            key=f"theme_swap_select_{idx}"
+                        )
+                        
+                        # Check if selection changed and update playlist
+                        if selected_option != current_track:
+                            new_title = selected_option.split("] ", 1)[1].rsplit(" by ", 1)[0]
+                            new_row = swap_pool[swap_pool['Song Title'] == new_title].iloc[0]
                             for col in playlist_df.columns:
-                                st.session_state['theme_playlist'].at[i, col] = new_row[col]
+                                playlist_df.at[idx, col] = new_row[col]
+                            st.session_state['theme_playlist'] = playlist_df
                             st.rerun()
+                        
                     else:
-                        st.button(f"No alternatives", key=swap_button_key, disabled=True)
+                        st.button("No alternatives", key=f"theme_no_options_{idx}", disabled=True)
+
+
+        st.session_state['theme_playlist'] = playlist_df
         playlist_copy_export(playlist_df)
-# Tab 3: Custom
+
+# ---------- Tab 3: Custom ----------
 with tab3:
     st.markdown("Browse all your available options for each track and build your playlist manually.")
-    manual_selection = {}
-    selected_sort = df[df['Release'] == early_release]['SortKey'].iloc[0]
+
+    selected_sort = df[df['Release'].astype(str) == str(early_release)]['SortKey'].iloc[0]
+    filtered_df = df[df['SortKey'] >= selected_sort]
     if use_recent:
         top_10 = df['SortKey'].drop_duplicates().nlargest(10)
-        filtered_df = df[df['SortKey'].isin(top_10)]
-    else:
-        filtered_df = df.copy()
+        filtered_df = filtered_df[filtered_df['SortKey'].isin(top_10)]
     if avoid_current_release:
-        filtered_df = filtered_df[filtered_df['Release'].astype(str) != "133"]
-    eligible_df = filtered_df[filtered_df['SortKey'] >= selected_sort]
+        filtered_df = filtered_df[filtered_df['Release'].astype(str) != str(current_release)]
 
+    manual_selection = {}
     for track in track_types:
-        track_df = eligible_df[eligible_df['Track No#'] == track]
+        track_df = filtered_df[filtered_df['Track No#'] == track]
         if not track_df.empty:
             display_names = [f"[{row['Release']}] {row['Song Title']} by {row['Artist']}" for _, row in track_df.iterrows()]
             selected_display = st.selectbox(track, display_names, key=f"manual_{track}")
-            # Extract song title robustly
-            try:
-                after_bracket = selected_display.split(']', 1)[1].strip()
-                selected_song_title = after_bracket.rsplit(' by ', 1)[0]
-            except Exception:
-                selected_song_title = None
+            selected_song_title = selected_display.split('] ', 1)[1].rsplit(' by ', 1)[0]
             match = track_df[track_df['Song Title'] == selected_song_title]
-            if match.shape[0] > 0:
-                chosen_row = match.iloc[0]
-                manual_selection[track] = chosen_row
-            else:
-                manual_selection[track] = pd.Series({
-                    "Track No#": track,
-                    "Song Title": "⚠️ No match found",
-                    "Artist": "-",
-                    "Release": "-",
-                    "Duration": "-",
-                    "Genre": "-",
-                    "Tags": "-"
-                })
+            chosen_row = match.iloc[0] if not match.empty else pd.Series({
+                "Track No#": track, "Song Title": "⚠️ No match found", "Artist": "-",
+                "Release": "-", "Duration": "-", "Genre": "-", "Tags": "-"
+            })
+            manual_selection[track] = chosen_row
         else:
             manual_selection[track] = pd.Series({
-                "Track No#": track,
-                "Song Title": "⚠️ No match found",
-                "Artist": "-",
-                "Release": "-",
-                "Duration": "-",
-                "Genre": "-",
-                "Tags": "-"
+                "Track No#": track, "Song Title": "⚠️ No match found", "Artist": "-",
+                "Release": "-", "Duration": "-", "Genre": "-", "Tags": "-"
             })
 
     playlist_df = pd.DataFrame(manual_selection.values())
+    st.session_state['custom_playlist'] = playlist_df
+    total_sec = playlist_df['Duration'].apply(duration_to_sec).sum()
+    min_, sec = divmod(total_sec, 60)
+    st.markdown(f"### 🕒 Total Duration: **{min_}:{str(sec).zfill(2)}**")
+    for _, row in playlist_df.iterrows():
+        st.markdown(f"""
+            <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px">
+                <strong>{row['Track No#']} - {row['Song Title']}</strong> by {row['Artist']}<br>
+                <em><span>Release: <span class='release-number'>{row['Release']}</span></span> |
+                Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
+                {render_tags(row)}
+            </div>
+        """, unsafe_allow_html=True)
     playlist_copy_export(playlist_df)
 
-# Footer
-st.markdown("<br><br>", unsafe_allow_html=True)
+# ---------------- Footer ----------------
 st.markdown("---")
 st.markdown(f"""
     <div style="text-align:center; padding:1rem; color:#666; font-size:0.9rem; font-style:italic;">
