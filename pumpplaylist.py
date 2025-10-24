@@ -67,7 +67,7 @@ def load_data():
             return 0
 
     df["SortKey"] = df["Release"].apply(sort_key)
-    df = df[df["SortKey"] >= 89].sort_values("SortKey").reset_index(drop=True)
+    df = df.sort_values("SortKey").reset_index(drop=True)
 
     # --- Clean tags ---
     def clean_tags(tag_str):
