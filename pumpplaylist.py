@@ -137,11 +137,21 @@ def apply_search_filter(df, search_term):
         normalized_title = normalize_for_search(title)
         normalized_artist = normalize_for_search(artist)
         
-        # Exact substring matching only - no fuzzy matching
-        if (search_lower in title or search_lower in artist or
-            any(term.strip() in normalized_title for term in normalized_search.split() if term.strip()) or
-            any(term.strip() in normalized_artist for term in normalized_search.split() if term.strip())):
-            return True
+        # Split search term into individual words for more precise matching
+        search_words = [word.strip() for word in search_lower.split() if word.strip()]
+        
+        # For multi-word searches (like "lady gaga"), require ALL words to be present
+        if len(search_words) > 1:
+            # Check if all words in the search term are present in title or artist
+            title_match = all(word in normalized_title for word in search_words)
+            artist_match = all(word in normalized_artist for word in search_words)
+            return title_match or artist_match
+        else:
+            # For single word searches, use the original substring matching
+            single_word = search_words[0] if search_words else search_lower
+            if (single_word in title or single_word in artist or
+                single_word in normalized_title or single_word in normalized_artist):
+                return True
         
         return False
     
