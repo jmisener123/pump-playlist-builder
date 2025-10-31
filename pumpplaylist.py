@@ -112,12 +112,53 @@ def duration_to_sec(dur):
     except:
         return 0
 
+def apply_search_filter(df, search_term):
+    """Apply search filter to dataframe with exact matching and artist name normalization"""
+    if not search_term or not search_term.strip():
+        return df
+    
+    search_lower = search_term.lower().strip()
+    
+    def normalize_for_search(text):
+        """Normalize text for better search matching"""
+        text = text.lower()
+        # Handle common artist name variations
+        text = text.replace('p!nk', 'pink')
+        text = text.replace('pink', 'p!nk pink')  # Allow both to match
+        # Add more normalizations as needed
+        return text
+    
+    def matches_search(row):
+        title = str(row.get('Song Title', '')).lower()
+        artist = str(row.get('Artist', '')).lower()
+        
+        # Normalize both search term and data for special character matching
+        normalized_search = normalize_for_search(search_lower)
+        normalized_title = normalize_for_search(title)
+        normalized_artist = normalize_for_search(artist)
+        
+        # Exact substring matching only - no fuzzy matching
+        if (search_lower in title or search_lower in artist or
+            any(term.strip() in normalized_title for term in normalized_search.split() if term.strip()) or
+            any(term.strip() in normalized_artist for term in normalized_search.split() if term.strip())):
+            return True
+        
+        return False
+    
+    return df[df.apply(matches_search, axis=1)]
+
 def render_tags(row):
     tag_html = ""
     if row.get("Tags") not in [None, "-", "nan", "NaN", "None"] and not pd.isna(row.get("Tags")):
         tags = [t.strip() for t in str(row["Tags"]).split(",") if t.strip()]
         for tag in tags:
             emoji = tag_emojis.get(tag, "")
+            
+            # Map tag names for display (keeps data unchanged)
+            display_tag = tag
+            if tag == "Hard":
+                display_tag = "Hard Workout"
+            
             if tag == "Women of Pop":
                 pill_color = "#ffd1e7"
             elif tag == "Valentine's Day":
@@ -140,7 +181,7 @@ def render_tags(row):
                 pill_color = "#e2e8f0"
             else:
                 pill_color = "#ffeaa7"
-            tag_html += f"<span style='background-color:{pill_color}; color:#222; padding:0.2rem 0.5rem; margin-right:5px; border-radius:10px; font-size:0.8rem'>{emoji} {tag}</span>"
+            tag_html += f"<span style='background-color:{pill_color}; color:#222; padding:0.2rem 0.5rem; margin-right:5px; border-radius:10px; font-size:0.8rem'>{emoji} {display_tag}</span>"
     return tag_html
 
 def playlist_copy_export(playlist_df):
@@ -163,6 +204,21 @@ st.markdown(f"""
         color:white; border-radius:1rem;">
         <h1 style='margin-bottom:0.5rem;'>🎵 Pump Playlist Builder <span style='pointer-events:none;'>💪</span></h1>
         <p style='margin-top:0;'>Create your perfect Pump class lineup</p>
+    </div>
+""", unsafe_allow_html=True)
+
+# Small floating updates popup - sticky at top-right
+st.markdown("""
+    <div style="position:fixed; top:20px; right:20px; background:rgba(255,255,255,0.98); 
+                color:#333; padding:10px 15px; border-radius:12px; font-size:0.8rem; 
+                box-shadow:0 4px 15px rgba(0,0,0,0.2); max-width:220px; z-index:10000;
+                border:1px solid rgba(102,126,234,0.3);">
+        <div style="font-weight:bold; margin-bottom:6px; color:#667eea;">🎉 New Updates!</div>
+        <div style="line-height:1.4; color:#444;">
+            • Releases now go back to 60<br>
+            • Search by artist/song in Custom tab<br>
+            • New song length tags: Short (under 4:30) & Long (over 6 min)
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -194,7 +250,7 @@ early_release = st.selectbox("Select your earliest release", available_releases,
 
 # ---------------- Step 2 ----------------
 st.markdown("### Step 2: Pick your method and build your playlist")
-tab1, tab2, tab3 = st.tabs(["🎲 Random", "👻 Theme", "🛠️ Custom"])
+tab1, tab2, tab3 = st.tabs(["🎲 Random", "👻 Theme", "🛠️ Custom/Search"])
 
 # ---------- Tab 1: Random ----------
 with tab1:
@@ -275,7 +331,10 @@ with tab2:
     
     # Create display options with emojis
     theme_display_options = [f"{tag_emojis.get(tag, '')} {tag}" for tag in available_theme_tags]
-    instructor_display_options = [f"{tag_emojis.get(tag, '')} {tag}" for tag in available_instructor_tags]
+    instructor_display_options = []
+    for tag in available_instructor_tags:
+        display_tag = "Hard Workout" if tag == "Hard" else tag
+        instructor_display_options.append(f"{tag_emojis.get(tag, '')} {display_tag}")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -284,8 +343,14 @@ with tab2:
         selected_theme_tags = [option.split(' ', 1)[1] for option in selected_theme_display]
     with col2:
         selected_instructor_display = st.multiselect("Difficulty & Length", options=instructor_display_options, key="instructor_tags", placeholder="Select details")
-        # Convert back to original tag names
-        selected_instructor_tags = [option.split(' ', 1)[1] for option in selected_instructor_display]
+        # Convert back to original tag names (handling "Hard Workout" -> "Hard")
+        selected_instructor_tags = []
+        for option in selected_instructor_display:
+            tag_name = option.split(' ', 1)[1]  # Remove emoji
+            if tag_name == "Hard Workout":
+                selected_instructor_tags.append("Hard")
+            else:
+                selected_instructor_tags.append(tag_name)
     
     # Combine both tag types for filtering
     selected_tags = selected_theme_tags + selected_instructor_tags
@@ -529,7 +594,14 @@ with tab2:
 # ---------- Tab 3: Custom ----------
 with tab3:
     st.markdown("Browse all your available options for each track and build your playlist manually.")
-
+    
+    # Create two columns: left for search, right for playlist builder
+    search_col, playlist_col = st.columns([1, 1])
+    
+    # Initialize manual selection in session state if not exists
+    if 'manual_selection' not in st.session_state:
+        st.session_state['manual_selection'] = {}
+    
     selected_sort = df[df['Release'].astype(str) == str(early_release)]['SortKey'].iloc[0]
     filtered_df = df[df['SortKey'] >= selected_sort]
     if use_recent:
@@ -538,40 +610,151 @@ with tab3:
     if avoid_current_release:
         filtered_df = filtered_df[filtered_df['Release'].astype(str) != str(current_release)]
 
-    manual_selection = {}
-    for track in track_types:
-        track_df = filtered_df[filtered_df['Track No#'] == track]
-        if not track_df.empty:
-            display_names = [f"[{row['Release']}] {row['Song Title']} by {row['Artist']}" for _, row in track_df.iterrows()]
-            selected_display = st.selectbox(track, display_names, key=f"manual_{track}")
-            selected_song_title = selected_display.split('] ', 1)[1].rsplit(' by ', 1)[0]
-            match = track_df[track_df['Song Title'] == selected_song_title]
-            chosen_row = match.iloc[0] if not match.empty else pd.Series({
-                "Track No#": track, "Song Title": "⚠️ No match found", "Artist": "-",
-                "Release": "-", "Duration": "-", "Genre": "-", "Tags": "-"
-            })
-            manual_selection[track] = chosen_row
+    # Left column: Search functionality
+    with search_col:
+        st.markdown("### 🔍 Search & Browse")
+        
+        # Add search bar
+        search_term = st.text_input("Search by song title or artist", 
+                                   placeholder="Type to search...", 
+                                   key="custom_search",
+                                   help="Search for songs by title or artist name. Uses exact text matching for precise results.")
+        
+        # Apply search filter if search term is provided
+        if search_term and search_term.strip():
+            search_results = apply_search_filter(filtered_df, search_term)
+            
+            # Show search results if there's a search term
+            if not search_results.empty:
+                st.markdown(f"**Found {len(search_results)} tracks matching '{search_term}'**")
+                
+                # Display search results grouped by track type
+                for track_type in track_types:
+                    track_results = search_results[search_results['Track No#'] == track_type]
+                    if not track_results.empty:
+                        with st.expander(f"{track_type} ({len(track_results)} matches)", expanded=True):
+                            for idx, row in track_results.iterrows():
+                                col1, col2 = st.columns([3, 1])
+                                with col1:
+                                    st.markdown(f"""
+                                        <div class="playlist-card" style="padding:0.8rem;margin-bottom:0.4rem;
+                                            border-left:4px solid #667eea;border-radius:6px; font-size:0.9rem;">
+                                            <strong>{row['Song Title']}</strong> by {row['Artist']}<br>
+                                            <em>Release: <span class='release-number'>{row['Release']}</span> | 
+                                            Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
+                                            {render_tags(row)}
+                                        </div>
+                                    """, unsafe_allow_html=True)
+                                with col2:
+                                    # Add button to add this track to the playlist
+                                    track_key = make_track_key(row)
+                                    if st.button("➕", key=f"add_search_{track_key}", 
+                                               help=f"Add this track to the {track_type} position"):
+                                        st.session_state['manual_selection'][track_type] = row
+                                        st.success(f"✅ Added to {track_type}!")
+                                        st.rerun()
+            else:
+                st.markdown("**🔍 No results found**")
+                st.info(f"No tracks found matching '{search_term}'. Try different keywords, check your spelling, or try searching for partial words.")
         else:
-            manual_selection[track] = pd.Series({
-                "Track No#": track, "Song Title": "⚠️ No match found", "Artist": "-",
-                "Release": "-", "Duration": "-", "Genre": "-", "Tags": "-"
-            })
+            st.info("Enter a search term above to find specific tracks, or use the playlist builder on the right to browse all available options.")
 
-    playlist_df = pd.DataFrame(manual_selection.values())
-    st.session_state['custom_playlist'] = playlist_df
-    total_sec = playlist_df['Duration'].apply(duration_to_sec).sum()
-    min_, sec = divmod(total_sec, 60)
-    st.markdown(f"### 🕒 Total Duration: **{min_}:{str(sec).zfill(2)}**")
-    for _, row in playlist_df.iterrows():
-        st.markdown(f"""
-            <div class="playlist-card" style="padding:1rem;margin-bottom:0.5rem;border-left:5px solid #667eea;border-radius:8px">
-                <strong>{row['Track No#']} - {row['Song Title']}</strong> by {row['Artist']}<br>
-                <em><span>Release: <span class='release-number'>{row['Release']}</span></span> |
-                Duration: {row['Duration']} | Genre: {row['Genre']}</em><br>
-                {render_tags(row)}
-            </div>
-        """, unsafe_allow_html=True)
-    playlist_copy_export(playlist_df)
+    # Right column: Manual playlist builder
+    with playlist_col:
+        st.markdown("### 🛠️ Build Your Custom Playlist")
+        st.markdown("See all your available options for each track:")
+
+        # Use the full filtered_df for dropdowns (not search results)
+        display_filtered_df = filtered_df
+        if search_term and search_term.strip():
+            # Reset display_filtered_df to full filtered set for dropdowns
+            display_filtered_df = df[df['SortKey'] >= selected_sort]
+            if use_recent:
+                top_10 = df['SortKey'].drop_duplicates().nlargest(10)
+                display_filtered_df = display_filtered_df[display_filtered_df['SortKey'].isin(top_10)]
+            if avoid_current_release:
+                display_filtered_df = display_filtered_df[display_filtered_df['Release'].astype(str) != str(current_release)]
+
+        for track in track_types:
+            track_df = display_filtered_df[display_filtered_df['Track No#'] == track]
+            
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                if not track_df.empty:
+                    display_names = [f"[{row['Release']}] {row['Song Title']} by {row['Artist']}" for _, row in track_df.iterrows()]
+                    
+                    # Determine current selection index
+                    current_selection = 0
+                    
+                    # Check if there's a forced reset (from clear button)
+                    reset_key = f"reset_{track}"
+                    if reset_key in st.session_state and st.session_state[reset_key]:
+                        current_selection = 0
+                        st.session_state[reset_key] = False  # Reset the flag
+                    elif track in st.session_state.get('manual_selection', {}):
+                        # Try to find the current selection in the dropdown
+                        selected_row = st.session_state['manual_selection'][track]
+                        try:
+                            for i, (_, row) in enumerate(track_df.iterrows()):
+                                if (row['Song Title'] == selected_row['Song Title'] and 
+                                    row['Artist'] == selected_row['Artist'] and 
+                                    str(row['Release']) == str(selected_row['Release'])):
+                                    current_selection = i
+                                    break
+                        except:
+                            current_selection = 0
+                    
+                    selected_idx = st.selectbox(
+                        track, 
+                        range(len(display_names)),
+                        format_func=lambda x: display_names[x],
+                        index=current_selection,
+                        key=f"manual_{track}"
+                    )
+                    
+                    # Update session state with the selected track
+                    chosen_row = track_df.iloc[selected_idx]
+                    st.session_state['manual_selection'][track] = chosen_row
+                else:
+                    st.selectbox(track, ["⚠️ No tracks available"], key=f"manual_{track}")
+                    st.session_state['manual_selection'][track] = pd.Series({
+                        "Track No#": track, "Song Title": "⚠️ No match found", "Artist": "-",
+                        "Release": "-", "Duration": "-", "Genre": "-", "Tags": "-"
+                    })
+            
+            with col2:
+                # Clear selection button
+                if st.button("🗑️", key=f"clear_{track}", help=f"Reset to first option"):
+                    # Set flag to reset this track's selection
+                    st.session_state[f"reset_{track}"] = True
+                    st.rerun()
+
+        # Build final playlist from session state
+        manual_selection = st.session_state.get('manual_selection', {})
+        playlist_rows = []
+        for track in track_types:
+            if track in manual_selection:
+                playlist_rows.append(manual_selection[track])
+            else:
+                # Default to first available track or empty
+                track_df = display_filtered_df[display_filtered_df['Track No#'] == track]
+                if not track_df.empty:
+                    playlist_rows.append(track_df.iloc[0])
+                else:
+                    playlist_rows.append(pd.Series({
+                        "Track No#": track, "Song Title": "⚠️ No match found", "Artist": "-",
+                        "Release": "-", "Duration": "-", "Genre": "-", "Tags": "-"
+                    }))
+
+        playlist_df = pd.DataFrame(playlist_rows)
+        st.session_state['custom_playlist'] = playlist_df
+        
+        # Show playlist summary and export
+        total_sec = playlist_df['Duration'].apply(duration_to_sec).sum()
+        min_, sec = divmod(total_sec, 60)
+        st.markdown(f"**🕒 Total Duration: {min_}:{str(sec).zfill(2)}**")
+        
+        playlist_copy_export(playlist_df)
 
 # ---------------- Footer ----------------
 st.markdown("---")
