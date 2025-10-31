@@ -208,19 +208,31 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Small floating updates popup - sticky at top-right
-st.markdown("""
-    <div style="position:fixed; top:20px; right:20px; background:rgba(255,255,255,0.98); 
-                color:#333; padding:10px 15px; border-radius:12px; font-size:0.8rem; 
-                box-shadow:0 4px 15px rgba(0,0,0,0.2); max-width:220px; z-index:10000;
-                border:1px solid rgba(102,126,234,0.3);">
-        <div style="font-weight:bold; margin-bottom:6px; color:#667eea;">🎉 New Updates!</div>
-        <div style="line-height:1.4; color:#444;">
-            • Releases now go back to 60<br>
-            • Search by artist/song in Custom tab<br>
-            • New song length tags: Short (under 4:30) & Long (over 6 min)
+if 'hide_updates_box' not in st.session_state:
+    st.session_state['hide_updates_box'] = False
+
+if not st.session_state['hide_updates_box']:
+    # Close button in normal layout
+    col1, col2 = st.columns([20, 1])
+    with col2:
+        if st.button("❌", key="close_updates", help="Hide updates box"):
+            st.session_state['hide_updates_box'] = True
+            st.rerun()
+    
+    st.markdown("""
+        <div style="position:fixed; top:80px; right:20px; background:rgba(255,255,255,0.98); 
+                    color:#333; padding:15px; border-radius:12px; font-size:0.8rem; 
+                    box-shadow:0 4px 15px rgba(0,0,0,0.2); max-width:220px; z-index:10000;
+                    border:1px solid rgba(102,126,234,0.3);">
+            <div style="font-weight:bold; color:#667eea; margin-bottom:8px;">🎉 New Updates!</div>
+            <div style="line-height:1.4; color:#444;">
+                • Releases now go back to 60<br>
+                • Search by artist/song title in Custom tab<br>
+                • New song length Theme tags: Short (<4:30) and Long (>6 min)
+            </div>
+    
         </div>
-    </div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 st.markdown(f"""
     <div class="step1-gradient" style="background:linear-gradient(135deg, #ffecd2, {accent_color});
