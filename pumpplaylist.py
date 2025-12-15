@@ -7,6 +7,7 @@ import io
 import shutil
 import hashlib
 import unicodedata
+from typing import Optional
 
 def make_track_key(row):
     base = f"{row['Track No#']}_{row['Song Title']}_{row['Artist']}_{row['Release']}"
@@ -19,6 +20,12 @@ st.set_page_config(page_title="Pump Playlist Builder", page_icon="favicon.png", 
 if os.path.exists("/etc/secrets/secrets.toml"):
     os.makedirs(os.path.expanduser("~/.streamlit"), exist_ok=True)
     shutil.copy("/etc/secrets/secrets.toml", os.path.expanduser("~/.streamlit/secrets.toml"))
+import hashlib
+
+encoded_csv = st.secrets.get("csv_data")
+
+if encoded_csv:
+    st.write("CSV fingerprint:", hashlib.md5(encoded_csv.encode()).hexdigest())
 
 # --- Light/Dark mode styling ---
 st.markdown("""
@@ -42,7 +49,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
-def load_data(encoded_csv: str | None):
+def load_data(encoded_csv: Optional[str]):
     if encoded_csv:
         decoded_bytes = base64.b64decode(encoded_csv)
         # Pass the raw bytes to pandas
