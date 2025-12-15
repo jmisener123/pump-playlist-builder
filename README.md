@@ -1,6 +1,8 @@
 # 💪 Pump Playlist Builder
 
-Pump Playlist Builder ([pumpplaylistbuilder.com](http://pumpplaylistbuilder.com)) is a tool for BodyPump instructors to create custom class playlists using tracks from Les Mills releases. Creating your playlists can be a huge mental load — use this tool to sort through the release you own and create a totally random playlist, filter by theme tags like “Halloween,” “Break-Up Songs,” or “Easy to Learn,” or simply see all your back catalog options for each track and build your playlist manually. This tool currently goes back to release 89.
+Pump Playlist Builder ([pumpplaylistbuilder.com](http://pumpplaylistbuilder.com)) is a tool for BodyPump instructors to create custom class playlists using tracks from Les Mills releases. Creating your playlists can be a huge mental load — use this tool to sort through the release you own and create a totally random playlist, filter by theme tags like “Halloween,” “Break-Up Songs,” or “Easy to Learn,” or simply see all your back catalog options for each track and build your playlist manually.
+
+Releases currently go back to release 60.
 
 This tool is not affiliated with, endorsed by, or officially connected to Les Mills International. It was created by a certified instructor for educational and personal use.
 
