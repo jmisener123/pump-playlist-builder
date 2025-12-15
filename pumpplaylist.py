@@ -42,10 +42,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
-def load_data():
-    if "csv_data" in st.secrets:
-        encoded = st.secrets["csv_data"]
-        decoded_bytes = base64.b64decode(encoded)
+def load_data(encoded_csv: str | None):
+    if encoded_csv:
+        decoded_bytes = base64.b64decode(encoded_csv)
         # Pass the raw bytes to pandas
         try:
             df = pd.read_csv(io.BytesIO(decoded_bytes), encoding="utf-8")
@@ -88,7 +87,8 @@ def load_data():
 
     return df
 
-df = load_data()
+encoded_csv = st.secrets.get("csv_data")
+df = load_data(encoded_csv)
 
 # Track/Tag data
 track_types = [
