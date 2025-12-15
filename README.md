@@ -15,9 +15,13 @@ Questions/feedback? [Click here to contact me](https://jessicamisener.com/contac
 - "This is so fun! And a great way to force me to not constantly choose my favourite tracks!"
 
 ## Features
-
 - 🎵 Three methods to build your playlist
 - ✨ Tag-based emoji support for quick visual scanning
 - 🔁 Alternate suggestions if a track doesn’t match your vibe
+- 🔍 Search function to find an artist or song title
 - 📋 Copy/paste your playlist for easy exporting
-- ⚡ Built with Cursor and Streamlit, deployed on Render
+- ⚡ Built with Streamlit, deployed on Render.
+
+## Coming Soon
+- Migration to React front-end for better UX on mobile
+- Movement-based tags (search for a song with push-ups or hang cleans)
