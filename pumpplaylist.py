@@ -24,9 +24,6 @@ import hashlib
 
 encoded_csv = st.secrets.get("csv_data")
 
-if encoded_csv:
-    st.write("CSV fingerprint:", hashlib.md5(encoded_csv.encode()).hexdigest())
-
 # --- Light/Dark mode styling ---
 st.markdown("""
     <style>
