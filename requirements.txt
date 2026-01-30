@@ -1,3 +1,0 @@
-streamlit-scrollable-textbox
-streamlit
-pandas

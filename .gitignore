@@ -1,4 +1,29 @@
+# Data files
 BPdata_89_Current.csv
-.streamlit/secrets.toml
 encoded.txt
+playlist-data-base64.txt
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Node.js
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor and OS
 .DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Build output
+*.local
+.vercel
