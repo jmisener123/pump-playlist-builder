@@ -137,7 +137,6 @@ export function QuickGenerate() {
         <Button
           variant="secondary"
           onClick={generateThemed}
-          disabled={!hasFilters}
           className="flex-1"
         >
           👻 Create Themed Playlist
@@ -194,7 +193,7 @@ export function QuickGenerate() {
         <div className="flex items-center gap-2 mb-1">
           <span className="text-2xl">🎲</span>
           <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-            Generate Entire Playlist
+            Generate A Full Playlist with One Click
           </h3>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
@@ -209,7 +208,7 @@ export function QuickGenerate() {
         {/* Divider */}
         <div className="flex items-center gap-2 mb-3">
           <div className="flex-1 border-t border-purple-200 dark:border-purple-700"></div>
-          <span className="text-xs font-medium text-gray-600 dark:text-gray-400">or by theme</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">or by theme</span>
           <div className="flex-1 border-t border-purple-200 dark:border-purple-700"></div>
         </div>
 

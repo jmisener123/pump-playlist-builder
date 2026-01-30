@@ -5,8 +5,7 @@ export function TabNavigation() {
   const { state, actions } = usePlaylist()
 
   const tabs = [
-    { id: 'quick', label: '🎲 Quick Generate', description: 'Random or themed playlist' },
-    { id: 'custom', label: '🔍 Browse & Search', description: 'Build track by track' }
+    { id: 'quick', label: '🎲 Quick Generate', description: 'Random or themed playlist' }
   ]
 
   return (

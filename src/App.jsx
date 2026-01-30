@@ -4,7 +4,6 @@ import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 import { ReleaseSelector } from './components/Step1/ReleaseSelector'
 import { QuickGenerate } from './components/Step2/QuickGenerate'
-import { TrackByTrackBuilder } from './components/Step2/TrackByTrackBuilder'
 import { PlaylistBuilder } from './components/Step2/PlaylistBuilder'
 
 function PlaylistApp() {
@@ -72,11 +71,9 @@ function PlaylistApp() {
           {/* Build Tools - Left on desktop */}
           <div className="space-y-4">
             <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide px-1">
-              Build Tools
+              Start Building
             </div>
             <QuickGenerate />
-            <div className="text-center text-xs text-gray-400 dark:text-gray-500">— or —</div>
-            <TrackByTrackBuilder />
           </div>
 
           {/* Playlist - Right on desktop */}
