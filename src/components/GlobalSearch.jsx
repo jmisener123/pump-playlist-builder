@@ -24,7 +24,9 @@ export function GlobalSearch({ isOpen, onClose }) {
   // Get which track positions a song can be used for
   const getCompatibleSlots = (track) => {
     const trackNumber = track['Track No#']
-    const trackTypeIndex = TRACK_TYPES.findIndex(type => type.startsWith(`${trackNumber} -`))
+    // TRACK_TYPES is like ["1 - Warmup", "2 - Squats", ...]
+    // trackNumber from CSV is like "1 - Warmup"
+    const trackTypeIndex = TRACK_TYPES.findIndex(type => type === trackNumber)
     return trackTypeIndex !== -1 ? [trackTypeIndex] : []
   }
 
@@ -119,23 +121,23 @@ export function GlobalSearch({ isOpen, onClose }) {
                         by {track.Artist}
                       </p>
                       <div className="flex flex-wrap items-center gap-2 mt-1">
-                        <p className="text-gray-500 dark:text-gray-500 text-xs">
-                          Release: <span className="release-number">{track.Release}</span>
-                          {' | '}Duration: {track.Duration}
-                          {' | '}{track.Genre}
-                        </p>
                         {compatibleSlots.map(slotIndex => {
                           const trackType = TRACK_TYPES[slotIndex]
                           const bodyPart = getBodyPart(trackType)
                           return (
                             <span 
                               key={slotIndex}
-                              className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded"
+                              className="text-sm font-semibold bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 px-2.5 py-1 rounded"
                             >
                               {bodyPart}
                             </span>
                           )
                         })}
+                        <p className="text-gray-500 dark:text-gray-500 text-xs">
+                          Release: <span className="release-number">{track.Release}</span>
+                          {' | '}Duration: {track.Duration}
+                          {' | '}{track.Genre}
+                        </p>
                       </div>
                       {track.Tags && (
                         <div className="mt-2">

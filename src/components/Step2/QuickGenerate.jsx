@@ -214,7 +214,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
         {/* Divider */}
         <div className="flex items-center gap-2 mb-3">
           <div className="flex-1 border-t border-purple-200 dark:border-purple-700"></div>
-          <span className="text-xs text-gray-500 dark:text-gray-400">or by theme</span>
+          <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">or by theme</span>
           <div className="flex-1 border-t border-purple-200 dark:border-purple-700"></div>
         </div>
 

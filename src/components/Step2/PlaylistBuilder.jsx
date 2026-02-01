@@ -118,7 +118,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
 
       {!hasAnyTracks && (
         <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-          <p className="text-sm">Build track-by-track below or use the Generate tab for a one-click full playlist</p>
+          <p className="text-sm">Build track-by-track below. Use the Generate tab for a one-click full playlist.</p>
         </div>
       )}
 
