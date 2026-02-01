@@ -6,7 +6,7 @@ import { Button } from '../ui/Button'
 import { TAG_EMOJIS, getTagDisplayName } from '../../utils/trackUtils'
 import { THEME_TAGS, INSTRUCTOR_TAGS } from '../../utils/themes'
 
-export function QuickGenerate() {
+export function QuickGenerate({ onPlaylistGenerated }) {
   const { state, actions } = usePlaylist()
   const { generateRandom, generateThemed, hasAnyTracks } = usePlaylistBuilder()
   const { availableTags, genres } = usePlaylistData()
@@ -54,7 +54,10 @@ export function QuickGenerate() {
   // Random content section
   const RandomSection = () => (
     <div>
-      <Button variant="primary" onClick={generateRandom} className="w-full">
+      <Button variant="primary" onClick={() => {
+        generateRandom()
+        if (onPlaylistGenerated) onPlaylistGenerated()
+      }} className="w-full">
         {hasAnyTracks ? '🔄 Regenerate Random' : '🎲 Generate playlist (random)'}
       </Button>
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
@@ -136,7 +139,10 @@ export function QuickGenerate() {
       <div className="flex gap-2">
         <Button
           variant="secondary"
-          onClick={generateThemed}
+          onClick={() => {
+            generateThemed()
+            if (onPlaylistGenerated) onPlaylistGenerated()
+          }}
           className="flex-1"
         >
           👻 Create Themed Playlist
@@ -191,7 +197,7 @@ export function QuickGenerate() {
       <div className="hidden lg:block">
         {/* Header */}
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-2xl">🎲</span>
+          <span className="text-2xl">⚡</span>
           <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
             Generate A Full Playlist with One Click
           </h3>

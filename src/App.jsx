@@ -40,7 +40,7 @@ function PlaylistApp() {
             Use the tools on the left to add tracks. Your playlist appears on the right. You can always swap individual tracks later.
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400 lg:hidden">
-            Generate all tracks at once, or switch between building and viewing your playlist using the tabs below.
+            Build track-by-track, or generate a full random or themed playlist using the Generate tab.
           </p>
         </div>
 
@@ -64,7 +64,7 @@ function PlaylistApp() {
                 : 'text-gray-600 dark:text-gray-400'
               }`}
           >
-            🎲 Generate
+            ⚡ Generate
           </button>
         </div>
 
@@ -93,7 +93,7 @@ function PlaylistApp() {
             <PlaylistBuilder />
           )}
           {mobileTab === 'build' && (
-            <QuickGenerate />
+            <QuickGenerate onPlaylistGenerated={() => setMobileTab('playlist')} />
           )}
         </div>
 

@@ -6,7 +6,7 @@ import { TrackSlot, EmptyTrackMessage } from './TrackSlot'
 import { TotalDuration } from './TotalDuration'
 import { TrackSearch } from './TrackSearch'
 import { PlaylistExport } from './PlaylistExport'
-import { TRACK_TYPES } from '../../utils/trackUtils'
+import { TRACK_TYPES, TAG_EMOJIS } from '../../utils/trackUtils'
 
 export function PlaylistBuilder({ mode = 'random' }) {
   const { state } = usePlaylist()
@@ -19,6 +19,44 @@ export function PlaylistBuilder({ mode = 'random' }) {
   const hasThemeFilters = state.themeTags.length > 0 ||
     state.instructorTags.length > 0 ||
     state.selectedGenres.length > 0
+
+  // Get emoji for the active theme
+  const getThemeEmoji = () => {
+    // Prioritize theme tags
+    if (state.themeTags.length === 1) {
+      return TAG_EMOJIS[state.themeTags[0]] || '👻'
+    }
+    if (state.themeTags.length > 1) {
+      return '👻'
+    }
+    // Then instructor tags
+    if (state.instructorTags.length === 1) {
+      return TAG_EMOJIS[state.instructorTags[0]] || '👻'
+    }
+    if (state.instructorTags.length > 1) {
+      return '👻'
+    }
+    // Default for genres only
+    if (state.selectedGenres.length > 0) {
+      return '🎵'
+    }
+    return '👻'
+  }
+
+  // Get active theme description
+  const getActiveThemeText = () => {
+    const parts = []
+    if (state.themeTags.length > 0) {
+      parts.push(state.themeTags.join(', '))
+    }
+    if (state.instructorTags.length > 0) {
+      parts.push(state.instructorTags.join(', '))
+    }
+    if (state.selectedGenres.length > 0) {
+      parts.push(state.selectedGenres.join(', '))
+    }
+    return parts.join(' • ')
+  }
 
   const handleSearch = (position) => {
     setBrowseMode(false)
@@ -63,7 +101,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
           </h3>
           {hasThemeFilters && (
             <span className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full">
-              👻 Theme active
+              {getThemeEmoji()} {getActiveThemeText()}
             </span>
           )}
         </div>
@@ -80,7 +118,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
 
       {!hasAnyTracks && (
         <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-          <p className="text-sm">Build track-by-track below or use the Generate tab to build by theme</p>
+          <p className="text-sm">Build track-by-track below or use the Generate tab for a one-click full playlist</p>
         </div>
       )}
 

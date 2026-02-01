@@ -100,6 +100,7 @@ export function GlobalSearch({ isOpen, onClose }) {
               const compatibleSlots = getCompatibleSlots(track)
               const availableSlots = getAvailableSlots(track)
               const canAdd = availableSlots.length > 0
+              const hasFilledSlot = compatibleSlots.length > 0 && availableSlots.length === 0
               const alreadyInPlaylist = compatibleSlots.some(index => 
                 playlist[index] && playlist[index]['Song Title'] === track['Song Title']
               )
@@ -155,7 +156,7 @@ export function GlobalSearch({ isOpen, onClose }) {
                         >
                           + Add
                         </Button>
-                      ) : (
+                      ) : hasFilledSlot ? (
                         <>
                           <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 px-3 py-1.5 rounded text-center">
                             Slot filled
@@ -173,7 +174,8 @@ export function GlobalSearch({ isOpen, onClose }) {
                             Replace
                           </Button>
                         </>
-                      )}
+                      ) : null
+                      }
                     </div>
                   </div>
                 </div>
