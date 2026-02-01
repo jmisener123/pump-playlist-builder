@@ -24,13 +24,13 @@ export function ReleaseSelector() {
         Step 1: Select Your Catalog
       </h2>
       <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
-        Tell us which releases you own so we can build from your library.
+        Choose the oldest release you own. We'll use everything newer.
       </p>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="flex-1">
           <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Earliest release you own
+            Oldest release I own
           </label>
           <Select
             value={state.earliestRelease}
@@ -61,7 +61,7 @@ export function ReleaseSelector() {
             className="w-4 h-4 text-primary rounded focus:ring-primary"
           />
           <span className="text-gray-700 dark:text-gray-300">
-            Only use 10 most recent releases
+            Only use my 10 most recent releases
           </span>
         </label>
       </div>

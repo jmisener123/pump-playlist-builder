@@ -34,10 +34,10 @@ export function TrackSlot({
         <div className="flex items-center gap-2">
           {hasThemedOptions && (
             <span className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 px-1.5 py-0.5 rounded">
-              👻 {themedOptions.length} themed
+              👻 {themedOptions.length} other themed track{themedOptions.length !== 1 ? 's' : ''} available
             </span>
           )}
-          {noThemedTrackAvailable && (
+          {noThemedTrackAvailable && isEmpty && (
             <span className="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 px-1.5 py-0.5 rounded">
               ⚠️ No themed track
             </span>
@@ -96,7 +96,7 @@ export function TrackSlot({
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 hidden sm:inline">Change:</span>
+            <span className="text-xs text-gray-400">Change track:</span>
             <div className="flex items-center gap-1">
               <button
                 onClick={onRandom}

@@ -5,10 +5,12 @@ import { Footer } from './components/Footer'
 import { ReleaseSelector } from './components/Step1/ReleaseSelector'
 import { QuickGenerate } from './components/Step2/QuickGenerate'
 import { PlaylistBuilder } from './components/Step2/PlaylistBuilder'
+import { GlobalSearch } from './components/GlobalSearch'
 
 function PlaylistApp() {
   const { state } = usePlaylist()
   const [mobileTab, setMobileTab] = useState('playlist') // 'playlist' | 'build'
+  const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false)
 
   if (state.isLoading) {
     return (
@@ -24,7 +26,7 @@ function PlaylistApp() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <Header />
+        <Header onSearchClick={() => setIsGlobalSearchOpen(true)} />
 
         {/* Step 1: Release Selection */}
         <ReleaseSelector />
@@ -35,10 +37,10 @@ function PlaylistApp() {
             Step 2: Build Your Playlist
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 hidden lg:block">
-            Use the tools on the left to add tracks. Your playlist appears on the right.
+            Use the tools on the left to add tracks. Your playlist appears on the right. You can always swap individual tracks later.
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400 lg:hidden">
-            Tap any track to swap it, or generate all 10 at once.
+            Generate all tracks at once, or switch between building and viewing your playlist using the tabs below.
           </p>
         </div>
 
@@ -97,6 +99,12 @@ function PlaylistApp() {
 
         <Footer />
       </div>
+
+      {/* Global Search Modal */}
+      <GlobalSearch 
+        isOpen={isGlobalSearchOpen} 
+        onClose={() => setIsGlobalSearchOpen(false)} 
+      />
     </div>
   )
 }

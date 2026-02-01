@@ -55,10 +55,10 @@ export function QuickGenerate() {
   const RandomSection = () => (
     <div>
       <Button variant="primary" onClick={generateRandom} className="w-full">
-        {hasAnyTracks ? '🔄 Regenerate Random' : '🎲 Generate Random Playlist'}
+        {hasAnyTracks ? '🔄 Regenerate Random' : '🎲 Generate playlist (random)'}
       </Button>
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-        Completely random from your catalog
+        Uses any tracks from your selected releases
       </p>
     </div>
   )
@@ -68,7 +68,7 @@ export function QuickGenerate() {
     <div>
       {/* Theme Tags */}
       <div className="mb-3">
-        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">
           Themes
         </label>
         <div className="flex flex-wrap gap-1">
@@ -90,7 +90,7 @@ export function QuickGenerate() {
 
       {/* Instructor Tags */}
       <div className="mb-3">
-        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">
           Difficulty & Length
         </label>
         <div className="flex flex-wrap gap-1">
@@ -112,7 +112,7 @@ export function QuickGenerate() {
 
       {/* Genres */}
       <div className="mb-3">
-        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">
           Genres
         </label>
         <div className="flex flex-wrap gap-1">
