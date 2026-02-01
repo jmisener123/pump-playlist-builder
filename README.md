@@ -22,8 +22,7 @@ Questions/feedback? [Click here to contact me](https://jessicamisener.com/contac
 - 🔁 Alternate suggestions if a track doesn’t match your vibe
 - 🔍 Search function to find an artist or song title
 - 📋 Copy/paste your playlist for easy exporting
-- ⚡ Built with Streamlit, deployed on Render.
+- ⚡ Migrated site from Python to React for faster loading/ better mobile UI using Claude Code
 
 ## Coming Soon
-- Migration to React front-end for better UX on mobile
 - Movement-based tags (search for a song with push-ups or hang cleans)
