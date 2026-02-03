@@ -150,6 +150,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
                 }
               }}
               hasThemeFilters={hasThemeFilters}
+              activeThemeText={getActiveThemeText()}
             />
           )
         })}

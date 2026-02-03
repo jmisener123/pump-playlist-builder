@@ -15,7 +15,8 @@ export function TrackSlot({
   availableCount = 0,
   onThemedSwap,
   onRandomThemed,
-  hasThemeFilters = false
+  hasThemeFilters = false,
+  activeThemeText = ''
 }) {
   const bodyPart = getBodyPart(trackType)
   const isEmpty = !track
@@ -33,9 +34,13 @@ export function TrackSlot({
         </h4>
         <div className="flex items-center gap-2">
           {hasThemedOptions && (
-            <span className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 px-1.5 py-0.5 rounded">
-              👻 {themedOptions.length} other themed track{themedOptions.length !== 1 ? 's' : ''} available
-            </span>
+            <button
+              onClick={() => setShowThemedDropdown(!showThemedDropdown)}
+              className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 px-1.5 py-0.5 rounded hover:bg-purple-200 dark:hover:bg-purple-800/50 transition-colors cursor-pointer"
+              title="Click to view themed tracks"
+            >
+              👻 {themedOptions.length} other {activeThemeText} track{themedOptions.length !== 1 ? 's' : ''} available
+            </button>
           )}
           {noThemedTrackAvailable && isEmpty && (
             <span className="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 px-1.5 py-0.5 rounded">
@@ -182,18 +187,6 @@ export function TrackSlot({
                   </option>
                 ))}
               </select>
-              <button
-                onClick={() => {
-                  if (themedOptions.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * themedOptions.length)
-                    onThemedSwap(themedOptions[randomIndex])
-                    setShowThemedDropdown(false)
-                  }
-                }}
-                className="mt-1 w-full text-xs py-1 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded"
-              >
-                🎲 Random themed track
-              </button>
             </div>
           )}
         </div>
