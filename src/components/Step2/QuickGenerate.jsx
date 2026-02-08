@@ -16,21 +16,24 @@ export function QuickGenerate({ onPlaylistGenerated }) {
   const availableThemeTags = THEME_TAGS.filter(tag => availableTags.includes(tag))
   const availableInstructorTags = INSTRUCTOR_TAGS.filter(tag => availableTags.includes(tag))
 
-  const toggleThemeTag = (tag) => {
+  const toggleThemeTag = (tag, event) => {
+    if (event) event.stopPropagation()
     const newTags = state.themeTags.includes(tag)
       ? state.themeTags.filter(t => t !== tag)
       : [...state.themeTags, tag]
     actions.setThemeFilters({ themeTags: newTags })
   }
 
-  const toggleInstructorTag = (tag) => {
+  const toggleInstructorTag = (tag, event) => {
+    if (event) event.stopPropagation()
     const newTags = state.instructorTags.includes(tag)
       ? state.instructorTags.filter(t => t !== tag)
       : [...state.instructorTags, tag]
     actions.setThemeFilters({ instructorTags: newTags })
   }
 
-  const toggleGenre = (genre) => {
+  const toggleGenre = (genre, event) => {
+    if (event) event.stopPropagation()
     const newGenres = state.selectedGenres.includes(genre)
       ? state.selectedGenres.filter(g => g !== genre)
       : [...state.selectedGenres, genre]
@@ -58,10 +61,10 @@ export function QuickGenerate({ onPlaylistGenerated }) {
         generateRandom()
         if (onPlaylistGenerated) onPlaylistGenerated()
       }} className="w-full">
-        {hasAnyTracks ? '🔄 Regenerate Random' : '🎲 Generate playlist (random)'}
+        {hasAnyTracks ? '🔄 Regenerate Random' : '🎲 One-Click Playlist (Random)'}
       </Button>
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-        Uses any tracks from your selected releases
+        Fill all 10 tracks instantly using any songs from your selected releases.
       </p>
     </div>
   )
@@ -78,7 +81,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
           {availableThemeTags.map(tag => (
             <button
               key={tag}
-              onClick={() => toggleThemeTag(tag)}
+              onClick={(e) => toggleThemeTag(tag, e)}
               className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors
                 ${state.themeTags.includes(tag)
                   ? 'bg-primary text-white'
@@ -100,7 +103,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
           {availableInstructorTags.map(tag => (
             <button
               key={tag}
-              onClick={() => toggleInstructorTag(tag)}
+              onClick={(e) => toggleInstructorTag(tag, e)}
               className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors
                 ${state.instructorTags.includes(tag)
                   ? 'bg-primary text-white'
@@ -122,7 +125,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
           {genres.map(genre => (
             <button
               key={genre}
-              onClick={() => toggleGenre(genre)}
+              onClick={(e) => toggleGenre(genre, e)}
               className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors
                 ${state.selectedGenres.includes(genre)
                   ? 'bg-secondary text-white'
@@ -199,7 +202,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
         <div className="flex items-center gap-2 mb-1">
           <span className="text-2xl">⚡</span>
           <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-            Generate A Full Playlist with One Click
+            Start Building Your Playlist
           </h3>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
@@ -214,7 +217,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
         {/* Divider */}
         <div className="flex items-center gap-2 mb-3">
           <div className="flex-1 border-t border-purple-200 dark:border-purple-700"></div>
-          <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">or by theme</span>
+          <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">Or build around a specific vibe</span>
           <div className="flex-1 border-t border-purple-200 dark:border-purple-700"></div>
         </div>
 

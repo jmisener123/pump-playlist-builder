@@ -105,37 +105,37 @@ export function TrackSlot({
             <div className="flex items-center gap-1">
               <button
                 onClick={onRandom}
-                className="p-2 sm:px-2 sm:py-1 text-base sm:text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                className="px-2 py-1 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                 title="Random"
               >
-                🎲
+                Random
               </button>
               {hasThemedOptions && (
                 <button
                   onClick={() => setShowThemedDropdown(!showThemedDropdown)}
-                  className={`p-2 sm:px-2 sm:py-1 text-base sm:text-sm rounded transition-colors
+                  className={`px-2 py-1 text-xs rounded transition-colors
                     ${showThemedDropdown
                       ? 'bg-purple-100 dark:bg-purple-900/50'
                       : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   title={`Themed (${themedOptions.length})`}
                 >
-                  👻
+                  Themed
                 </button>
               )}
               <button
                 onClick={onBrowse}
-                className="p-2 sm:px-2 sm:py-1 text-base sm:text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                className="px-2 py-1 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                 title={`Browse (${availableCount})`}
               >
-                📂
+                Browse
               </button>
               <button
                 onClick={onSearch}
-                className="p-2 sm:px-2 sm:py-1 text-base sm:text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                className="px-2 py-1 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                 title="Search"
               >
-                🔍
+                Search
               </button>
               <span className="text-gray-300 dark:text-gray-600 mx-1">|</span>
               <button

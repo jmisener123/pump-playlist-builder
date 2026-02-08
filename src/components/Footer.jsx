@@ -15,7 +15,7 @@ export function Footer() {
           rel="noopener noreferrer"
           className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm underline"
         >
-          GitHub
+          GitHub / Contact me
         </a>
       </div>
     </footer>

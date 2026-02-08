@@ -75,6 +75,14 @@ function PlaylistApp() {
             <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide px-1">
               Start Building
             </div>
+            <div className="px-1 -mt-2 mb-2">
+              <button
+                onClick={() => setIsGlobalSearchOpen(true)}
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors underline decoration-dotted underline-offset-2"
+              >
+                🔍 Search entire catalog
+              </button>
+            </div>
             <QuickGenerate />
           </div>
 
