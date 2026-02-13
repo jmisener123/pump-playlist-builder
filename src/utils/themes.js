@@ -63,6 +63,11 @@ export const THEMES = {
     name: "P!nk",
     emoji: "💗",
     tags: ["P!nk"]
+  },
+  spicy: {
+    name: "Spicy",
+    emoji: "🌶️",
+    tags: ["Spicy"]
   }
 }
 
@@ -76,6 +81,7 @@ export const THEME_TAGS = [
   "P!nk",
   "Positive Vibes",
   "Sing-Along",
+  "Spicy",
   "Summer",
   "Valentine's Day",
   "Women of Pop"

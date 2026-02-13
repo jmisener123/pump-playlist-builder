@@ -13,12 +13,12 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 61,2 - Squats,Walk On Water (Flip & Fill Remix),Milk Inc,,5:28,EDM,,,
 61,3 - Chest,I'm Not Dead,P!nk,,5:44,Pop,,,"P!nk, Women of Pop"
 61,4 - Back,Miracle (Extended Mix),Cascada,,5:26,EDM,,,
-61,5 - Triceps,Sexyback (Clean Version),Justin Timberlake,,4:01,Pop,,,"Valentine's Day, Sing-Along, Short (<4:30)"
+61,5 - Triceps,Sexyback (Clean Version),Justin Timberlake,,4:01,Pop,,,"Valentine's Day, Sing-Along, Short (<4:30), Spicy"
 61,6 - Biceps,Original Fire,Audioslave,,3:36,Rock,,,Short (<4:30)
 61,7 - Lunges,Somebody's Watching Me (Hi_Tack Radio Edit),BeatFreakz,,5:05,EDM,,,Halloween
 61,8 - Shoulders,Uprocking Beats,Bomfunk MCs,,4:02,EDM,,,Short (<4:30)
 61,9 - Core,Deja Vu,Beyonce feat Jay Z,,4:05,Pop,,,Short (<4:30)
-61,10 - Cooldown,Chasing Cars,Snow Patrol,,4:34,Pop,,,
+61,10 - Cooldown,Chasing Cars,Snow Patrol,,4:34,Pop,,,Emo
 62,1 - Warmup,I Believe In Dreams (Full On Vocal Radio Edit),Jackie Rawe,,5:18,Pop,,,
 62,2 - Squats,Run To Paradise,Nick Skitz vs The Choirboys,,5:52,Pop,,,
 62,3 - Chest,Rock This Party (Everybody Dance Now) (Original),"Bob Sinclair & Cutee B feat. Dollarman, Big Ali & Makedah",,5:33,Pop,,,
@@ -27,7 +27,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 62,6 - Biceps,Weight Of The World,Evanescence,,3:32,Rock,,,"Emo, Short (<4:30)"
 62,7 - Lunges,I Go Crazy (Giuseppe D.'s Euro Madness Mix),DHT feat. Edmee,,5:17,Pop,,,
 62,8 - Shoulders,The Power Of Bhangra 2003,Snap! vs Motivo,,4:39,Pop,,,
-62,9 - Core,My Love feat. T.I.,Justin Timberlake,,4:47,Pop,,,
+62,9 - Core,My Love feat. T.I.,Justin Timberlake,,4:47,Pop,,,Valentine's Day
 62,10 - Cooldown,Lips Of An Angel,Hinder,,4:26,Pop,,,Short (<4:30)
 63,1 - Warmup,All For You,Kate Ryan,,5:14,Pop,,,
 63,2 - Squats,Truly Madly Deeply (Club Mix),Cascada,,5:29,EDM,,,
@@ -93,8 +93,8 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 69,2 - Squats,Get This Party Started,Dan Winter,,5:31,Pop,,,New Year's Eve
 69,3 - Chest,I Don't Care,Fall Out Boy,,4:46,Rock,,,Emo
 69,4 - Back,Castles In The Sky,Liz Kay,,5:34,Pop,,,
-69,5 - Triceps,Shut Up & Drive,Rihanna,,4:30,Pop,,,"Women of Pop, Sing-Along, Short (<4:30)"
-69,6 - Biceps,So What,P!nk,,3:33,Pop,,,"P!nk, Women of Pop, Short (<4:30)"
+69,5 - Triceps,Shut Up & Drive,Rihanna,,4:30,Pop,,,"Spicy, Women of Pop, Sing-Along, Short (<4:30)"
+69,6 - Biceps,So What,P!nk,,3:33,Pop,,,"P!nk, Women of Pop, Short (<4:30), Break-Up Songs"
 69,7 - Lunges,Stand Alone,Dyce,,5:09,Pop,,,
 69,8 - Shoulders,All I Ever Wanted,Basshunter,,4:44,Pop,,,
 69,9 - Core,All Summer Long,Kid Rock,,4:47,Rock,,,Summer
@@ -120,7 +120,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 71,9 - Core,Circus,Britney Spears,,4:17,Pop,,,"Sing-Along, Women of Pop, Short (<4:30)"
 71,10 - Cooldown,Sober,P!nk,,4:16,Pop,,,"P!nk, Women of Pop, Short (<4:30)"
 72,1 - Warmup,If (Freemasons 2009 Re-Rub),Freemasons feat. Hazel Fernandes,,5:07,Pop,,,
-72,2 - Squats,I Do Not Hook Up,Kelly Clarkson,,5:34,Pop,,,Women of Pop
+72,2 - Squats,I Do Not Hook Up,Kelly Clarkson,,5:34,Pop,,,"Women of Pop, Break-Up Songs"
 72,3 - Chest,Always Be Here,Dane Rumble,,4:53,Pop,,,
 72,4 - Back,Perfect Day,Cascada,,4:59,EDM,,,
 72,5 - Triceps,Sugar,Flo Rida feat. Wynter,,4:02,Hip-Hop,,,Short (<4:30)
@@ -143,7 +143,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 74,2 - Squats,This Is Who I Am,Annie Lee,,5:29,Pop,,,
 74,3 - Chest,We Weren't Born To Follow,OneZeroOne feat. Ant P (original: Bon Jovi),,5:00,Rock,,,
 74,4 - Back,Don't Speak,Alex Cortez (original: No Doubt),,5:13,Pop,,,"Women of Pop, Break-Up Songs, Sing-Along"
-74,5 - Triceps,3,Britney Spears,,4:30,Pop,,,"Women of Pop, Sing-Along, Short (<4:30)"
+74,5 - Triceps,3,Britney Spears,,4:30,Pop,,,"Spicy, Women of Pop, Sing-Along, Short (<4:30)"
 74,6 - Biceps,Boom Boom Pow,Beat Factory (original: Black Eyed Peas),,4:17,Hip-Hop,,,Short (<4:30)
 74,7 - Lunges,Dangerous,Rhythm Twins,,5:50,Pop,,,
 74,8 - Shoulders,She's A Genius,Badlands Inc,,4:21,Pop,,,Short (<4:30)
@@ -154,7 +154,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 75,3 - Chest,Shut It Down,Pitbull featuring Akon,,4:59,Latin,,,
 75,4 - Back,Wherever You Will Go (Handz Up Edit),Jan Wayne,,5:45,Pop,,,
 75,5 - Triceps,Bad Influence,P!nk,,4:39,Pop,,,"P!nk, Women of Pop"
-75,6 - Biceps,Cowboy Casanova,Carrie Underwood,,3:50,Pop,,,Short (<4:30)
+75,6 - Biceps,Cowboy Casanova,Carrie Underwood,,3:50,Pop,,,"Short (<4:30), Women of Pop, Break-Up Songs"
 75,7 - Lunges,I Will Be Here,DJ Lotus,,5:01,EDM,,,
 75,8 - Shoulders,Ravers In The UK (Hypasonic Remix),Manian,,5:13,Pop,,,
 75,9 - Core,More,Usher,,3:55,Hip-Hop,,,Short (<4:30)
@@ -171,7 +171,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 76,10 - Cooldown,The Truth,Kris Allen,,4:08,Pop,,,Short (<4:30)
 77,1 - Warmup,Commander,Spacegliderz,,5:29,Pop,,,
 77,2 - Squats,It's My Life,Swade (original: Bon Jovi),,4:49,Rock,,,"Sing-Along, Positive Vibes"
-77,3 - Chest,DJ Got Us Fallin' In Love,Usher feat. Pitbull,,4:59,Pop,,,"Valentine's Day, New Year's Eve"
+77,3 - Chest,DJ Got Us Fallin' In Love,Usher feat. Pitbull,,4:59,Pop,,,"Valentine's Day, New Year's Eve, Sing-Along"
 77,4 - Back,Hold Me Tonight (Manox Remix),Manian,,5:31,Pop,,,
 77,5 - Triceps,I Like It,Tokyo Haze (original: Enrique Iglesias and Pitbull),,5:19,Pop,,,Sing-Along
 77,6 - Biceps,Diamond Eyes (Boom-Lay Boom-Lay Boom),Shinedown,,5:25,Pop,,,
@@ -193,7 +193,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 79,2 - Squats,Closer To The Edge,Mekon Garden,,5:56,Pop,,,
 79,3 - Chest,Party All Night (Sleep All Day),Sean Kingston,,5:09,Hip-Hop,,,New Year's Eve
 79,4 - Back,Written In The Stars (Sunny Dee Remix),Jason Born,,5:33,Pop,,,
-79,5 - Triceps,Born This Way,Southern Light,,5:00,Pop,,,"Positive Vibes, Women of Pop"
+79,5 - Triceps,Born This Way,Southern Light (original: Lady Gaga),,5:00,Pop,,,"Positive Vibes, Women of Pop"
 79,6 - Biceps,Livin' On A Prayer,Altiyan Childs (original: Bon Jovi),,4:15,Rock,,,"Sing-Along, Positive Vibes, Short (<4:30)"
 79,7 - Lunges,Grenade (Damn-R Mix),Jason Born,,5:05,Pop,,,
 79,8 - Shoulders,J'Adore Hardcore (Extended Mix),Scooter,,5:25,EDM,,,
@@ -267,9 +267,9 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 86,6 - Biceps,Dark Side,Kelly Clarkson,,3:42,Pop,,,"Women of Pop, Short (<4:30)"
 86,7 - Lunges,Don't You Worry Child (Radio Edit),Swedish House Mafia feat. John Martin,,5:19,Pop,,,Positive Vibes
 86,8 - Shoulders,We'll Be Coming Back,Upon Havoc,,5:44,Pop,,,
-86,9 - Core,She's So Mean,Matchbox 20,,3:56,Rock,,,"Sing-Along, Short (<4:30)"
+86,9 - Core,She's So Mean,Matchbox 20,,3:56,Rock,,,"Sing-Along, Short (<4:30), Break-Up Songs"
 86,10 - Cooldown,Try,P!nk,,4:31,Pop,,,"P!nk, Women of Pop"
-87,1 - Warmup,Let There Be Love,Christina Aguilera,,5:22,Pop,,,"Women of Pop, Valentine's Day"
+87,1 - Warmup,Let There Be Love,Christina Aguilera,,5:22,Pop,,,"Women of Pop, Valentine's Day, Spicy"
 87,2 - Squats,Black Betty,Scooter,,5:20,EDM,,,Sing-Along
 87,3 - Chest,Don't Stop The Party,Pitbull ft. TJR,,5:21,Latin,,,New Year's Eve
 87,4 - Back,Again & Again (Club Mix),Nick Skitz & Basslouder ft. Brooklyn Bounce,,5:31,Pop,,,
@@ -285,7 +285,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 88,4 - Back,Somebody (Cc.K Remix),Jens O.,,5:39,Pop,,,
 88,5 - Triceps,Can't Hold Us,Macklemore & Ryan Lewis feat. Ray Dalton,,5:49,Pop,,,"Sing-Along, Positive Vibes"
 88,6 - Biceps,Up in the Air,Thirty Seconds to Mars,,4:33,Rock,,,
-88,7 - Lunges,Play Hard,David Guetta feat. Ne-Yo & Akon,,5:19,Pop,,,
+88,7 - Lunges,Play Hard,David Guetta feat. Ne-Yo & Akon,,5:19,Pop,,,Sing-Along
 88,8 - Shoulders,Raving (G! Mix),Brooklyn Bounce & Giorno,,5:20,Pop,,,
 88,9 - Core,Only You,Ellie Goulding,,3:55,Pop,,,"Women of Pop, Short (<4:30)"
 88,10 - Cooldown,Give Me Love,LL Cool J ft. Seal,,4:31,Hip-Hop,,,Valentine's Day
@@ -293,7 +293,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 89,2 - Squats,Raise Those Hands,R3Hab & Bassjackers,128,5:41,EDM,,,New Year's Eve
 89,3 - Chest,Where Did the Party Go,Fall Out Boy,94,5:06,Rock,,,"Emo, New Year's Eve"
 89,4 - Back,Me & You,Nero,104,5:25,EDM,,,
-89,5 - Triceps,Applause,Lady Gaga,95,4:35,Pop,,,"Women of Pop, Sing-Along"
+89,5 - Triceps,Applause,Lady Gaga,95,4:35,Pop,,,"Women of Pop, Sing-Along, New Year's Eve"
 89,6 - Biceps,When You Were Young,The Killers,101,5:22,Rock,,,Sing-Along
 89,7 - Lunges,Burn,Ellie Goulding,100,5:34,Pop,,,"Women of Pop, Sing-Along, Summer"
 89,8 - Shoulders,True Hardstyler (Silver Nikan Radio Edit),Brooklyn Bounce & DJ Zealot,125,5:29,EDM,,,
@@ -303,7 +303,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 90,2 - Squats,What Now,Rihanna,134,5:51,Hip-Hop,,,Women of Pop
 90,3 - Chest,Conquistador,Thirty Seconds to Mars,108,5:29,Rock,,,"Emo, Beast Mode"
 90,4 - Back,Promises,Nero,118,5:45,EDM,,,
-90,5 - Triceps,Walk of Shame,P!nk,94,4:18,Pop,,,"P!nk, Women of Pop, Short (<4:30)"
+90,5 - Triceps,Walk of Shame,P!nk,94,4:18,Pop,,,"P!nk, Women of Pop, Short (<4:30), Spicy"
 90,6 - Biceps,Miss Jackson,Panic! at the Disco feat. Lolo,106,3:59,Rock,,,"Emo, Break-Up Songs, Short (<4:30)"
 90,7 - Lunges,Stay the Night,Zedd feat. Hayley Williams,128,5:20,Pop,,,Easy to Learn
 90,8 - Shoulders,Thumbs Up (For Rock N Roll) Kill The Noise Remix,Kill the Noise and Feed Me,113,4:37,EDM,,,Positive Vibes
@@ -319,7 +319,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 91,6 - Biceps,Bad Company,Five Finger Death Punch,93,5:13,Rock,,,
 91,7 - Lunges,Find You,Zedd,131,5:31,EDM,,,
 91,8 - Shoulders,"Eat, Sleep, Rave, Repeat (Remix)",Fatboy Slim,81,5:08,EDM,,,New Year's Eve
-91,9 - Core,Trumpets,Jason Derulo,44,3:42,Pop,,,Short (<4:30)
+91,9 - Core,Trumpets,Jason Derulo,44,3:42,Pop,,,"Short (<4:30), Spicy"
 91,10 - Cooldown,Burning Bridges,OneRepublic,0,4:23,Pop,,,Short (<4:30)
 91,9 - Core,Hold On,Colbie Caillat,60,3:39,Pop,,,"Women of Pop, Positive Vibes, Short (<4:30)"
 92,1 - Warmup,All We Need Is Love,Ricki-Lee,91,5:16,Pop,,,"Valentine's Day, Positive Vibes"
@@ -333,12 +333,12 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 92,9 - Core,Fancy,Iggy Azalea feat. Charli XCX,54,4:20,Pop,,,"Women of Pop, Sing-Along, Short (<4:30)"
 92,10 - Cooldown,Chandelier,Sia,0,3:40,Pop,,,"Women of Pop, Sing-Along, New Year's Eve, Short (<4:30)"
 92,4 - Back,Dream & Dance,DJ Paffendorf vs Ryan T,92,5:38,EDM,,,New Year's Eve
-92,9 - Core,Love Runs Out,OneRepublic,48,3:50,Pop,,,"Sing-Along, Valentine's Day, Short (<4:30)"
+92,9 - Core,Love Runs Out,OneRepublic,48,3:50,Pop,,,"Sing-Along, Valentine's Day, Short (<4:30), Positive Vibes"
 93,1 - Warmup,Break Free,Ariana Grande feat. Zedd,95,5:00,Pop,,,"Women of Pop, Positive Vibes, Break-Up Songs"
 93,2 - Squats,Booyah (Lucky Date Remix),Showtek feat. We are Loud & Sonny Wilson,95,5:37,EDM,,,
 93,3 - Chest,Kings And Queens,Thirty Seconds To Mars,75,5:34,Rock,,,Emo
 93,4 - Back,Here Tonight (Carita La Nina Radio Edit),Dash Berlin & Jay Cosmic feat. Colin McLoughlin,78,5:11,EDM,,Easy to Learn,"New Year's Eve, Easy to Learn"
-93,5 - Triceps,Bang Bang,"Jessie J, Ariana Grande, & Nicki Minaj",116,4:56,Pop,Hard,,"Women of Pop, Hard"
+93,5 - Triceps,Bang Bang,"Jessie J, Ariana Grande, & Nicki Minaj",116,4:56,Pop,Hard,,"Women of Pop, Hard, Spicy"
 93,6 - Biceps,Centuries,Fall Out Boy,144,4:56,Rock,,,"Emo, Sing-Along"
 93,7 - Lunges,1941,Klayplex feat. Virian,121,5:27,EDM,Hard,,"New Year's Eve, Hard"
 93,8 - Shoulders,Twisted (Eptic Remix),Fedde le Grand,112,5:37,EDM,,,
@@ -348,7 +348,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 93,5 - Triceps,Animal,Neon Trees,96,4:36,EDM,,,
 94,1 - Warmup,Heroes (We Could Be),Alesso feat. Tove Lo,104,5:31,EDM,Hard,,"Positive Vibes, Hard"
 94,2 - Squats,Everybody Go!,Vice,60,5:36,EDM,,,
-94,3 - Chest,Burnin' Up,Jessie J feat. 2 Chainz,146,5:34,Pop,,,"Women of Pop, Summer"
+94,3 - Chest,Burnin' Up,Jessie J feat. 2 Chainz,146,5:34,Pop,,,"Women of Pop, Summer, Spicy"
 94,4 - Back,Today (Scooter Remix),Scooter & Vassy,72,5:29,EDM,,,Easy to Learn
 94,5 - Triceps,Lips Are Movin,Meghan Trainor,127,4:43,Pop,,,"Women of Pop, Break-Up Songs"
 94,6 - Biceps,Get 'Em Up,Nickelback,142,4:57,Rock,,,
@@ -369,11 +369,11 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 95,10 - Cooldown,Brother,NEEDTOBREATHE feat. Gavin DeGraw,0,3:33,Pop,,,Short (<4:30)
 96,1 - Warmup,Five More Hours,Deorro X Chris Brown,94,5:29,Hip-Hop,,,"Sing-Along, New Year's Eve"
 96,2 - Squats,Blow Your Mind,Tiesto & MOTI,122,6:12,EDM,Hard,,"Hard, Long (>6 min)"
-96,3 - Chest,Immortals,Along Pointless,137,6:08,Rock,,,"Emo, Long (>6 min)"
+96,3 - Chest,Immortals,Along Pointless (original: Fall Out Boy),137,6:08,Rock,,,"Emo, Long (>6 min)"
 96,4 - Back,The Thrill,Nero,105,5:29,EDM,,,
 96,5 - Triceps,Hallelujah,Panic! at the Disco,101,4:16,Rock,,,"Emo, Short (<4:30)"
 96,6 - Biceps,Wobble,Flo Rida,158,4:30,Hip-Hop,,,"Valentine's Day, Short (<4:30)"
-96,7 - Lunges,Peanut Butter Jelly,Galantis,172,5:21,EDM,,,
+96,7 - Lunges,Peanut Butter Jelly,Galantis,172,5:21,EDM,,,Spicy
 96,8 - Shoulders,Addicted To A Memory,Zedd Feat. Bahari,126,6:06,EDM,Hard,,"Break-Up Songs, Hard, Long (>6 min)"
 96,9 - Core,Want To Want Me,Jason Derulo,89,3:32,Pop,,,"Valentine's Day, Short (<4:30)"
 96,10 - Cooldown,Adore,Cashmire Cat Feat. Ariana Grande,0,3:41,Pop,,,"Valentine's Day, Women of Pop, Short (<4:30)"
@@ -400,7 +400,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 98,10 - Cooldown,Bird Set Free,Sia,0,4:18,Pop,,,"Easy to Learn, Women of Pop, Positive Vibes, Short (<4:30)"
 99,1 - Warmup,Mad World,Hardwell Feat. Jake Reese,98,5:29,EDM,,,
 99,2 - Squats,Power Glove,Knife Party,138,6:00,EDM,,,"Beast Mode, Long (>6 min)"
-99,3 - Chest,In The Dark,3 Doors Down,144,6:08,Rock,Hard,,"Hard, Long (>6 min)"
+99,3 - Chest,In The Dark,3 Doors Down,144,6:08,Rock,Hard,,"Hard, Long (>6 min), Spicy"
 99,4 - Back,Winterburn,Andrew Rayel & Digital X Feat. Sylvia Tosun,80,6:11,EDM,,,Long (>6 min)
 99,5 - Triceps,Something in the Way You Move,Ellie Goulding,112,4:51,Pop,,,"Positive Vibes, Women of Pop, Valentine's Day"
 99,6 - Biceps,Emperor's New Clothes,Panic! At The Disco,99,4:16,Rock,,,"Emo, Halloween, Short (<4:30)"
@@ -455,7 +455,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 104,1 - Warmup,More Than You Know,Axwell/\Ingrosso,77,5:10,Pop,,,
 104,2 - Squats,Black Rose,BlasterJaxx feat. Jonathan Mendelsohn,136,6:10,EDM,,,"Halloween, Break-Up Songs, Beast Mode, Long (>6 min)"
 104,3 - Chest,Young And Menace,Fall Out Boy,110,5:34,Rock,,,"Emo, Beast Mode"
-104,4 - Back,Ain’t Giving Up (WiDE AWAKE Remix),Craig David & Sigala,102,5:15,EDM,,,"Valentine's Day, Positive Vibes"
+104,4 - Back,Ain't Giving Up (WiDE AWAKE Remix),Craig David & Sigala,102,5:15,EDM,,,"Valentine's Day, Positive Vibes"
 104,5 - Triceps,Touch,Little Mix,109,4:21,Pop,,,"Women of Pop, Valentine's Day, Short (<4:30)"
 104,6 - Biceps,Back Again,Flosstradamus & Mayhem feat. Waka Flocka Flame,108,5:14,Hip-Hop,,,
 104,7 - Lunges,Rise and Shine,Deorro,161,4:51,EDM,,,Summer
@@ -475,7 +475,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 106,1 - Warmup,Still The One,Kill The Buzz & Hardwell feat. Max Collins,76,5:06,Pop,,,Positive Vibes
 106,2 - Squats,I Am Here,P!nk,122,5:21,Pop,,,"P!nk, Women of Pop, Positive Vibes"
 106,3 - Chest,Little Thing Gone Wild,Black Rebel Motorcycle Club,126,5:30,Rock,,,Beast Mode
-106,4 - Back,Say Less,Dillon Francis feat. G-Eazy,130,5:39,EDM,Hard,,"Hard, Beast Mode"
+106,4 - Back,Say Less,Dillon Francis feat. G-Eazy,130,5:39,EDM,Hard,,"Hard, Beast Mode, Spicy"
 106,5 - Triceps,Tell Me You Love Me,Galantis & Throttle,117,4:59,Pop,,,Valentine's Day
 106,6 - Biceps,Walk On Water,Thirty Seconds To Mars,124,5:10,Rock,,,"Emo, Positive Vibes"
 106,7 - Lunges,Coco's Miracle (Club Mix),Fedde le Grand & Dannic vs Coco Star,268,6:05,EDM,Hard,,"Hard, Long (>6 min)"
@@ -485,7 +485,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 107,1 - Warmup,Lullaby,Sigala & Paloma Faith,86,5:13,Pop,,,
 107,2 - Squats,Dreamer (Matisse & Sadko Remix,Axwell/\Ingrosso,140,6:13,EDM,,,"Positive Vibes, Long (>6 min)"
 107,3 - Chest,Dangerous Night,Thirty Seconds To Mars,136,5:29,Rock,,,"Emo, Halloween"
-107,4 - Back,BOOM,Tiesto & Sevenn feat. Gucci Mane,102,5:38,Hip-Hop,,,
+107,4 - Back,BOOM,Tiesto & Sevenn feat. Gucci Mane,102,5:38,Hip-Hop,,,Spicy
 107,5 - Triceps,No Excuses,Meghan Trainor,132,4:58,Pop,,,"Women of Pop, Break-Up Songs"
 107,6 - Biceps,Church,Fall Out Boy,118,5:02,Rock,,,"Emo, Easy to Learn"
 107,7 - Lunges,Going Mad,Paces feat. CLYPSO & Raven Felix,214,5:41,EDM,Hard,,"Halloween, Hard"
@@ -505,13 +505,13 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 108,10 - Cooldown,Remind Me To Forget,Kygo & Miguel,0,3:42,Pop,,,"Break-Up Songs, Short (<4:30)"
 109,1 - Warmup,Jackie Chan,Tiesto & Dzeko Feat. Preme & Post Malone,92,5:38,EDM,,,
 109,2 - Squats,Natural,Imagine Dragons,146,6:25,Rock,Hard,,"Sing-Along, Hard, Long (>6 min)"
-109,3 - Chest,Satisfied,Galantis feat. Max,104,5:22,EDM,,,Sing-Along
+109,3 - Chest,Satisfied,Galantis feat. Max,104,5:22,EDM,,,"Sing-Along, Spicy"
 109,4 - Back,The Island Pt.1 (Dawn) [Skrillex Remix),Pendulum,114,5:48,EDM,,,Summer
 109,5 - Triceps,I Like It,Cardi B,144,5:08,Hip-Hop,Hard,,"Sing-Along, Hard"
 109,6 - Biceps,Shadowboxer,Good Charlotte,118,4:59,Rock,,,Emo
 109,7 - Lunges,The In Between,Elephante feat. Anjulie,176,5:40,EDM,,,Break-Up Songs
-109,8 - Shoulders,Blah Blah Blah,Armin Van Buuren,120,5:29,EDM,Hard,,Hard
-109,9 - Core,Complicated,Mura Masa & NAO,65,3:44,Pop,,,Short (<4:30)
+109,8 - Shoulders,Blah Blah Blah,Armin Van Buuren,120,5:29,EDM,Hard,,"Hard, Beast Mode"
+109,9 - Core,Complicated,Mura Masa & NAO,65,3:44,Pop,,,"Short (<4:30), Break-Up Songs"
 109,10 - Cooldown,Deep End,Daughtry,0,3:59,Rock,,,Short (<4:30)
 110,1 - Warmup,I Need,Wilkinson feat. Hayla,111,5:13,EDM,,,"Valentine's Day, Easy to Learn"
 110,2 - Squats,Wild Wild Son (Club Mix),Armin Van Buuren feat. Sam Martin,109,5:41,EDM,,,
@@ -521,7 +521,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 110,6 - Biceps,Machine,Imagine Dragons,149,5:12,Rock,Hard,,Hard
 110,7 - Lunges,Buscando,GTA & Jenn Morel,172,6:00,Latin,,,Long (>6 min)
 110,8 - Shoulders,Losing It,FISHER,122,5:42,EDM,,,
-110,9 - Core,Taki Taki,"DJ Snake feat. Selena Gomez, Ozuna & Cardi B",104,3:42,Latin,,,"Women of Pop, Short (<4:30)"
+110,9 - Core,Taki Taki,"DJ Snake feat. Selena Gomez, Ozuna & Cardi B",104,3:42,Latin,,,"Women of Pop, Short (<4:30), Sing-Along"
 110,10 - Cooldown,Want To,Dua Lipa,0,3:42,Pop,,,"Women of Pop, Short (<4:30)"
 110,9 - Core,"1, 2, 3",Liberty Woes,66,3:20,Hip-Hop,,,Short (<4:30)
 111,1 - Warmup,Speechless (Nicolas Haelg Remix),Robin Schulz feat. Erika Sirola,88,5:14,EDM,,,Valentine's Day
@@ -545,22 +545,22 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 112,9 - Core,No New Friends,"LSD feat Sia, Diplo & Labrinth",77,2:59,Pop,,,"Sing-Along, Short (<4:30)"
 112,10 - Cooldown,Miracle,Labrinth,0,3:55,Pop,,,Short (<4:30)
 113,1 - Warmup,When In Rome,Gattuso & Damon Sharpe,101,5:31,Pop,,,
-113,2 - Squats,It’s Gonna Be Alright (Netsky & t1r Remix),Jon Lemmon,126,5:25,EDM,,,
+113,2 - Squats,It's Gonna Be Alright (Netsky & t1r Remix),Jon Lemmon,126,5:25,EDM,,,Positive Vibes
 113,3 - Chest,Hope For The Underrated Youth,YUNGBLUD,118,5:08,Rock,,,Emo
-113,4 - Back,Don’t Kill My High (Squalzz Remix),Lost Kings feat. Wiz Khalifa & Social House,128,5:45,EDM,,,Sing-Along
+113,4 - Back,Don't Kill My High (Squalzz Remix),Lost Kings feat. Wiz Khalifa & Social House,128,5:45,EDM,,,Sing-Along
 113,5 - Triceps,Post Malone,Sam Feldt feat. RANI,220,5:40,Pop,,,
 113,6 - Biceps,Better As One,Toll Taken,118,4:48,Rock,,,
 113,7 - Lunges,When The Lights Go Down,DJ Snake,184,5:55,EDM,,,
 113,8 - Shoulders,It Goes Like,Afrojack,136,5:44,EDM,,Easy to Learn,Easy to Learn
-113,9 - Core,Mad Love,Mabel,60,2:54,Pop,,,"Valentine's Day, Short (<4:30)"
+113,9 - Core,Mad Love,Mabel,60,2:54,Pop,,,"Valentine's Day, Short (<4:30), Spicy"
 113,10 - Cooldown,The Greatest,SIX60,0,2:56,Pop,,,Short (<4:30)
 113,9 - Core,Take Me Home,Tamagotchii,60,2:54,EDM,,,Short (<4:30)
-114,1 - Warmup,This Groove (Codeko Remix),Oliver Heldens & LENNO,108,5:11,Pop,,,
+114,1 - Warmup,This Groove (Codeko Remix),Oliver Heldens & LENNO,108,5:11,Pop,,,Positive Vibes
 114,2 - Squats,Pin The Grenade,Blink-182,152,4:55,Rock,,,Emo
 114,3 - Chest,Wopbabalubop Bulapbub Boom,Kool Hertz,150,5:28,EDM,,,
 114,4 - Back,Your Gain,Swif7,122,5:02,EDM,,,
 114,5 - Triceps,Disco Inferno,50 Cent,102,5:36,Hip-Hop,,,Summer
-114,6 - Biceps,Like A Girl,Lizzo,170,4:59,Hip-Hop,,,"Women of Pop, Sing-Along"
+114,6 - Biceps,Like A Girl,Lizzo,170,4:59,Hip-Hop,,,"Women of Pop, Sing-Along, Positive Vibes"
 114,7 - Lunges,Lay It Down,Carmada feat. Georgi Kay,204,4:58,EDM,,,
 114,8 - Shoulders,Azumba,Head Over Heels,144,5:17,EDM,,,
 114,9 - Core,Dance Monkey,Tones and I,92,3:34,Pop,,,"Sing-Along, New Year's Eve, Short (<4:30)"
@@ -639,11 +639,11 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 121,10 - Cooldown,Moth To A Flame,Swedish House Mafia & The Weeknd,0,3:59,Pop,,,"Sing-Along, Short (<4:30)"
 122,1 - Warmup,Not Alone,Codeko & April Bender,123,4:55,EDM,,,
 122,2 - Squats,BADBOY,Fas Fash,108,4:58,EDM,,,
-122,3 - Chest,edamame,bbno$ & Rich Brian,95,5:06,Hip-Hop,,,"Beast Mode, Hard"
+122,3 - Chest,edamame,bbno$ & Rich Brian,95,5:06,Hip-Hop,,,"Beast Mode, Hard, Spicy"
 122,4 - Back,U & Me (Baauer Remix),alt-J,112,5:39,EDM,,,
 122,5 - Triceps,Dirty Sexy Money,Chilli Larder,104,4:31,Pop,,,
 122,6 - Biceps,HUMBLE (Skrillex Remix),Kendrick Lamar,104,3:59,Hip-Hop,,,"Beast Mode, Short (<4:30)"
-122,7 - Lunges,Holy Water,Galantis,176,4:35,Pop,,,Easy to Learn
+122,7 - Lunges,Holy Water,Galantis,176,4:35,Pop,,,"Easy to Learn, Spicy"
 122,8 - Shoulders,GUD VIBRATIONS,NGHTMRE & SLANDER,119,5:25,EDM,,,Positive Vibes
 122,9 - Core,Say Nothing,Flume feat. MAY-A,152,5:10,Pop,,,
 122,10 - Cooldown,Cool Again,Faraway Earthside,0,3:17,Pop,,,Short (<4:30)
@@ -653,7 +653,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 123,3 - Chest,Clap Snap,Icona Pop,136,5:33,Pop,,Easy to Learn,"Women of Pop, Positive Vibes, Easy to Learn"
 123,4 - Back,Flatline,Blanke feat. Calivania,118,5:26,EDM,,,
 123,5 - Triceps,Medicine,E-Jux,114,5:04,Pop,,,
-123,6 - Biceps,Bad Girls,M.I.A,93,5:15,Hip-Hop,Hard,,Hard
+123,6 - Biceps,Bad Girls,M.I.A,93,5:15,Hip-Hop,Hard,,"Hard, Spicy"
 123,7 - Lunges,The Way We Do This,Ape Drums feat. Busy Signal & Major,164,5:51,EDM,,,Beast Mode
 123,8 - Shoulders,Take U There,Jack U feat. Kiesza,100,4:57,EDM,,,
 123,9 - Core,Money Money,Molly Wolfes,72,4:02,Pop,,,Short (<4:30)
@@ -663,17 +663,17 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 124,2 - Squats,We've Got Us,Mecco,136,5:40,Pop,,,
 124,3 - Chest,Lonely Boy,The Black Keys,103,4:53,Rock,,,"Hard, Break-Up Songs"
 124,4 - Back,Won't Make A Sound,ARMNHMR & NURKO feat. Micah Martin,88,6:37,Rock,,,Long (>6 min)
-124,5 - Triceps,2 Be Loved (Am I Ready),Lizzo,106,5:17,Hip-Hop,,Easy to Learn,"Women of Pop, Valentine's Day, Easy to Learn"
+124,5 - Triceps,2 Be Loved (Am I Ready),Lizzo,106,5:17,Hip-Hop,,Easy to Learn,"Women of Pop, Valentine's Day, Sing-Along, Easy to Learn"
 124,6 - Biceps,Fancy (GTA Remix),Iggy Azalea feat. Charli XCX,91,4:17,Hip-Hop,,,Short (<4:30)
 124,7 - Lunges,Voodoo (Tiesto Remix),Badshah & J Balvin,108,4:53,Latin,,Easy to Learn,"Halloween, Easy to Learn, Beast Mode"
 124,8 - Shoulders,Hunnid,Chino Casino,90,4:42,Hip-Hop,,,
 124,9 - Core,Now Is When I Need You,Goldfield,111,5:12,Pop,,,
 124,10 - Cooldown,LOL,Mabel,0,3:37,Pop,,,Short (<4:30)
-United,1 - Warmup,Better Off Without You,Becky Hill feat. Shift K3Y,98,5:19,Pop,,,"Women of Pop, Break-Up Songs"
+United,1 - Warmup,Better Off Without You,Becky Hill feat. Shift K3Y,98,5:19,Pop,,,"Women of Pop, Break-Up Songs, Positive Vibes"
 United,2 - Squats,Oh My My,Summer Kennedy,124,5:35,Pop,,,"Women of Pop, Positive Vibes"
 United,3 - Chest,Sway With Me,Ivory Stone,120,5:09,Hip-Hop,,,
 United,4 - Back,Pray,Egzod feat. RIELL,90,5:16,EDM,,Easy to Learn,Easy to Learn
-United,5 - Triceps,Stupid Love,Lady Gaga,94,5:18,Pop,,,"Women of Pop, Valentine's Day"
+United,5 - Triceps,Stupid Love,Lady Gaga,94,5:18,Pop,,,"Women of Pop, Valentine's Day, Break-Up Songs"
 United,6 - Biceps,Billionaire,FLOYD WONDER,141,5:03,Hip-Hop,,,Easy to Learn
 United,7 - Lunges,Gold,Koven,144,5:06,Pop,,Easy to Learn,"Break-Up Songs, Easy to Learn"
 United,8 - Shoulders,Break It Down,Big Dope P,112,5:01,EDM,,,
@@ -682,7 +682,7 @@ United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Posi
 125,1 - Warmup,My Feelings,Riggi & Piros x VENIICE with RANI,,4:54,Pop,,,
 125,2 - Squats,Big City Life,Luude & Mattafix,,5:04,Pop,,,
 125,3 - Chest,Pump It Louder,Tiesto & Black Eyed Peas,,5:22,EDM,,Easy to Learn,"Sing-Along, New Year's Eve, Easy to Learn"
-125,4 - Back,My Feet Don’t Work No More,Splasher,,5:50,Rock,,,
+125,4 - Back,My Feet Don't Work No More,Splasher,,5:50,Rock,,,
 125,5 - Triceps,Worth It,Fifth Harmony feat. Kid Ink,,5:37,Pop,,Easy to Learn,"Women of Pop, Easy to Learn"
 125,6 - Biceps,Drop It,K3rk,,5:17,Pop,,,
 125,7 - Lunges,Goin Up,Valentino Khan,,5:19,Pop,,,
@@ -713,8 +713,8 @@ United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Posi
 128,2 - Squats,Dynamite (Dr Phunk Remix),"Nicky Romero, Mike Williams & Amba Shepherd",,6:02,EDM,,,"Beast Mode, Long (>6 min)"
 128,3 - Chest,God is a Dancer (Cheyenne Giles & Knock2 Remix),Tiesto & Mabel,,5:19,EDM,,,Beast Mode
 128,4 - Back,Paranoid,Lux Holm & Glaceo,,4:58,Pop,Hard,,Hard
-128,5 - Triceps,Eat Your Man,Khansas,,6:21,Hip-Hop,,,Long (>6 min)
-128,6 - Biceps,Jacare,Hottica,,4:42,Latin,,,Easy to Learn
+128,5 - Triceps,Eat Your Man,"Khansas (original: Nelly Furtado, Dom Dolla)",,6:21,Hip-Hop,,,"Long (>6 min), Spicy"
+128,6 - Biceps,Jacare,Hottica (original: Sofi Tukker),,4:42,Latin,,,Easy to Learn
 128,7 - Lunges,How To Love (Boombox Cartel Remix),Cash Cash feat. Sofia Reyes,,5:23,EDM,,,Valentine's Day
 128,8 - Shoulders,Let You Go,Pauline Herr,,4:48,Pop,,,
 128,9 - Core,If Only I,Loud Luxury x Two Friends feat. Bebe Rexha,,4:11,Pop,,,"Women of Pop, Short (<4:30)"
@@ -724,7 +724,7 @@ United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Posi
 129,3 - Chest,Bun Up the Dance,Dillon Francis & Skrillex,,5:52,EDM,,,
 129,4 - Back,Whole Heart (BKAYE Remix),Gryffin & Bipolar Sunshine,,5:12,EDM,,,"Valentine's Day, Positive Vibes"
 129,5 - Triceps,Strictly 4 Tha,Moss & Example,,5:28,Hip-Hop,,,
-129,6 - Biceps,Rude Boy,Rihanna,,5:07,Hip-Hop,,,"Women of Pop, Sing-Along"
+129,6 - Biceps,Rude Boy,Rihanna,,5:07,Hip-Hop,,,"Spicy, Women of Pop, Sing-Along"
 129,7 - Lunges,Free,"Dillon Francis, Alesso & Clementine Douglas",,4:51,EDM,,,
 129,8 - Shoulders,Asking (Tiesto Remix),Sonny Fodera & MK feat. Clementine Douglas,,5:42,EDM,,,Beast Mode
 129,9 - Core,MANIAC,Stray Kids,,4:56,K-Pop,,,Sing-Along
@@ -733,7 +733,7 @@ United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Posi
 130,2 - Squats,Mr. Brightside,Arcando & Livingston Crain,,6:02,Rock,,,"Sing-Along, Long (>6 min)"
 130,3 - Chest,BOTH (David Guetta & Seth Hills Remix),Tiesto,,5:25,EDM,,Easy to Learn,"Beast Mode, Easy to Learn"
 130,4 - Back,Escape (Dan Aux Remix),Nice Enough,,5:08,EDM,,,
-130,5 - Triceps,Beggin',Chris Lake & Aluna,,6:01,Hip-Hop,,,Long (>6 min)
+130,5 - Triceps,Beggin',Chris Lake & Aluna,,6:01,Hip-Hop,,,"Spicy, Long (>6 min)"
 130,6 - Biceps,MEGAVERSE,Stray Kids,,4:48,K-Pop,,,
 130,7 - Lunges,SPEAK up! (ISOxo Remix),Knock2,,5:12,EDM,Hard,,Hard
 130,8 - Shoulders,Where You Are,Yesssss,,5:48,Pop,,,
@@ -748,7 +748,7 @@ United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Posi
 131,7 - Lunges,Humo,"Dillon Francis, Good Times Ahead",,5:34,Latin,,,
 131,8 - Shoulders,Traces Of You (Luca Lush Remix),Nytrix,,5:28,EDM,,,Break-Up Songs
 131,9 - Core,Swish Swish (Valentino Khan Remix),Katy Perry feat. Nicki Minaj,,5:25,Pop,,,Women of Pop
-131,10 - Cooldown,Espresso,Sabrina Carpenter,,4:24,Pop,,,"Women of Pop, Sing-Along, Short (<4:30)"
+131,10 - Cooldown,Espresso,Sabrina Carpenter,,4:24,Pop,,,"Spicy, Women of Pop, Sing-Along, Short (<4:30)"
 132,1 - Warmup,Shiver,Cleanhitterz,,5:48,EDM,,,
 132,2 - Squats,Convivium,Gabry Ponte & T-78 Trish Belt,,6:22,EDM,,Easy to Learn,"Beast Mode, Easy to Learn, Long (>6 min)"
 132,3 - Chest,Delilah (pull me out of this),Fred again..,,6:13,EDM,,,"Easy to Learn, Long (>6 min)"
@@ -764,7 +764,7 @@ United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Posi
 133,3 - Chest,Kill It,aespa,,5:20,K-Pop,,,Beast Mode
 133,4 - Back,SMACK TALK,"ISOxo, Knock2, RL Grime, ISOKNOCK",,5:25,EDM,,,Beast Mode
 133,5 - Triceps,Its ok I'm ok,Tate McRae,,5:00,Pop,,Easy to Learn,"Women of Pop, Break-Up Songs, Easy to Learn"
-133,6 - Biceps,HOT TO GO!,Chappell Roan,,5:00,Pop,,,"Women of Pop, Sing-Along, Valentine's Day, Summer"
+133,6 - Biceps,HOT TO GO!,Chappell Roan,,5:00,Pop,,,"Women of Pop, Spicy, Sing-Along, Valentine's Day, Summer"
 133,7 - Lunges,My My My,Promise Land x Skullwell,,5:17,EDM,Hard,,"Positive Vibes, Hard"
 133,8 - Shoulders,In My Mind (Extended Mix),"Gabry Ponte, Giuseppe Ottaviani feat. Malou",,5:55,EDM,,,
 133,9 - Core,Candela,Sunlay,,5:00,Latin,,,
@@ -783,7 +783,7 @@ United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Posi
 135,2 - Squats,Sound of You,"Pendulum, Armin van Buuren & Rob Swire",,5:58,EDM,,,"Easy to Learn, Valentine's Day"
 135,3 - Chest,Gnarly,KATSEYE,,4:38,K-Pop,,,Easy to Learn
 135,4 - Back,STACKS,TRICKSTAR & Dirty Audio,,4:57,EDM,,,
-135,5 - Triceps,Super Graphic Ultra Modern Girl,Chappell Roan,,5:01,Pop,,,"Valentine's Day, Women of Pop, Sing-Along"
+135,5 - Triceps,Super Graphic Ultra Modern Girl,Chappell Roan,,5:01,Pop,,,"Valentine's Day, Women of Pop, Sing-Along, Spicy"
 135,6 - Biceps,R U SLEEPING,Sigma feat. Dizzee Rascal & Coco,,4:53,EDM,,,
 135,7 - Lunges,Mind Still,Sonny Fodera feat. blythe,,5:00,EDM,,,Easy to Learn
 135,8 - Shoulders,Lift Off,Hardwell,,6:18,EDM,,,Long (>6 min)

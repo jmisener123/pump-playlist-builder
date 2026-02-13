@@ -20,6 +20,9 @@ export function TrackByTrackBuilder() {
     state.instructorTags.length > 0 ||
     state.selectedGenres.length > 0
 
+  // Only show themed indicators if filters are active AND playlist has tracks at least one track
+  const showThemedIndicators = hasThemeFilters && playlist.some(t => t !== null)
+
   // Get tracks for selected position
   const getTracksForSelectedPosition = () => {
     if (selectedPosition === null) return []
@@ -80,7 +83,7 @@ export function TrackByTrackBuilder() {
             <div className="flex flex-wrap gap-1">
               {TRACK_TYPES.map((trackType, index) => {
                 const isFilled = playlist[index] !== null
-                const themedCount = hasThemeFilters ? getThemedTracksForSlot(index).length : 0
+                const themedCount = showThemedIndicators ? getThemedTracksForSlot(index).length : 0
 
                 return (
                   <button

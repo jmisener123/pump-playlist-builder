@@ -20,6 +20,9 @@ export function PlaylistBuilder({ mode = 'random' }) {
     state.instructorTags.length > 0 ||
     state.selectedGenres.length > 0
 
+  // Only show themed options if filters are active AND playlist has tracks
+  const showThemedOptions = hasThemeFilters && hasAnyTracks
+
   // Get emoji for the active theme
   const getThemeEmoji = () => {
     // Prioritize theme tags
@@ -82,7 +85,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
 
   // Get themed options for a position (excluding current track)
   const getThemedOptionsForSlot = (index) => {
-    if (!hasThemeFilters) return []
+    if (!showThemedOptions) return []
     const themedTracks = getThemedTracksForSlot(index)
     const currentTrack = playlist[index]
     // Exclude current track from options
@@ -149,7 +152,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
                   setTrack(index, themedOptions[randomIndex])
                 }
               }}
-              hasThemeFilters={hasThemeFilters}
+              hasThemeFilters={showThemedOptions}
               activeThemeText={getActiveThemeText()}
             />
           )
