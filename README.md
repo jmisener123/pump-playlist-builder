@@ -8,12 +8,14 @@ This tool is not affiliated with, endorsed by, or officially connected to Les Mi
 
 Questions/feedback? [Click here to contact me](https://jessicamisener.com/contact)
 
-## What instructors are saying:
+## What real instructors are saying:
 - "GAME CHANGER! This should be a part of Initial Training"
 - "This is fantastic! So clever!"
 - "WOW!! So easy to use and so many forgotten tracks!"
 - "Wishing I had it years ago!"
 - "This is GOLD!"
+- "Thank you so much for making our lives easier!"
+- "This tool is invaluable to me!"
 - "This is so fun! And a great way to force me to not constantly choose my favourite tracks!"
 
 ## Features
