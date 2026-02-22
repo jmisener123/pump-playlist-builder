@@ -68,6 +68,21 @@ export const THEMES = {
     name: "Spicy",
     emoji: "🌶️",
     tags: ["Spicy"]
+  },
+  spring: {
+    name: "Spring",
+    emoji: "🌷",
+    tags: ["Spring"]
+  },
+  winter: {
+    name: "Winter",
+    emoji: "❄️",
+    tags: ["Winter"]
+  },
+  pride: {
+    name: "Pride",
+    emoji: "🌈",
+    tags: ["Pride"]
   }
 }
 
@@ -80,10 +95,13 @@ export const THEME_TAGS = [
   "New Year's Eve",
   "P!nk",
   "Positive Vibes",
+  "Pride",
   "Sing-Along",
   "Spicy",
+  "Spring",
   "Summer",
   "Valentine's Day",
+  "Winter",
   "Women of Pop"
 ]
 
