@@ -153,7 +153,7 @@ export function TrackSlot({
             <div className="mt-2 pt-2 border-t border-purple-200 dark:border-purple-700 bg-purple-50 dark:bg-purple-900/20 -mx-3 -mb-2 px-3 pb-2 rounded-b-lg">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
-                  👻 Swap with themed track ({themedOptions.length} options)
+                  👻 Choose a different themed track for {trackType} ({themedOptions.length} options)
                 </span>
                 <button
                   onClick={() => setShowThemedDropdown(false)}
