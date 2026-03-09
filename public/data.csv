@@ -4,7 +4,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 60,3 - Chest,Have A Nice Day,Bon Jovi,,5:00,Rock,,,"Sing-Along, Spring"
 60,4 - Back,Africa,E-Type,,5:05,Pop,,,
 60,5 - Triceps,Who Knew,P!nk,,4:26,Pop,,,"P!nk, Women of Pop, Short (<4:30)"
-60,6 - Biceps,Flaunt It,TV Rock feat. Seany B,,4:07,EDM,,,Short (<4:30)
+60,6 - Biceps,Flaunt It,TV Rock feat. Seany B,,4:07,EDM,,,"Spicy, Short (<4:30)"
 60,7 - Lunges,Angel,b*p*m,,4:52,Pop,,,
 60,8 - Shoulders,One Night In Bangkok,Vinylshakerz,,4:09,EDM,,,Short (<4:30)
 60,9 - Core,Hips Don't Lie,Shakira feat. Wyclef Jean,,4:16,Latin,,,"Sing-Along, Short (<4:30)"
@@ -226,7 +226,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 82,5 - Triceps,Bad Case Of Loving You,Secret Appendix (original: Robert Palmer),,4:32,Rock,,,Valentine's Day
 82,6 - Biceps,Bottoms Up,Nickelback,,3:34,Rock,,,Short (<4:30)
 82,7 - Lunges,Ecuador (Bad Behaviour Remix),Sash!,,5:25,Pop,,,
-82,8 - Shoulders,Be Cool 2011 (DJ From Mars Club Remix),Paffendorf,,5:42,Pop,,,Winter
+82,8 - Shoulders,Be Cool 2011 (DJ From Mars Club Remix),Paffendorf,,5:42,Pop,,,"Winter, Spicy"
 82,9 - Core,Feel So Close,Calvin Harris,,3:30,EDM,,,"Short (<4:30), Valentine's Day, Positive Vibes"
 82,10 - Cooldown,Time To Say Goodbye,Il Divo,,4:45,Pop,,,
 83,1 - Warmup,Set It Off (Wings & Rider Remix Edit),Pimp Dawg,,5:11,Pop,,,
@@ -446,7 +446,7 @@ Release,Track No#,Song Title,Artist,Rep Count,Duration,Genre,Hard?,Easy to Learn
 103,2 - Squats,Here Comes the Sun,Will K feat. Sean Declase,128,5:24,EDM,,,"Summer, Spring"
 103,3 - Chest,Believer,Imagine Dragons,118,5:13,Rock,,,"Sing-Along, Positive Vibes"
 103,4 - Back,I Need You,Armin Van Buuren feat. Olaf Blackwood,98,6:19,EDM,,,Long (>6 min)
-103,5 - Triceps,Come Get It Bae,Pharrell Williams,80,4:41,Hip-Hop,Hard,,Hard
+103,5 - Triceps,Come Get It Bae,Pharrell Williams,80,4:41,Hip-Hop,Hard,,"Hard, Spicy"
 103,6 - Biceps,Let Me Love You,DJ Snake & Justin Bieber,89,4:20,Pop,,,"Sing-Along, Valentine's Day, Short (<4:30)"
 103,7 - Lunges,ILYSM,Steve Aoki & Autoerotique,188,6:33,EDM,Hard,,"Hard, Long (>6 min), Valentine's Day"
 103,8 - Shoulders,Paris,The Chainsmokers,110,5:35,Pop,,Easy to Learn,"Valentine's Day, Easy to Learn"
@@ -678,7 +678,7 @@ United,6 - Biceps,Billionaire,FLOYD WONDER,141,5:03,Hip-Hop,,,Easy to Learn
 United,7 - Lunges,Gold,Koven,144,5:06,Pop,,Easy to Learn,"Break-Up Songs, Easy to Learn"
 United,8 - Shoulders,Break It Down,Big Dope P,112,5:01,EDM,,,
 United,9 - Core,Maldad,Steve Aoki & Maluma,46,2:52,Pop,,,"Easy to Learn, Short (<4:30)"
-United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Positive Vibes, Short (<4:30)"
+United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Pride, Valentine's Day, Positive Vibes, Short (<4:30)"
 125,1 - Warmup,My Feelings,Riggi & Piros x VENIICE with RANI,,4:54,Pop,,,
 125,2 - Squats,Big City Life,Luude & Mattafix,,5:04,Pop,,,
 125,3 - Chest,Pump It Louder,Tiesto & Black Eyed Peas,,5:22,EDM,,Easy to Learn,"Sing-Along, New Year's Eve, Easy to Learn"
@@ -763,7 +763,7 @@ United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Posi
 133,2 - Squats,Sun Is Shining,Funkstar De Luxe x Fred V,,5:11,EDM,,,"Summer, Easy to Learn"
 133,3 - Chest,Kill It,aespa,,5:20,K-Pop,,,Beast Mode
 133,4 - Back,SMACK TALK,"ISOxo, Knock2, RL Grime, ISOKNOCK",,5:25,EDM,,,Beast Mode
-133,5 - Triceps,Its ok I'm ok,Tate McRae,,5:00,Pop,,Easy to Learn,"Women of Pop, Break-Up Songs, Easy to Learn"
+133,5 - Triceps,Its ok I'm ok,Tate McRae,,5:00,Pop,,Easy to Learn,"Positive Vibes, Women of Pop, Break-Up Songs, Easy to Learn"
 133,6 - Biceps,HOT TO GO!,Chappell Roan,,5:00,Pop,,,"Women of Pop, Pride, Spicy, Sing-Along, Valentine's Day, Summer"
 133,7 - Lunges,My My My,Promise Land x Skullwell,,5:17,EDM,Hard,,"Positive Vibes, Hard"
 133,8 - Shoulders,In My Mind (Extended Mix),"Gabry Ponte, Giuseppe Ottaviani feat. Malou",,5:55,EDM,,,
@@ -793,7 +793,7 @@ United,10 - Cooldown,Sanctuary,Welshly Arms,0,3:52,Rock,,,"Valentine's Day, Posi
 136,2 - Squats,BODY RIGHT,SPLNTER feat. Rache,,6:10,EDM,,,Long (>6 min)
 136,3 - Chest,Enter Sandman (Remastered),Metallica,,5:25,Rock,,,"Beast Mode, Halloween"
 136,4 - Back,True Colours,The Tammi,,6:20,EDM,,,Pride
-136,5 - Triceps,Garden of Eden,Lady Gaga,,5:27,Rock,,,"Spicy, Women of Pop, Sing-Along"
+136,5 - Triceps,Garden of Eden,Lady Gaga,,5:27,Rock,,,"Spring, Spicy, Women of Pop, Sing-Along"
 136,6 - Biceps,Rethink (Remix),Blendwise,,4:32,EDM,,,
 136,7 - Lunges,Carnival,Cheat Codes & Ownboss,,5:03,Latin,,,"Summer, New Year's Eve, "
 136,8 - Shoulders,Never Let Go,Domeno feat. Kayla Diamond,,6:13,EDM,,,"Valentine's Day, Positive Vibes, Long (>6 min)"
