@@ -74,15 +74,17 @@ function processRawTracks(rawTracks) {
 }
 
 /**
- * Load and process playlist data from CSV file (async)
+ * Load and process playlist data from base64-encoded file (async)
  */
 export async function loadPlaylistDataAsync() {
   try {
-    const response = await fetch('/data.csv')
+    const response = await fetch('/playlist-data.txt')
     if (!response.ok) {
-      throw new Error(`Failed to fetch CSV: ${response.status}`)
+      throw new Error(`Failed to fetch data: ${response.status}`)
     }
-    const csvString = await response.text()
+    const base64String = await response.text()
+    // Decode base64 to CSV string
+    const csvString = atob(base64String.trim())
     const rawTracks = parseCSV(csvString)
     return processRawTracks(rawTracks)
   } catch (error) {

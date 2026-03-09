@@ -2,6 +2,7 @@
 BPdata_89_Current.csv
 encoded.txt
 playlist-data-base64.txt
+public/data.csv
 
 # Streamlit
 .streamlit/secrets.toml
