@@ -31,7 +31,7 @@ export function CustomBuilder() {
   return (
     <div className="grid md:grid-cols-2 gap-6">
       {/* Left Column: Search */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-md p-6">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
           🔍 Search & Browse
         </h3>
@@ -72,7 +72,7 @@ export function CustomBuilder() {
                         {results.map(track => (
                           <div
                             key={`${track.Release}_${track['Song Title']}`}
-                            className="playlist-card rounded-lg border-l-4 border-primary p-3 text-sm"
+                            className="playlist-card rounded-md border-l-4 border-primary p-3 text-sm"
                           >
                             <div className="flex justify-between items-start gap-2">
                               <div className="flex-1 min-w-0">
@@ -129,7 +129,7 @@ export function CustomBuilder() {
       </div>
 
       {/* Right Column: Playlist Builder */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-md p-6">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
           🛠️ Build Your Custom Playlist
         </h3>

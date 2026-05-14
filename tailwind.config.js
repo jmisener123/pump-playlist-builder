@@ -10,11 +10,11 @@ export default {
       colors: {
         primary: '#667eea',
         secondary: '#4ecdc4',
-        accent: '#ff6b6b',
+        accent: '#f97316',
       },
       backgroundImage: {
         'gradient-header': 'linear-gradient(135deg, #667eea, #4ecdc4)',
-        'gradient-step1': 'linear-gradient(135deg, #ffecd2, #ff6b6b)',
+        'gradient-step1': 'linear-gradient(135deg, #dcfce7, #16a34a)',
       },
     },
   },

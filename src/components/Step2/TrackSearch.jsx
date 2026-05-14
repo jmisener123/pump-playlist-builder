@@ -60,7 +60,7 @@ export function TrackSearch({ position, trackType, onSelect, onClose, browseMode
             displayTracks.map((track) => (
               <div
                 key={`${track.Release}_${track['Song Title']}`}
-                className="playlist-card rounded-lg border-l-4 border-primary p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="playlist-card rounded-md border-l-4 border-primary p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 onClick={() => handleSelect(track)}
               >
                 <div className="flex justify-between items-start gap-2">

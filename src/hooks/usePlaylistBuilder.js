@@ -44,6 +44,7 @@ export function usePlaylistBuilder() {
   // Clear entire playlist
   const clearPlaylist = () => {
     actions.setPlaylist(Array(10).fill(null))
+    actions.setThemeFilters({ themeTags: [], instructorTags: [], selectedGenres: [] })
   }
 
   // Randomize a single track (using current filters)

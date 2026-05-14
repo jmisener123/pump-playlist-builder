@@ -2,15 +2,16 @@ import React, { useState } from 'react'
 import { usePlaylist } from '../../context/PlaylistContext'
 import { usePlaylistBuilder } from '../../hooks/usePlaylistBuilder'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
+import { Button } from '../ui/Button'
 import { TrackSlot, EmptyTrackMessage } from './TrackSlot'
 import { TotalDuration } from './TotalDuration'
 import { TrackSearch } from './TrackSearch'
 import { PlaylistExport } from './PlaylistExport'
 import { TRACK_TYPES, TAG_EMOJIS } from '../../utils/trackUtils'
 
-export function PlaylistBuilder({ mode = 'random' }) {
+export function PlaylistBuilder({ mode = 'random', showRandomAction = false }) {
   const { state } = usePlaylist()
-  const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, hasAnyTracks } = usePlaylistBuilder()
+  const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, generateRandom, hasAnyTracks } = usePlaylistBuilder()
   const { getTracksForSlot, getThemedTracksForSlot } = usePlaylistData()
   const [searchPosition, setSearchPosition] = useState(null)
   const [browseMode, setBrowseMode] = useState(false)
@@ -95,15 +96,14 @@ export function PlaylistBuilder({ mode = 'random' }) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/20 dark:to-cyan-900/20 border border-teal-200 dark:border-teal-800 rounded-xl p-3 md:p-4">
+    <div className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-md p-3 md:p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="text-xl">📋</span>
           <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
             Your Playlist
           </h3>
           {hasThemeFilters && (
-            <span className="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full">
+            <span className="text-xs bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 px-2 py-0.5 rounded-full">
               {getThemeEmoji()} {getActiveThemeText()}
             </span>
           )}
@@ -114,14 +114,22 @@ export function PlaylistBuilder({ mode = 'random' }) {
             className="text-xs text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
             title="Clear playlist and start over"
           >
-            🗑️ Clear All
+            Clear All
           </button>
         )}
       </div>
 
-      {!hasAnyTracks && (
+      {showRandomAction && (
+        <div className="mb-3">
+          <Button variant="primary" onClick={generateRandom} className="w-full">
+            Fill All Randomly
+          </Button>
+        </div>
+      )}
+
+      {!hasAnyTracks && !showRandomAction && (
         <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-          <p className="text-sm">Build track-by-track below. Use the Generate tab for a one-click full playlist.</p>
+          <p className="text-sm">Build track-by-track below, or use the Themes tab to generate a full playlist.</p>
         </div>
       )}
 
@@ -153,6 +161,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
                 }
               }}
               hasThemeFilters={showThemedOptions}
+              activeFilterTags={[...state.themeTags, ...state.instructorTags]}
               activeThemeText={getActiveThemeText()}
             />
           )

@@ -43,7 +43,7 @@ export function TrackByTrackBuilder() {
   const emptySlots = playlist.filter(t => t === null).length
 
   return (
-    <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+    <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800 rounded-md p-4">
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
@@ -100,7 +100,7 @@ export function TrackByTrackBuilder() {
                     {index + 1}. {trackType.split(' - ')[1]}
                     {isFilled && ' ✓'}
                     {themedCount > 0 && !isFilled && (
-                      <span className="ml-1 text-purple-600 dark:text-purple-400">👻</span>
+                      <span className="ml-1 text-rose-600 dark:text-rose-400">👻</span>
                     )}
                   </button>
                 )
@@ -117,12 +117,12 @@ export function TrackByTrackBuilder() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder={`Search ${TRACK_TYPES[selectedPosition].split(' - ')[1]} tracks...`}
-                  className="w-full px-3 py-2 text-sm border border-amber-300 dark:border-amber-600 rounded-lg bg-white dark:bg-gray-800"
+                  className="w-full px-3 py-2 text-sm border border-amber-300 dark:border-amber-600 rounded-md bg-white dark:bg-gray-800"
                 />
               </div>
 
               {/* Track List */}
-              <div className="max-h-64 overflow-y-auto space-y-1 bg-white/50 dark:bg-gray-800/50 rounded-lg p-2">
+              <div className="max-h-64 overflow-y-auto space-y-1 bg-white/50 dark:bg-gray-800/50 rounded-md p-2">
                 {availableTracks.length > 0 ? (
                   <>
                     <p className="text-xs text-gray-500 mb-2">
@@ -145,7 +145,7 @@ export function TrackByTrackBuilder() {
                           }}
                           className={`p-2 rounded cursor-pointer transition-colors
                             ${isThemed
-                              ? 'bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 border-l-2 border-purple-400'
+                              ? 'bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 border-l-2 border-rose-400'
                               : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                             }`}
                         >

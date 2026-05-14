@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { usePlaylist } from '../../context/PlaylistContext'
 import { usePlaylistBuilder } from '../../hooks/usePlaylistBuilder'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
@@ -10,9 +10,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
   const { state, actions } = usePlaylist()
   const { generateRandom, generateThemed, hasAnyTracks } = usePlaylistBuilder()
   const { availableTags, genres } = usePlaylistData()
-  const [mobileTab, setMobileTab] = useState('random') // 'random' | 'theme'
 
-  // Filter theme and instructor tags to only show those that exist in the data
   const availableThemeTags = THEME_TAGS.filter(tag => availableTags.includes(tag))
   const availableInstructorTags = INSTRUCTOR_TAGS.filter(tag => availableTags.includes(tag))
 
@@ -41,184 +39,104 @@ export function QuickGenerate({ onPlaylistGenerated }) {
   }
 
   const clearAll = () => {
-    actions.setThemeFilters({
-      themeTags: [],
-      instructorTags: [],
-      selectedGenres: []
-    })
+    actions.setThemeFilters({ themeTags: [], instructorTags: [], selectedGenres: [] })
   }
 
   const hasFilters = state.themeTags.length > 0 ||
     state.instructorTags.length > 0 ||
     state.selectedGenres.length > 0
 
-  const filterCount = state.themeTags.length + state.instructorTags.length + state.selectedGenres.length
+  const pillBase = 'px-3 py-1 rounded-full text-sm font-medium transition-colors'
+  const pillUnselected = 'bg-white/80 text-gray-700 hover:bg-white dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
 
-  // Random content section
   const RandomSection = () => (
     <div>
       <Button variant="primary" onClick={() => {
         generateRandom()
         if (onPlaylistGenerated) onPlaylistGenerated()
       }} className="w-full">
-        {hasAnyTracks ? '🔄 Regenerate Random' : '🎲 One-Click Playlist (Random)'}
+        Fill All Randomly
       </Button>
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-        Fill all 10 tracks instantly using any songs from your selected releases.
-      </p>
     </div>
   )
 
-  // Theme content section
   const ThemeSection = () => (
     <div>
-      {/* Theme Tags */}
       <div className="mb-3">
-        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">
-          Themes
-        </label>
-        <div className="flex flex-wrap gap-1">
+        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">Themes</label>
+        <div className="flex flex-wrap gap-1.5">
           {availableThemeTags.map(tag => (
-            <button
-              key={tag}
-              onClick={(e) => toggleThemeTag(tag, e)}
-              className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors
-                ${state.themeTags.includes(tag)
-                  ? 'bg-primary text-white'
-                  : 'bg-white/70 text-gray-700 hover:bg-white dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                }`}
-            >
+            <button key={tag} onClick={(e) => toggleThemeTag(tag, e)}
+              className={`${pillBase} ${state.themeTags.includes(tag) ? 'bg-primary text-white' : pillUnselected}`}>
               {TAG_EMOJIS[tag] || ''} {tag}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Instructor Tags */}
       <div className="mb-3">
-        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">
-          Difficulty & Length
-        </label>
-        <div className="flex flex-wrap gap-1">
+        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">Difficulty & Length</label>
+        <div className="flex flex-wrap gap-1.5">
           {availableInstructorTags.map(tag => (
-            <button
-              key={tag}
-              onClick={(e) => toggleInstructorTag(tag, e)}
-              className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors
-                ${state.instructorTags.includes(tag)
-                  ? 'bg-primary text-white'
-                  : 'bg-white/70 text-gray-700 hover:bg-white dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                }`}
-            >
+            <button key={tag} onClick={(e) => toggleInstructorTag(tag, e)}
+              className={`${pillBase} ${state.instructorTags.includes(tag) ? 'bg-primary text-white' : pillUnselected}`}>
               {TAG_EMOJIS[tag] || ''} {getTagDisplayName(tag)}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Genres */}
       <div className="mb-3">
-        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">
-          Genres
-        </label>
-        <div className="flex flex-wrap gap-1">
+        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">Genres</label>
+        <div className="flex flex-wrap gap-1.5">
           {genres.map(genre => (
-            <button
-              key={genre}
-              onClick={(e) => toggleGenre(genre, e)}
-              className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors
-                ${state.selectedGenres.includes(genre)
-                  ? 'bg-secondary text-white'
-                  : 'bg-white/70 text-gray-700 hover:bg-white dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                }`}
-            >
+            <button key={genre} onClick={(e) => toggleGenre(genre, e)}
+              className={`${pillBase} ${state.selectedGenres.includes(genre) ? 'bg-secondary text-white' : pillUnselected}`}>
               {genre}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Themed Generate Button */}
       <div className="flex gap-2">
-        <Button
-          variant="secondary"
-          onClick={() => {
-            generateThemed()
-            if (onPlaylistGenerated) onPlaylistGenerated()
-          }}
-          className="flex-1"
-        >
-          👻 Create Themed Playlist
+        <Button variant="primary" onClick={() => {
+          generateThemed()
+          if (onPlaylistGenerated) onPlaylistGenerated()
+        }} className="flex-1">
+          Apply Theme & Fill
         </Button>
         {hasFilters && (
-          <Button variant="ghost" onClick={clearAll} className="text-xs px-2">
-            Clear
-          </Button>
+          <Button variant="ghost" onClick={clearAll} className="text-xs px-2">Clear</Button>
         )}
       </div>
       {!hasFilters && (
-        <p className="text-xs text-gray-400 mt-1 text-center">
-          Select at least one filter above
-        </p>
+        <p className="text-xs text-gray-400 mt-1 text-center">Select at least one filter above</p>
       )}
     </div>
   )
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-4">
+    <div className="bg-gradient-to-r from-blue-50 via-sky-100 to-blue-100 dark:from-blue-900/30 dark:via-sky-900/30 dark:to-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md p-4">
 
-      {/* Mobile: Tabs for Random vs Theme */}
+      {/* Mobile: Themes only (Random button lives in Playlist tab) */}
       <div className="lg:hidden">
-        <div className="flex border-b border-purple-200 dark:border-purple-700 mb-4">
-          <button
-            onClick={() => setMobileTab('random')}
-            className={`flex-1 py-2 px-3 text-sm font-medium transition-colors border-b-2 -mb-px
-              ${mobileTab === 'random'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 dark:text-gray-400'
-              }`}
-          >
-            🎲 Random
-          </button>
-          <button
-            onClick={() => setMobileTab('theme')}
-            className={`flex-1 py-2 px-3 text-sm font-medium transition-colors border-b-2 -mb-px
-              ${mobileTab === 'theme'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 dark:text-gray-400'
-              }`}
-          >
-            👻 Theme {hasFilters && `(${filterCount})`}
-          </button>
-        </div>
-
-        {mobileTab === 'random' && <RandomSection />}
-        {mobileTab === 'theme' && <ThemeSection />}
+        <ThemeSection />
       </div>
 
       {/* Desktop: Show everything */}
       <div className="hidden lg:block">
-        {/* Header */}
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-2xl">⚡</span>
-          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-            Start Building Your Playlist
-          </h3>
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Start Building Your Playlist</h3>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-          Fill all 10 tracks at once — randomly or by theme
-        </p>
 
-        {/* Random Button */}
         <div className="mb-4">
           <RandomSection />
         </div>
 
-        {/* Divider */}
         <div className="flex items-center gap-2 mb-3">
-          <div className="flex-1 border-t border-purple-200 dark:border-purple-700"></div>
-          <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">Or build around a specific vibe</span>
-          <div className="flex-1 border-t border-purple-200 dark:border-purple-700"></div>
+          <div className="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">Or build around a specific vibe</span>
+          <div className="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
         </div>
 
         <ThemeSection />

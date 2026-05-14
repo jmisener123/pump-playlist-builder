@@ -9,7 +9,7 @@ export function TotalDuration() {
   }
 
   return (
-    <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 mb-2">
+    <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-md px-3 py-2 mb-2">
       <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">
         🕒 Total Duration:
       </span>
