@@ -9,7 +9,7 @@ export function ReleaseSelector() {
 
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-r from-blue-50 via-sky-100 to-blue-100 dark:from-blue-900/30 dark:via-sky-900/30 dark:to-blue-900/30 rounded-md shadow-lg p-4 md:p-6 mb-4">
+      <div className="bg-gradient-to-r from-orange-50 via-pink-100 to-rose-100 dark:from-orange-900/30 dark:via-pink-900/30 dark:to-rose-900/30 rounded-md shadow-lg p-4 md:p-6 mb-4">
         <div className="animate-pulse">
           <div className="h-6 bg-white/50 rounded w-1/2 mb-2"></div>
           <div className="h-4 bg-white/50 rounded w-3/4"></div>
@@ -19,7 +19,7 @@ export function ReleaseSelector() {
   }
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 via-sky-100 to-blue-100 dark:from-blue-900/30 dark:via-sky-900/30 dark:to-blue-900/30 rounded-md shadow-lg p-4 md:p-6 mb-4">
+    <div className="bg-gradient-to-r from-orange-50 via-pink-100 to-rose-100 dark:from-orange-900/30 dark:via-pink-900/30 dark:to-rose-900/30 rounded-md shadow-lg p-4 md:p-6 mb-4">
       <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-1">
         Step 1: Select Your Catalog
       </h2>

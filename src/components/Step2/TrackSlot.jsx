@@ -31,7 +31,7 @@ export function TrackSlot({
     <div className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm px-3 py-2 mb-2">
       {/* Track Type Header */}
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 pl-2 border-l-2 border-primary">
+        <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 pl-2 border-l-2 border-blue-500">
           {trackType}
         </h4>
         <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ export function TrackSlot({
         /* Empty State */
         <div className="py-2">
           <div className={`grid gap-1 ${hasThemedOptions ? 'grid-cols-4' : 'grid-cols-3'}`}>
-            <Button variant="primary" size="sm" onClick={onRandom} className="w-full">
+            <Button variant="blue" size="sm" onClick={onRandom} className="w-full">
               Random
             </Button>
             {hasThemedOptions && (
@@ -69,10 +69,10 @@ export function TrackSlot({
                 Themed
               </Button>
             )}
-            <Button variant="outline" size="sm" onClick={onBrowse} className="w-full">
+            <Button variant="blue-outline" size="sm" onClick={onBrowse} className="w-full">
               Browse ({availableCount})
             </Button>
-            <Button variant="outline" size="sm" onClick={onSearch} className="w-full">
+            <Button variant="blue-outline" size="sm" onClick={onSearch} className="w-full">
               Search
             </Button>
           </div>
@@ -185,7 +185,7 @@ export function EmptyTrackMessage({ position, trackType, onRandom, onPartialMatc
   return (
     <div className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm px-3 py-2 mb-2">
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 pl-2 border-l-2 border-primary">
+        <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 pl-2 border-l-2 border-blue-500">
           {trackType}
         </h4>
         <span className="text-yellow-600 dark:text-yellow-400 text-xs font-medium">
@@ -193,7 +193,7 @@ export function EmptyTrackMessage({ position, trackType, onRandom, onPartialMatc
         </span>
       </div>
       <div className="flex gap-2 mt-1">
-        <Button variant="primary" size="sm" onClick={onRandom}>
+        <Button variant="blue" size="sm" onClick={onRandom}>
           Random
         </Button>
         {hasPartialMatches && (

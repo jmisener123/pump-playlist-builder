@@ -47,7 +47,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
     state.selectedGenres.length > 0
 
   const pillBase = 'px-3 py-1 rounded-full text-sm font-medium transition-colors'
-  const pillUnselected = 'bg-white/80 text-gray-700 hover:bg-white dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+  const pillUnselected = 'bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600'
 
   const RandomSection = () => (
     <div>
@@ -116,30 +116,32 @@ export function QuickGenerate({ onPlaylistGenerated }) {
   )
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 via-sky-100 to-blue-100 dark:from-blue-900/30 dark:via-sky-900/30 dark:to-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md p-4">
-
-      {/* Mobile: Themes only (Random button lives in Playlist tab) */}
-      <div className="lg:hidden">
-        <ThemeSection />
-      </div>
-
-      {/* Desktop: Show everything */}
-      <div className="hidden lg:block">
-        <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Start Building Your Playlist</h3>
-        </div>
-
+    <div>
+      {/* Mobile: random fill + themes */}
+      <div className="lg:hidden bg-gradient-to-r from-blue-50 via-sky-100 to-blue-100 dark:from-blue-900/30 dark:via-sky-900/30 dark:to-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md p-4">
         <div className="mb-4">
           <RandomSection />
         </div>
+        <div className="border-t border-blue-200 dark:border-blue-700 pt-4">
+          <ThemeSection />
+        </div>
+      </div>
 
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
-          <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">Or build around a specific vibe</span>
-          <div className="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
+      {/* Desktop: two option cards */}
+      <div className="hidden lg:flex lg:flex-col lg:gap-3">
+        {/* Option 2: Track by track */}
+        <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4">
+          <div className="text-base font-bold text-gray-800 dark:text-gray-200 mb-0.5">Build track by track</div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">Use the Random, Browse, or Search buttons on each slot. Or fill all at once:</p>
+          <RandomSection />
         </div>
 
-        <ThemeSection />
+        {/* Option 3: Fill with a theme */}
+        <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4">
+          <div className="text-base font-bold text-gray-800 dark:text-gray-200 mb-0.5">Fill with a theme</div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">Filter by vibe, genre, or difficulty, then fill your playlist.</p>
+          <ThemeSection />
+        </div>
       </div>
     </div>
   )

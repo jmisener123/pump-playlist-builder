@@ -6,10 +6,12 @@ import { ReleaseSelector } from './components/Step1/ReleaseSelector'
 import { QuickGenerate } from './components/Step2/QuickGenerate'
 import { PlaylistBuilder } from './components/Step2/PlaylistBuilder'
 import { GlobalSearch } from './components/GlobalSearch'
+import { InlineSearch } from './components/InlineSearch'
+import { WhatsNew } from './components/WhatsNew'
 
 function PlaylistApp() {
   const { state } = usePlaylist()
-  const [mobileTab, setMobileTab] = useState('playlist') // 'playlist' | 'build'
+  const [mobileTab, setMobileTab] = useState('playlist') // 'playlist' | 'search' | 'themes'
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false)
 
   if (state.isLoading) {
@@ -33,91 +35,51 @@ function PlaylistApp() {
 
         {/* Step 2: Playlist Building */}
         <div className="bg-white dark:bg-gray-800 rounded-md shadow-lg p-4 md:p-6 mb-4">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-1">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
             Step 2: Build Your Playlist
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 hidden lg:block">
-            Use the tools on the left to add tracks. Your playlist appears on the right. You can always swap individual tracks later.
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 lg:hidden mb-3">
-            Search your catalog, build track-by-track, or use the Themes tab.
-          </p>
-          
-          {/* Mobile Search Tool */}
-          <div className="lg:hidden mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-            <button
-              onClick={() => setIsGlobalSearchOpen(true)}
-              className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="text-left">
-                  <div className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                    Search Your Catalog
-                  </div>
-                </div>
-              </div>
-              <svg 
-                className="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
         </div>
 
         {/* Mobile Tab Navigation */}
-        <div className="lg:hidden flex mb-4 bg-white dark:bg-gray-800 rounded-md p-1 shadow">
+        <div className="lg:hidden flex mb-4 bg-white dark:bg-gray-800 rounded-md p-1 shadow gap-1">
+          {['search', 'themes'].map((id) => (
+            <button
+              key={id}
+              onClick={() => setMobileTab(id)}
+              className={`flex-1 py-2 px-2 rounded-md text-sm font-medium transition-colors capitalize
+                ${mobileTab === id ? 'bg-primary text-white' : 'text-gray-600 dark:text-gray-400'}`}
+            >
+              {id.charAt(0).toUpperCase() + id.slice(1)}
+            </button>
+          ))}
+          <div className="w-px bg-gray-200 dark:bg-gray-700 my-1" />
           <button
             onClick={() => setMobileTab('playlist')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors
+            className={`flex-1 py-2 px-2 rounded-md text-sm font-medium transition-colors
               ${mobileTab === 'playlist'
                 ? 'bg-primary text-white'
-                : 'text-gray-600 dark:text-gray-400'
-              }`}
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
           >
             Playlist
-          </button>
-          <button
-            onClick={() => setMobileTab('build')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors
-              ${mobileTab === 'build'
-                ? 'bg-primary text-white'
-                : 'text-gray-600 dark:text-gray-400'
-              }`}
-          >
-            Themes
           </button>
         </div>
 
         {/* Two Column Layout - Desktop */}
         <div className="hidden lg:grid lg:grid-cols-2 gap-4">
           {/* Build Tools - Left on desktop */}
-          <div className="space-y-4">
-            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide px-1">
-              Start Building
+          <div className="space-y-3">
+            {/* Option 1: Search */}
+            <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4">
+              <div className="text-base font-bold text-gray-800 dark:text-gray-200 mb-3">Search your catalog</div>
+              <InlineSearch />
             </div>
-            <button
-              onClick={() => setIsGlobalSearchOpen(true)}
-              className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="text-left">
-                  <div className="text-sm font-medium text-gray-800 dark:text-gray-200">Search Your Catalog</div>
-                </div>
-              </div>
-              <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+            {/* Options 2 & 3: Track by track + Theme */}
             <QuickGenerate />
           </div>
 
           {/* Playlist - Right on desktop */}
           <div className="lg:sticky lg:top-4 lg:self-start">
-            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide px-1 mb-2">
+            <div className="text-lg font-bold text-gray-800 dark:text-gray-200 px-1 mb-2">
               Your Playlist
             </div>
             <PlaylistBuilder />
@@ -127,9 +89,14 @@ function PlaylistApp() {
         {/* Mobile Tab Content */}
         <div className="lg:hidden">
           {mobileTab === 'playlist' && (
-            <PlaylistBuilder showRandomAction={true} />
+            <PlaylistBuilder />
           )}
-          {mobileTab === 'build' && (
+          {mobileTab === 'search' && (
+            <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4">
+              <InlineSearch />
+            </div>
+          )}
+          {mobileTab === 'themes' && (
             <QuickGenerate onPlaylistGenerated={() => setMobileTab('playlist')} />
           )}
         </div>
@@ -138,10 +105,12 @@ function PlaylistApp() {
       </div>
 
       {/* Global Search Modal */}
-      <GlobalSearch 
-        isOpen={isGlobalSearchOpen} 
-        onClose={() => setIsGlobalSearchOpen(false)} 
+      <GlobalSearch
+        isOpen={isGlobalSearchOpen}
+        onClose={() => setIsGlobalSearchOpen(false)}
       />
+
+      <WhatsNew />
     </div>
   )
 }

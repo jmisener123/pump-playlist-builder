@@ -99,9 +99,6 @@ export function PlaylistBuilder({ mode = 'random', showRandomAction = false }) {
     <div className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-md p-3 md:p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-            Your Playlist
-          </h3>
           {hasThemeFilters && (
             <span className="text-xs bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 px-2 py-0.5 rounded-full">
               {getThemeEmoji()} {getActiveThemeText()}
@@ -128,8 +125,9 @@ export function PlaylistBuilder({ mode = 'random', showRandomAction = false }) {
       )}
 
       {!hasAnyTracks && !showRandomAction && (
-        <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-          <p className="text-sm">Build track-by-track below, or use the Themes tab to generate a full playlist.</p>
+        <div className="text-center py-2 text-gray-500 dark:text-gray-400">
+          <p className="text-sm hidden lg:block">Use the options on the left to build your class playlist.</p>
+          <p className="text-sm lg:hidden">Use the Search or Themes tabs, or build track-by-track using the buttons below.</p>
         </div>
       )}
 
