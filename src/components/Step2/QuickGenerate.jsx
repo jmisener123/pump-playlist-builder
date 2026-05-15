@@ -60,8 +60,28 @@ export function QuickGenerate({ onPlaylistGenerated }) {
     </div>
   )
 
+  const ApplyBar = () => (
+    <div className="flex gap-2 mb-3">
+      <Button variant="primary" onClick={() => {
+        generateThemed()
+        if (onPlaylistGenerated) onPlaylistGenerated()
+      }} className="flex-1" disabled={!hasFilters}>
+        Apply Theme & Fill
+      </Button>
+      {hasFilters
+        ? <Button variant="ghost" onClick={clearAll} className="text-xs px-2">Clear</Button>
+        : <span className="text-xs text-gray-400 self-center">Select filters first</span>
+      }
+    </div>
+  )
+
   const ThemeSection = () => (
     <div>
+      {/* Mobile: apply bar at top so it's always reachable */}
+      <div className="lg:hidden">
+        <ApplyBar />
+      </div>
+
       <div className="mb-3">
         <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">Themes</label>
         <div className="flex flex-wrap gap-1.5">
@@ -98,20 +118,10 @@ export function QuickGenerate({ onPlaylistGenerated }) {
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <Button variant="primary" onClick={() => {
-          generateThemed()
-          if (onPlaylistGenerated) onPlaylistGenerated()
-        }} className="flex-1">
-          Apply Theme & Fill
-        </Button>
-        {hasFilters && (
-          <Button variant="ghost" onClick={clearAll} className="text-xs px-2">Clear</Button>
-        )}
+      {/* Desktop: apply bar at bottom */}
+      <div className="hidden lg:block">
+        <ApplyBar />
       </div>
-      {!hasFilters && (
-        <p className="text-xs text-gray-400 mt-1 text-center">Select at least one filter above</p>
-      )}
     </div>
   )
 
