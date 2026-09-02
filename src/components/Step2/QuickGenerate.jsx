@@ -3,7 +3,7 @@ import { usePlaylist } from '../../context/PlaylistContext'
 import { usePlaylistBuilder } from '../../hooks/usePlaylistBuilder'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
 import { Button } from '../ui/Button'
-import { getTagDisplayName } from '../../utils/trackUtils'
+import { TAG_EMOJIS, getTagDisplayName } from '../../utils/trackUtils'
 import { THEME_TAGS, INSTRUCTOR_TAGS } from '../../utils/themes'
 
 export function QuickGenerate({ onPlaylistGenerated }) {
@@ -88,6 +88,9 @@ export function QuickGenerate({ onPlaylistGenerated }) {
           {availableThemeTags.map(tag => (
             <button key={tag} onClick={(e) => toggleThemeTag(tag, e)}
               className={state.themeTags.includes(tag) ? pillOn : pillOff}>
+              {TAG_EMOJIS[tag] && (
+                <span aria-hidden="true" className="mr-1.5 text-[13px] leading-none">{TAG_EMOJIS[tag]}</span>
+              )}
               {tag}
             </button>
           ))}
@@ -100,6 +103,9 @@ export function QuickGenerate({ onPlaylistGenerated }) {
           {availableInstructorTags.map(tag => (
             <button key={tag} onClick={(e) => toggleInstructorTag(tag, e)}
               className={state.instructorTags.includes(tag) ? pillOn : pillOff}>
+              {TAG_EMOJIS[tag] && (
+                <span aria-hidden="true" className="mr-1.5 text-[13px] leading-none">{TAG_EMOJIS[tag]}</span>
+              )}
               {getTagDisplayName(tag)}
             </button>
           ))}

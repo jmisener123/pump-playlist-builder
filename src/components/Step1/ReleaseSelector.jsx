@@ -2,6 +2,7 @@ import React from 'react'
 import { usePlaylist } from '../../context/PlaylistContext'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
 import { Select } from '../ui/Select'
+import { StepHeading } from '../ui/StepHeading'
 
 export function ReleaseSelector() {
   const { state, actions } = usePlaylist()
@@ -10,10 +11,7 @@ export function ReleaseSelector() {
   if (isLoading) {
     return (
       <div>
-        <div className="flex items-baseline gap-3 mb-3">
-          <span className="eyebrow tabular">01</span>
-          <h2 className="display-md text-ink-950 dark:text-paper">Catalog</h2>
-        </div>
+        <StepHeading number={1} title="Choose your catalog" />
         <div className="panel p-5 animate-pulse">
           <div className="h-4 bg-ink-100 dark:bg-ink-800 rounded w-1/2 mb-3"></div>
           <div className="h-9 bg-ink-100 dark:bg-ink-800 rounded w-full"></div>
@@ -24,16 +22,13 @@ export function ReleaseSelector() {
 
   return (
     <div>
-      <div className="flex items-baseline gap-3 mb-3">
-        <span className="eyebrow tabular">01</span>
-        <h2 className="display-md text-ink-950 dark:text-paper">Catalog</h2>
-      </div>
+      <StepHeading
+        number={1}
+        title="Choose your catalog"
+        hint="Pick the oldest release you own — everything newer is fair game."
+      />
 
       <div className="panel p-5">
-        <p className="text-sm text-ink-500 dark:text-ink-400 mb-4">
-          Choose the oldest release you own — everything newer is fair game.
-        </p>
-
         <div className="max-w-xs mb-5">
           <label className="eyebrow block mb-1.5">
             Oldest release owned

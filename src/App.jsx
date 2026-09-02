@@ -8,16 +8,7 @@ import { PlaylistBuilder } from './components/Step2/PlaylistBuilder'
 import { GlobalSearch } from './components/GlobalSearch'
 import { InlineSearch } from './components/InlineSearch'
 import { WhatsNew } from './components/WhatsNew'
-
-function SectionHeading({ index, title, children }) {
-  return (
-    <div className="flex items-baseline gap-3 mb-3">
-      <span className="eyebrow tabular">{index}</span>
-      <h2 className="display-md text-ink-950 dark:text-paper">{title}</h2>
-      {children}
-    </div>
-  )
-}
+import { StepHeading } from './components/ui/StepHeading'
 
 function PlaylistApp() {
   const { state } = usePlaylist()
@@ -45,7 +36,11 @@ function PlaylistApp() {
         </section>
 
         <section>
-          <SectionHeading index="02" title="Build" />
+          <StepHeading
+            number={2}
+            title="Build your playlist"
+            hint="Fill all ten slots by search, theme, or track by track."
+          />
 
           {/* Mobile segmented control */}
           <div className="lg:hidden flex border border-ink-200 dark:border-ink-800 rounded mb-4 overflow-hidden">
