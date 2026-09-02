@@ -9,102 +9,93 @@ import { GlobalSearch } from './components/GlobalSearch'
 import { InlineSearch } from './components/InlineSearch'
 import { WhatsNew } from './components/WhatsNew'
 
+function SectionHeading({ index, title, children }) {
+  return (
+    <div className="flex items-baseline gap-3 mb-3">
+      <span className="eyebrow tabular">{index}</span>
+      <h2 className="display-md text-ink-950 dark:text-paper">{title}</h2>
+      {children}
+    </div>
+  )
+}
+
 function PlaylistApp() {
   const { state } = usePlaylist()
-  const [mobileTab, setMobileTab] = useState('playlist') // 'playlist' | 'search' | 'themes'
+  const [mobileTab, setMobileTab] = useState('playlist')
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false)
 
   if (state.isLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading playlist data...</p>
+          <div className="mx-auto h-px w-24 bg-ink-950 dark:bg-paper animate-pulse" />
+          <p className="eyebrow mt-4">Loading catalog</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="max-w-6xl mx-auto px-4 py-6">
+    <div className="min-h-screen">
+      <div className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-12">
         <Header onSearchClick={() => setIsGlobalSearchOpen(true)} />
 
-        {/* Step 1: Release Selection */}
-        <ReleaseSelector />
+        <section className="mb-10">
+          <ReleaseSelector />
+        </section>
 
-        {/* Step 2: Playlist Building */}
-        <div className="bg-white dark:bg-gray-800 rounded-md shadow-lg p-4 md:p-6 mb-4">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-            Step 2: Build Your Playlist
-          </h2>
-        </div>
+        <section>
+          <SectionHeading index="02" title="Build" />
 
-        {/* Mobile Tab Navigation */}
-        <div className="lg:hidden flex mb-4 bg-white dark:bg-gray-800 rounded-md p-1 shadow gap-1">
-          {['search', 'themes'].map((id) => (
-            <button
-              key={id}
-              onClick={() => setMobileTab(id)}
-              className={`flex-1 py-2 px-2 rounded-md text-sm font-medium transition-colors capitalize
-                ${mobileTab === id ? 'bg-primary text-white' : 'text-gray-600 dark:text-gray-400'}`}
-            >
-              {id.charAt(0).toUpperCase() + id.slice(1)}
-            </button>
-          ))}
-          <div className="w-px bg-gray-200 dark:bg-gray-700 my-1" />
-          <button
-            onClick={() => setMobileTab('playlist')}
-            className={`flex-1 py-2 px-2 rounded-md text-sm font-medium transition-colors
-              ${mobileTab === 'playlist'
-                ? 'bg-primary text-white'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
-          >
-            Playlist
-          </button>
-        </div>
-
-        {/* Two Column Layout - Desktop */}
-        <div className="hidden lg:grid lg:grid-cols-2 gap-4">
-          {/* Build Tools - Left on desktop */}
-          <div className="space-y-3">
-            {/* Option 1: Search */}
-            <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4">
-              <div className="text-base font-bold text-gray-800 dark:text-gray-200 mb-3">Search your catalog</div>
-              <InlineSearch />
-            </div>
-            {/* Options 2 & 3: Track by track + Theme */}
-            <QuickGenerate />
+          {/* Mobile segmented control */}
+          <div className="lg:hidden flex border border-ink-200 dark:border-ink-800 rounded mb-4 overflow-hidden">
+            {[
+              { id: 'search', label: 'Search' },
+              { id: 'themes', label: 'Themes' },
+              { id: 'playlist', label: 'Playlist' },
+            ].map(({ id, label }) => (
+              <button
+                key={id}
+                onClick={() => setMobileTab(id)}
+                className={`flex-1 py-2.5 display-sm transition-colors border-r last:border-r-0 border-ink-200 dark:border-ink-800
+                  ${mobileTab === id
+                    ? 'bg-ink-950 text-paper dark:bg-paper dark:text-ink-950'
+                    : 'text-ink-500 dark:text-ink-400 hover:text-ink-950 dark:hover:text-paper'}`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
 
-          {/* Playlist - Right on desktop */}
-          <div className="lg:sticky lg:top-4 lg:self-start">
-            <div className="text-lg font-bold text-gray-800 dark:text-gray-200 px-1 mb-2">
-              Your Playlist
+          {/* Desktop: tools left, playlist right */}
+          <div className="hidden lg:grid lg:grid-cols-[1fr_1.1fr] gap-8">
+            <div className="space-y-8">
+              <div>
+                <h3 className="display-sm text-ink-400 mb-2">Search your catalog</h3>
+                <InlineSearch />
+              </div>
+              <QuickGenerate />
             </div>
-            <PlaylistBuilder />
-          </div>
-        </div>
 
-        {/* Mobile Tab Content */}
-        <div className="lg:hidden">
-          {mobileTab === 'playlist' && (
-            <PlaylistBuilder />
-          )}
-          {mobileTab === 'search' && (
-            <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4">
-              <InlineSearch />
+            <div className="lg:sticky lg:top-8 lg:self-start">
+              <h3 className="display-sm text-ink-400 mb-2">Your playlist</h3>
+              <PlaylistBuilder />
             </div>
-          )}
-          {mobileTab === 'themes' && (
-            <QuickGenerate onPlaylistGenerated={() => setMobileTab('playlist')} />
-          )}
-        </div>
+          </div>
+
+          {/* Mobile panes */}
+          <div className="lg:hidden">
+            {mobileTab === 'playlist' && <PlaylistBuilder />}
+            {mobileTab === 'search' && <InlineSearch />}
+            {mobileTab === 'themes' && (
+              <QuickGenerate onPlaylistGenerated={() => setMobileTab('playlist')} />
+            )}
+          </div>
+        </section>
 
         <Footer />
       </div>
 
-      {/* Global Search Modal */}
       <GlobalSearch
         isOpen={isGlobalSearchOpen}
         onClose={() => setIsGlobalSearchOpen(false)}

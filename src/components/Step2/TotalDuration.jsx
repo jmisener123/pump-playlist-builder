@@ -9,11 +9,9 @@ export function TotalDuration() {
   }
 
   return (
-    <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-md px-3 py-2 mb-2">
-      <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">
-        🕒 Total Duration:
-      </span>
-      <span className="text-lg font-bold text-primary">
+    <div className="flex items-baseline justify-between px-3 py-2 border-b border-ink-200 dark:border-ink-800">
+      <span className="eyebrow">Total runtime</span>
+      <span className="font-display font-black text-xl tabular tracking-tight text-ink-950 dark:text-paper">
         {totalDuration}
       </span>
     </div>

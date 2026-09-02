@@ -43,30 +43,27 @@ export function TrackByTrackBuilder() {
   const emptySlots = playlist.filter(t => t === null).length
 
   return (
-    <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800 rounded-md p-4">
+    <div className="panel p-4">
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between"
       >
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🎯</span>
-          <div className="text-left">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-              Pick Individual Tracks
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Browse and select specific songs for each position
-            </p>
-          </div>
+        <div className="text-left">
+          <h3 className="display-sm text-ink-950 dark:text-paper">
+            Pick individual tracks
+          </h3>
+          <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
+            Browse and choose a song for each position
+          </p>
         </div>
         <div className="flex items-center gap-2">
           {emptySlots > 0 && emptySlots < 10 && (
-            <span className="text-xs bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 px-2 py-0.5 rounded-full">
+            <span className="pill-off tabular">
               {emptySlots} empty
             </span>
           )}
-          <span className="text-gray-500 text-xl">
+          <span className="text-ink-400 text-lg leading-none w-4 text-center">
             {isExpanded ? '−' : '+'}
           </span>
         </div>
@@ -77,8 +74,8 @@ export function TrackByTrackBuilder() {
 
           {/* Position Selector */}
           <div className="mb-3">
-            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Select position to fill:
+            <label className="eyebrow block mb-1.5">
+              Position to fill
             </label>
             <div className="flex flex-wrap gap-1">
               {TRACK_TYPES.map((trackType, index) => {
@@ -89,18 +86,18 @@ export function TrackByTrackBuilder() {
                   <button
                     key={trackType}
                     onClick={() => setSelectedPosition(index)}
-                    className={`px-2 py-1 rounded text-xs font-medium transition-colors relative
+                    className={`px-2 py-1 rounded border text-xs font-medium transition-colors relative
                       ${selectedPosition === index
-                        ? 'bg-amber-500 text-white'
+                        ? 'border-ink-950 bg-ink-950 text-paper dark:border-paper dark:bg-paper dark:text-ink-950'
                         : isFilled
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
-                          : 'bg-white/70 text-gray-700 hover:bg-white dark:bg-gray-700 dark:text-gray-300'
+                          ? 'border-ink-300 dark:border-ink-600 text-ink-900 dark:text-ink-100'
+                          : 'border-ink-200 dark:border-ink-700 text-ink-500 dark:text-ink-400 hover:border-ink-400'
                       }`}
                   >
                     {index + 1}. {trackType.split(' - ')[1]}
-                    {isFilled && ' ✓'}
+                    {isFilled && <span className="ml-1 text-flare">•</span>}
                     {themedCount > 0 && !isFilled && (
-                      <span className="ml-1 text-rose-600 dark:text-rose-400">👻</span>
+                      <span className="ml-1 text-flare">·</span>
                     )}
                   </button>
                 )
@@ -117,17 +114,17 @@ export function TrackByTrackBuilder() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder={`Search ${TRACK_TYPES[selectedPosition].split(' - ')[1]} tracks...`}
-                  className="w-full px-3 py-2 text-sm border border-amber-300 dark:border-amber-600 rounded-md bg-white dark:bg-gray-800"
+                  className="input-field"
                 />
               </div>
 
               {/* Track List */}
-              <div className="max-h-64 overflow-y-auto space-y-1 bg-white/50 dark:bg-gray-800/50 rounded-md p-2">
+              <div className="max-h-64 overflow-y-auto divide-y divide-ink-100 dark:divide-ink-800 border border-ink-200 dark:border-ink-800 rounded">
                 {availableTracks.length > 0 ? (
                   <>
-                    <p className="text-xs text-gray-500 mb-2">
-                      {availableTracks.length} tracks available
-                      {hasThemeFilters && ` (themed options highlighted)`}
+                    <p className="eyebrow px-3 py-2 tabular">
+                      {availableTracks.length} available
+                      {hasThemeFilters && ' · themed marked'}
                     </p>
                     {availableTracks.map(track => {
                       // Check if this track matches theme filters
@@ -143,20 +140,19 @@ export function TrackByTrackBuilder() {
                             setTrack(selectedPosition, track)
                             setSearchTerm('')
                           }}
-                          className={`p-2 rounded cursor-pointer transition-colors
+                          className={`px-3 py-2 cursor-pointer transition-colors group
                             ${isThemed
-                              ? 'bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 border-l-2 border-rose-400'
-                              : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                              ? 'border-l-2 border-flare hover:bg-flare-50 dark:hover:bg-ink-800'
+                              : 'hover:bg-ink-50 dark:hover:bg-ink-800'
                             }`}
                         >
                           <div className="flex justify-between items-start gap-2">
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
+                              <p className="font-semibold text-sm text-ink-900 dark:text-ink-100 truncate">
                                 {track['Song Title']}
-                                {isThemed && <span className="ml-1">👻</span>}
                               </p>
-                              <p className="text-xs text-gray-600 dark:text-gray-400">
-                                {track.Artist} • Release {track.Release} • {track.Duration}
+                              <p className="text-xs text-ink-500 dark:text-ink-400 tabular">
+                                {track.Artist} · R{track.Release} · {track.Duration}
                               </p>
                               {track.Tags && (
                                 <div className="mt-1">
@@ -173,8 +169,8 @@ export function TrackByTrackBuilder() {
                     })}
                   </>
                 ) : (
-                  <p className="text-center text-gray-500 dark:text-gray-400 py-4 text-sm">
-                    {searchTerm ? 'No tracks match your search' : 'No tracks available'}
+                  <p className="text-center text-ink-400 py-6 text-sm">
+                    {searchTerm ? 'Nothing matches that search' : 'No tracks available'}
                   </p>
                 )}
               </div>
@@ -182,8 +178,8 @@ export function TrackByTrackBuilder() {
           )}
 
           {selectedPosition === null && (
-            <p className="text-center text-gray-500 dark:text-gray-400 py-4 text-sm">
-              Select a position above to browse available tracks
+            <p className="text-center text-ink-400 py-6 text-sm">
+              Choose a position above to browse tracks
             </p>
           )}
         </div>

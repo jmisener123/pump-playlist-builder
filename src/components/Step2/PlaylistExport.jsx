@@ -22,32 +22,32 @@ export function PlaylistExport() {
   const exportText = getExportText()
 
   return (
-    <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">
+    <div className="border-t border-ink-200 dark:border-ink-800">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center justify-between w-full text-left p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        className="flex items-center justify-between gap-3 w-full text-left px-3 py-2.5 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
       >
-        <span className="font-medium text-gray-700 dark:text-gray-300">
-          📋 Ready to teach it? Click to get a copy/paste version of your playlist.
+        <span className="display-sm text-ink-950 dark:text-paper">
+          Export playlist
         </span>
-        <span className="text-gray-500 text-xl">
+        <span className="text-ink-400 text-lg leading-none w-4 text-center">
           {isExpanded ? '−' : '+'}
         </span>
       </button>
 
       {isExpanded && (
-        <div className="mt-3">
+        <div className="px-3 pb-3">
           <div className="relative">
-            <pre className="bg-gray-100 dark:bg-gray-900 p-4 rounded-md text-sm overflow-x-auto whitespace-pre-wrap font-mono text-gray-800 dark:text-gray-200">
+            <pre className="bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 p-4 rounded text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap font-mono text-ink-700 dark:text-ink-300">
               {exportText}
             </pre>
             <Button
-              variant={copied ? 'secondary' : 'primary'}
+              variant={copied ? 'accent' : 'primary'}
               size="sm"
               onClick={handleCopy}
               className="absolute top-2 right-2"
             >
-              {copied ? '✓ Copied!' : '📋 Copy'}
+              {copied ? 'Copied' : 'Copy'}
             </Button>
           </div>
         </div>

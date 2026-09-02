@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
-import { getBodyPart } from '../../utils/trackUtils'
 
 export function TrackSlot({
   position,
@@ -19,7 +18,6 @@ export function TrackSlot({
   activeThemeText = '',
   activeFilterTags = []
 }) {
-  const bodyPart = getBodyPart(trackType)
   const isEmpty = !track
   const [showThemedDropdown, setShowThemedDropdown] = useState(false)
 
@@ -28,29 +26,29 @@ export function TrackSlot({
   const [showActions, setShowActions] = useState(false)
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm px-3 py-2 mb-2">
+    <div className="border-b border-ink-200 dark:border-ink-800 last:border-b-0 px-3 py-2.5">
       {/* Track Type Header */}
-      <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 pl-2 border-l-2 border-blue-500">
+      <div className="flex items-center justify-between gap-2">
+        <h4 className="display-sm text-[11px] text-ink-400 dark:text-ink-500">
           {trackType}
         </h4>
         <div className="flex items-center gap-2">
           {hasThemedOptions && (
             <button
               onClick={() => setShowThemedDropdown(!showThemedDropdown)}
-              className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-1.5 py-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+              className="pill-off tabular cursor-pointer"
               title="Click to view themed tracks"
             >
               Swap themed ({themedOptions.length})
             </button>
           )}
           {noThemedTrackAvailable && isEmpty && (
-            <span className="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 px-1.5 py-0.5 rounded">
-              ⚠️ No themed track
+            <span className="pill-off text-flare border-flare-200">
+              No themed match
             </span>
           )}
           {track && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+            <span className="text-xs text-ink-400 tabular">
               {track.Duration}
             </span>
           )}
@@ -83,14 +81,14 @@ export function TrackSlot({
           {/* Track Info */}
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="font-semibold text-base text-gray-900 dark:text-gray-100 truncate">
-                "{track['Song Title']}"
+              <p className="font-display font-extrabold text-[15px] leading-tight text-ink-950 dark:text-paper truncate">
+                {track['Song Title']}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
+              <p className="text-sm text-ink-600 dark:text-ink-300 truncate">
                 {track.Artist}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                Release <span className="release-number">{track.Release}</span>
+              <p className="text-xs text-ink-400 mt-1 tabular">
+                <span className="release-number">R{track.Release}</span>
                 {' · '}{track.Genre || 'Unknown'}
               </p>
               {track.Tags && (() => {
@@ -101,55 +99,62 @@ export function TrackSlot({
             <div className="flex items-center gap-1 shrink-0">
               <button
                 onClick={() => setShowActions(!showActions)}
-                className={`px-2 py-1 text-xs rounded transition-colors ${showActions ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                className={`px-1.5 py-1 text-xs rounded transition-colors ${showActions ? 'bg-ink-100 dark:bg-ink-800 text-ink-900 dark:text-paper' : 'text-ink-400 hover:text-ink-900 dark:hover:text-paper'}`}
                 title="Change track"
+                aria-label="Change track"
               >
-                ✎
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 4H4v16h16v-7M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
               </button>
               <button
                 onClick={onClear}
-                className="px-2 py-1 text-xs text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                className="px-1.5 py-1 text-xs text-ink-400 hover:text-flare rounded transition-colors"
                 title="Remove"
+                aria-label="Remove track"
               >
-                ✕
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           </div>
 
           {/* Action Buttons — collapsed by default */}
           {showActions && (
-            <div className="flex items-center gap-1 mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-              <span className="text-xs text-gray-400 mr-1">Change:</span>
-              <button onClick={onRandom} className="px-2 py-1 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors">Random</button>
+            <div className="flex items-center gap-1 mt-2 pt-2 border-t border-ink-100 dark:border-ink-800">
+              <span className="eyebrow mr-1">Change</span>
+              <button onClick={onRandom} className="btn-quiet">Random</button>
               {hasThemedOptions && (
                 <button
                   onClick={() => setShowThemedDropdown(!showThemedDropdown)}
-                  className={`px-2 py-1 text-xs rounded transition-colors ${showThemedDropdown ? 'bg-rose-100 dark:bg-rose-900/50' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                  className={`btn-quiet ${showThemedDropdown ? 'text-flare' : ''}`}
                 >
                   Themed
                 </button>
               )}
-              <button onClick={onBrowse} className="px-2 py-1 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors">Browse</button>
-              <button onClick={onSearch} className="px-2 py-1 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors">Search</button>
+              <button onClick={onBrowse} className="btn-quiet">Browse</button>
+              <button onClick={onSearch} className="btn-quiet">Search</button>
             </div>
           )}
 
           {/* Themed Swap Dropdown */}
           {showThemedDropdown && hasThemedOptions && (
-            <div className="mt-2 pt-2 border-t border-rose-200 dark:border-rose-700 bg-rose-50 dark:bg-rose-900/20 -mx-3 -mb-2 px-3 pb-2 rounded-b-md">
+            <div className="mt-2 pt-2 border-t border-ink-200 dark:border-ink-800 bg-ink-50 dark:bg-ink-900 -mx-3 -mb-2.5 px-3 pb-2.5">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-medium text-rose-700 dark:text-rose-300">
-                  Choose a different themed track for {trackType} ({themedOptions.length} options)
+                <span className="eyebrow tabular">
+                  Themed options ({themedOptions.length})
                 </span>
                 <button
                   onClick={() => setShowThemedDropdown(false)}
-                  className="text-xs text-gray-500 hover:text-gray-700"
+                  className="text-xs text-ink-400 hover:text-flare"
+                  aria-label="Close themed options"
                 >
                   ✕
                 </button>
               </div>
               <select
-                className="w-full text-xs py-1.5 px-2 border border-rose-300 dark:border-rose-600 rounded bg-white dark:bg-gray-800"
+                className="select-field text-xs py-1.5"
                 value=""
                 onChange={(e) => {
                   if (e.target.value) {
@@ -169,7 +174,7 @@ export function TrackSlot({
                     key={`${t.Release}_${t['Song Title']}`}
                     value={`${t.Release}_${t['Song Title']}`}
                   >
-                    [{t.Release}] {t['Song Title']} by {t.Artist}
+                    R{t.Release} — {t['Song Title']} · {t.Artist}
                   </option>
                 ))}
               </select>
@@ -183,13 +188,13 @@ export function TrackSlot({
 
 export function EmptyTrackMessage({ position, trackType, onRandom, onPartialMatch, hasPartialMatches }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm px-3 py-2 mb-2">
+    <div className="border-b border-ink-200 dark:border-ink-800 last:border-b-0 px-3 py-2.5">
       <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-sm text-gray-800 dark:text-gray-200 pl-2 border-l-2 border-blue-500">
+        <h4 className="display-sm text-[11px] text-ink-400 dark:text-ink-500">
           {trackType}
         </h4>
-        <span className="text-yellow-600 dark:text-yellow-400 text-xs font-medium">
-          ⚠️ No themed track
+        <span className="pill-off text-flare border-flare-200">
+          No themed match
         </span>
       </div>
       <div className="flex gap-2 mt-1">
@@ -198,7 +203,7 @@ export function EmptyTrackMessage({ position, trackType, onRandom, onPartialMatc
         </Button>
         {hasPartialMatches && (
           <Button variant="outline" size="sm" onClick={onPartialMatch}>
-            🎯 Partial
+            Partial
           </Button>
         )}
       </div>
