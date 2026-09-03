@@ -9,7 +9,6 @@ import { QuickGenerate } from './components/Step2/QuickGenerate'
 import { PlaylistBuilder } from './components/Step2/PlaylistBuilder'
 import { GlobalSearch } from './components/GlobalSearch'
 import { InlineSearch } from './components/InlineSearch'
-import { WhatsNew } from './components/WhatsNew'
 import { StepHeading } from './components/ui/StepHeading'
 
 function PlaylistApp() {
@@ -181,7 +180,6 @@ function PlaylistApp() {
         onClose={() => setIsGlobalSearchOpen(false)}
       />
 
-      <WhatsNew />
     </div>
   )
 }
