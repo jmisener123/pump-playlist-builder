@@ -67,7 +67,7 @@ function PlaylistApp() {
           <StepHeading
             number={2}
             title="Build your playlist"
-            hint="Fill all ten slots by search, theme, or track by track."
+            hint="Fill all ten slots randomly, or by search, theme, or music genre."
           />
 
           {/* Mobile: Search and Themes are tools that feed one destination,
