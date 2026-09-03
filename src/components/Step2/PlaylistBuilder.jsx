@@ -82,62 +82,68 @@ export function PlaylistBuilder({ mode = 'random' }) {
     )
   }
 
+  // With no theme pill and no bulk actions, this row would render as an empty
+  // 40px strip with a rule under it, so only show it when it has content.
+  const showToolbar = hasThemeFilters || hasAnyTracks
+
   return (
     <div className="panel">
-      <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-ink-200 dark:border-ink-800 min-h-[2.5rem]">
-        <div className="flex items-center gap-2 min-w-0">
-          {hasThemeFilters && (
-            <span className="pill-accent truncate" title={getActiveThemeText()}>
-              {getActiveThemeText()}
-            </span>
+      {showToolbar && (
+        <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-ink-200 dark:border-ink-800 min-h-[2.5rem]">
+          <div className="flex items-center gap-2 min-w-0">
+            {hasThemeFilters && (
+              <span className="pill-accent truncate" title={getActiveThemeText()}>
+                {getActiveThemeText()}
+              </span>
+            )}
+          </div>
+          {hasAnyTracks && (
+            pending ? (
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400">
+                  {pending === 'refill' ? 'Replace' : 'Clear'} all {filledCount}?
+                </span>
+                <button
+                  onClick={() => {
+                    if (pending === 'refill') generateRandom()
+                    else clearPlaylist()
+                    setPending(null)
+                  }}
+                  className="display-sm text-[11px] text-flare-600 dark:text-flare-400 hover:underline"
+                  autoFocus
+                >
+                  Yes
+                </button>
+                <span aria-hidden="true" className="text-ink-200 dark:text-ink-700">|</span>
+                <button
+                  onClick={() => setPending(null)}
+                  className="display-sm text-[11px] text-ink-400 hover:text-ink-950 dark:hover:text-paper"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 shrink-0">
+                <button
+                  onClick={() => setPending('refill')}
+                  className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
+                  title="Replace every slot, including tracks you picked yourself"
+                >
+                  Refill all randomly
+                </button>
+                <span aria-hidden="true" className="text-ink-200 dark:text-ink-700">|</span>
+                <button
+                  onClick={() => setPending('clear')}
+                  className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
+                  title="Empty every slot and start over"
+                >
+                  Clear all
+                </button>
+              </div>
+            )
           )}
         </div>
-        {hasAnyTracks && (
-          pending ? (
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400">
-                {pending === 'refill' ? 'Replace' : 'Clear'} all {filledCount}?
-              </span>
-              <button
-                onClick={() => {
-                  if (pending === 'refill') generateRandom()
-                  else clearPlaylist()
-                  setPending(null)
-                }}
-                className="display-sm text-[11px] text-flare-600 dark:text-flare-400 hover:underline"
-                autoFocus
-              >
-                Yes
-              </button>
-              <span aria-hidden="true" className="text-ink-200 dark:text-ink-700">|</span>
-              <button
-                onClick={() => setPending(null)}
-                className="display-sm text-[11px] text-ink-400 hover:text-ink-950 dark:hover:text-paper"
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3 shrink-0">
-              <button
-                onClick={() => setPending('refill')}
-                className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
-                title="Replace every slot, including tracks you picked yourself"
-              >
-                Refill all randomly
-              </button>
-              <span aria-hidden="true" className="text-ink-200 dark:text-ink-700">|</span>
-              <button
-                onClick={() => setPending('clear')}
-                className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
-                title="Empty every slot and start over"
-              >
-                Clear all
-              </button>
-            </div>
-          )
-        )}
-      </div>
+      )}
 
       {!hasAnyTracks && (
         <div className="p-3 border-b border-ink-200 dark:border-ink-800">
