@@ -12,7 +12,7 @@ export function Footer() {
           href="https://github.com/jmisener123/pump-playlist-builder/"
           target="_blank"
           rel="noopener noreferrer"
-          className="display-sm text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare transition-colors shrink-0"
+          className="display-sm text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors shrink-0"
         >
           GitHub &amp; contact →
         </a>

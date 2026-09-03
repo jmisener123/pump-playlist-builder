@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { usePlaylist } from '../../context/PlaylistContext'
 import { usePlaylistBuilder } from '../../hooks/usePlaylistBuilder'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
@@ -9,12 +9,22 @@ import { TrackSearch } from './TrackSearch'
 import { PlaylistExport } from './PlaylistExport'
 import { TRACK_TYPES } from '../../utils/trackUtils'
 
-export function PlaylistBuilder({ mode = 'random', showRandomAction = false }) {
+export function PlaylistBuilder({ mode = 'random' }) {
   const { state } = usePlaylist()
   const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, generateRandom, hasAnyTracks } = usePlaylistBuilder()
   const { getTracksForSlot, getThemedTracksForSlot } = usePlaylistData()
   const [searchPosition, setSearchPosition] = useState(null)
   const [browseMode, setBrowseMode] = useState(false)
+  // Both bulk actions destroy hand-picked tracks with no undo, so they swap
+  // the row in place for a confirmation instead of firing immediately.
+  const [pending, setPending] = useState(null)
+
+  const filledCount = playlist.filter(Boolean).length
+
+  // Don't let a pending confirm survive the playlist emptying out.
+  useEffect(() => {
+    if (!hasAnyTracks) setPending(null)
+  }, [hasAnyTracks])
 
   // Check if any theme filters are active
   const hasThemeFilters = state.themeTags.length > 0 ||
@@ -75,36 +85,69 @@ export function PlaylistBuilder({ mode = 'random', showRandomAction = false }) {
   return (
     <div className="panel">
       <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-ink-200 dark:border-ink-800 min-h-[2.5rem]">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           {hasThemeFilters && (
-            <span className="pill-accent max-w-[22rem] truncate" title={getActiveThemeText()}>
+            <span className="pill-accent truncate" title={getActiveThemeText()}>
               {getActiveThemeText()}
             </span>
           )}
         </div>
         {hasAnyTracks && (
-          <button
-            onClick={clearPlaylist}
-            className="display-sm text-[11px] text-ink-400 hover:text-flare transition-colors shrink-0"
-            title="Clear playlist and start over"
-          >
-            Clear all
-          </button>
+          pending ? (
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400">
+                {pending === 'refill' ? 'Replace' : 'Clear'} all {filledCount}?
+              </span>
+              <button
+                onClick={() => {
+                  if (pending === 'refill') generateRandom()
+                  else clearPlaylist()
+                  setPending(null)
+                }}
+                className="display-sm text-[11px] text-flare-600 dark:text-flare-400 hover:underline"
+                autoFocus
+              >
+                Yes
+              </button>
+              <span aria-hidden="true" className="text-ink-200 dark:text-ink-700">|</span>
+              <button
+                onClick={() => setPending(null)}
+                className="display-sm text-[11px] text-ink-400 hover:text-ink-950 dark:hover:text-paper"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                onClick={() => setPending('refill')}
+                className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
+                title="Replace every slot, including tracks you picked yourself"
+              >
+                Refill all randomly
+              </button>
+              <span aria-hidden="true" className="text-ink-200 dark:text-ink-700">|</span>
+              <button
+                onClick={() => setPending('clear')}
+                className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
+                title="Empty every slot and start over"
+              >
+                Clear all
+              </button>
+            </div>
+          )
         )}
       </div>
 
-      {showRandomAction && (
+      {!hasAnyTracks && (
         <div className="p-3 border-b border-ink-200 dark:border-ink-800">
           <Button variant="primary" onClick={generateRandom} className="w-full">
             Fill all randomly
           </Button>
-        </div>
-      )}
-
-      {!hasAnyTracks && !showRandomAction && (
-        <div className="px-3 py-4 text-ink-400">
-          <p className="text-sm hidden lg:block">Empty. Use the tools on the left, or fill any slot directly below.</p>
-          <p className="text-sm lg:hidden">Empty. Use the Search or Themes tabs, or fill any slot below.</p>
+          <p className="text-xs text-ink-400 mt-2">
+            <span className="hidden lg:inline">Or pick a theme on the left, or fill any slot below.</span>
+            <span className="lg:hidden">Or use the Search or Themes tabs, or fill any slot below.</span>
+          </p>
         </div>
       )}
 

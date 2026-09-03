@@ -13,10 +13,10 @@ export function Button({
 
   // Legacy variant names are aliased so existing call sites keep working.
   const variantClasses = {
-    primary: 'bg-ink-950 text-paper hover:bg-flare dark:bg-paper dark:text-ink-950 dark:hover:bg-flare dark:hover:text-paper',
-    accent: 'bg-flare text-white hover:bg-flare-600',
-    secondary: 'bg-flare text-white hover:bg-flare-600',
-    blue: 'bg-ink-950 text-paper hover:bg-flare dark:bg-paper dark:text-ink-950 dark:hover:bg-flare dark:hover:text-paper',
+    primary: 'bg-ink-950 text-paper hover:bg-flare-600 dark:bg-paper dark:text-ink-950 dark:hover:bg-flare-600 dark:hover:text-paper',
+    accent: 'bg-flare-600 text-white hover:bg-flare-600',
+    secondary: 'bg-flare-600 text-white hover:bg-flare-600',
+    blue: 'bg-ink-950 text-paper hover:bg-flare-600 dark:bg-paper dark:text-ink-950 dark:hover:bg-flare-600 dark:hover:text-paper',
     outline: 'border border-ink-300 dark:border-ink-700 text-ink-800 dark:text-ink-200 hover:bg-ink-950 hover:text-paper hover:border-ink-950 dark:hover:bg-paper dark:hover:text-ink-950 dark:hover:border-paper',
     'blue-outline': 'border border-ink-300 dark:border-ink-700 text-ink-800 dark:text-ink-200 hover:bg-ink-950 hover:text-paper hover:border-ink-950 dark:hover:bg-paper dark:hover:text-ink-950 dark:hover:border-paper',
     ghost: 'text-ink-500 dark:text-ink-400 hover:text-ink-950 dark:hover:text-paper hover:bg-ink-100 dark:hover:bg-ink-800',

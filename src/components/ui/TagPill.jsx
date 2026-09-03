@@ -15,7 +15,7 @@ export function TagPill({ tag, size = 'md', active = false }) {
   }
 
   const tone = active
-    ? 'border-flare text-flare'
+    ? 'border-flare text-accent'
     : 'border-ink-200 dark:border-ink-700 text-ink-500 dark:text-ink-400'
 
   return (

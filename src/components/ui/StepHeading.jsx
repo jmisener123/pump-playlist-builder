@@ -12,7 +12,7 @@ export function StepHeading({ number, title, total = 2, hint }) {
         <span
           aria-hidden="true"
           className="flex items-center justify-center shrink-0 w-8 h-8 rounded
-                     bg-ink-950 text-paper dark:bg-paper dark:text-ink-950
+                     bg-flare-600 text-white
                      font-display font-black text-base tabular leading-none"
         >
           {number}

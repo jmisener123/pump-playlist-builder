@@ -50,6 +50,14 @@
     @apply font-display text-sm font-bold uppercase tracking-[0.06em];
   }
 
+  /* Accent as TEXT. The hero vermillion (flare-500) is only 3.81:1 on
+     paper and 4.97:1 on ink-950, so text steps down to flare-600 in light
+     mode (5.26:1) and up to flare-400 on dark (7.01:1). flare-500 stays
+     the display/rule colour where large-text and non-text 3:1 applies. */
+  .text-accent {
+    @apply text-flare-600 dark:text-flare-400;
+  }
+
   /* ---- Surfaces ------------------------------------------------------ */
   /* Flat panels with hairline rules. No drop shadows, no floating cards. */
 
@@ -75,11 +83,11 @@
 
   .btn-primary {
     @apply btn-base px-4 py-2 text-xs bg-ink-950 text-paper
-           hover:bg-flare dark:bg-paper dark:text-ink-950 dark:hover:bg-flare dark:hover:text-paper;
+           hover:bg-flare-600 dark:bg-paper dark:text-ink-950 dark:hover:bg-flare-600 dark:hover:text-paper;
   }
 
   .btn-accent {
-    @apply btn-base px-4 py-2 text-xs bg-flare text-white hover:bg-flare-600;
+    @apply btn-base px-4 py-2 text-xs bg-flare-600 text-white hover:bg-flare-700;
   }
 
   .btn-outline {
@@ -117,12 +125,11 @@
   }
 
   .pill-on {
-    @apply pill border-ink-950 dark:border-paper bg-ink-950 dark:bg-paper
-           text-paper dark:text-ink-950;
+    @apply pill border-flare-600 bg-flare-600 text-white;
   }
 
   .pill-accent {
-    @apply pill border-flare bg-flare text-white;
+    @apply pill border-flare-600 bg-flare-600 text-white;
   }
 
   /* Legacy hooks retained so existing markup keeps working */
@@ -131,7 +138,7 @@
   }
 
   .release-number {
-    @apply tabular font-display font-bold text-flare;
+    @apply tabular font-display font-bold text-accent;
   }
 
   .btn-secondary {

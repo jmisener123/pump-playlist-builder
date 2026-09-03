@@ -69,7 +69,7 @@ export function InlineSearch() {
                     <p className="text-ink-500 dark:text-ink-400 text-xs truncate">{track.Artist}</p>
                     <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                       {compatibleSlots.map(i => (
-                        <span key={i} className="pill-off text-flare border-flare-200">
+                        <span key={i} className="pill-off text-accent border-flare-200">
                           {getBodyPart(TRACK_TYPES[i])}
                         </span>
                       ))}

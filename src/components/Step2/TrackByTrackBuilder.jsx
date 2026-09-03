@@ -95,9 +95,9 @@ export function TrackByTrackBuilder() {
                       }`}
                   >
                     {index + 1}. {trackType.split(' - ')[1]}
-                    {isFilled && <span className="ml-1 text-flare">•</span>}
+                    {isFilled && <span className="ml-1 text-accent">•</span>}
                     {themedCount > 0 && !isFilled && (
-                      <span className="ml-1 text-flare">·</span>
+                      <span className="ml-1 text-accent">·</span>
                     )}
                   </button>
                 )

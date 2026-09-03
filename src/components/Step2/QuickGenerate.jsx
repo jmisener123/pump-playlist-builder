@@ -8,7 +8,7 @@ import { THEME_TAGS, INSTRUCTOR_TAGS } from '../../utils/themes'
 
 export function QuickGenerate({ onPlaylistGenerated }) {
   const { state, actions } = usePlaylist()
-  const { generateRandom, generateThemed, hasAnyTracks } = usePlaylistBuilder()
+  const { generateThemed } = usePlaylistBuilder()
   const { availableTags, genres } = usePlaylistData()
 
   const availableThemeTags = THEME_TAGS.filter(tag => availableTags.includes(tag))
@@ -48,17 +48,6 @@ export function QuickGenerate({ onPlaylistGenerated }) {
 
   const pillOn = 'pill-on'
   const pillOff = 'pill-off'
-
-  const RandomSection = () => (
-    <div>
-      <Button variant="primary" onClick={() => {
-        generateRandom()
-        if (onPlaylistGenerated) onPlaylistGenerated()
-      }} className="w-full">
-        Fill all randomly
-      </Button>
-    </div>
-  )
 
   const ApplyBar = () => (
     <div className="flex gap-2 mb-3">
@@ -133,31 +122,14 @@ export function QuickGenerate({ onPlaylistGenerated }) {
 
   return (
     <div>
-      {/* Mobile: random fill + themes */}
+      {/* Mobile: themes only — random fill lives in the playlist panel */}
       <div className="lg:hidden panel p-4">
-        <div className="mb-4">
-          <RandomSection />
-        </div>
-        <div className="border-t border-ink-200 dark:border-ink-800 pt-4">
-          <ThemeSection />
-        </div>
+        <ThemeSection />
       </div>
 
-      {/* Desktop: two option cards */}
-      <div className="hidden lg:flex lg:flex-col lg:gap-3">
-        {/* Option 2: Track by track */}
-        <div className="panel p-4">
-          <h3 className="display-sm text-ink-950 dark:text-paper mb-1">Track by track</h3>
-          <p className="text-xs text-ink-500 dark:text-ink-400 mb-3">Use Random, Browse or Search on any slot — or fill everything at once.</p>
-          <RandomSection />
-        </div>
-
-        {/* Option 3: Fill with a theme */}
-        <div className="panel p-4">
-          <h3 className="display-sm text-ink-950 dark:text-paper mb-1">Fill with a theme</h3>
-          <p className="text-xs text-ink-500 dark:text-ink-400 mb-3">Filter by vibe, genre or difficulty, then fill.</p>
-          <ThemeSection />
-        </div>
+      <div className="hidden lg:block panel p-4">
+        <h3 className="display-sm text-ink-950 dark:text-paper mb-3">Fill with a theme</h3>
+        <ThemeSection />
       </div>
     </div>
   )

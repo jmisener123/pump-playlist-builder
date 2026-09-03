@@ -25,7 +25,7 @@ export function ReleaseSelector() {
       <StepHeading
         number={1}
         title="Choose your catalog"
-        hint="Pick the oldest release you own — everything newer is fair game."
+        hint="Pick the oldest release you own. We'll use everything newer."
       />
 
       <div className="panel p-5">

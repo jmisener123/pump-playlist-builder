@@ -43,7 +43,7 @@ export function TrackSlot({
             </button>
           )}
           {noThemedTrackAvailable && isEmpty && (
-            <span className="pill-off text-flare border-flare-200">
+            <span className="pill-off text-accent border-flare-200">
               No themed match
             </span>
           )}
@@ -58,19 +58,21 @@ export function TrackSlot({
       {isEmpty ? (
         /* Empty State */
         <div className="py-2">
-          <div className={`grid gap-1 ${hasThemedOptions ? 'grid-cols-4' : 'grid-cols-3'}`}>
-            <Button variant="blue" size="sm" onClick={onRandom} className="w-full">
+          {/* Wraps instead of squeezing: a rigid 4-col grid clipped the
+              longer "Browse all" label on narrow screens. */}
+          <div className="flex flex-wrap gap-1">
+            <Button variant="blue" size="sm" onClick={onRandom} className="flex-1 min-w-[4.5rem] whitespace-nowrap">
               Random
             </Button>
             {hasThemedOptions && (
-              <Button variant="secondary" size="sm" onClick={onRandomThemed} className="w-full">
+              <Button variant="secondary" size="sm" onClick={onRandomThemed} className="flex-1 min-w-[4.5rem] whitespace-nowrap">
                 Themed
               </Button>
             )}
-            <Button variant="blue-outline" size="sm" onClick={onBrowse} className="w-full">
-              Browse ({availableCount})
+            <Button variant="blue-outline" size="sm" onClick={onBrowse} className="flex-1 min-w-[7rem] whitespace-nowrap">
+              Browse all ({availableCount})
             </Button>
-            <Button variant="blue-outline" size="sm" onClick={onSearch} className="w-full">
+            <Button variant="blue-outline" size="sm" onClick={onSearch} className="flex-1 min-w-[4.5rem] whitespace-nowrap">
               Search
             </Button>
           </div>
@@ -109,7 +111,7 @@ export function TrackSlot({
               </button>
               <button
                 onClick={onClear}
-                className="px-1.5 py-1 text-xs text-ink-400 hover:text-flare rounded transition-colors"
+                className="px-1.5 py-1 text-xs text-ink-400 hover:text-flare dark:hover:text-flare-400 rounded transition-colors"
                 title="Remove"
                 aria-label="Remove track"
               >
@@ -128,7 +130,7 @@ export function TrackSlot({
               {hasThemedOptions && (
                 <button
                   onClick={() => setShowThemedDropdown(!showThemedDropdown)}
-                  className={`btn-quiet ${showThemedDropdown ? 'text-flare' : ''}`}
+                  className={`btn-quiet ${showThemedDropdown ? 'text-accent' : ''}`}
                 >
                   Themed
                 </button>
@@ -147,7 +149,7 @@ export function TrackSlot({
                 </span>
                 <button
                   onClick={() => setShowThemedDropdown(false)}
-                  className="text-xs text-ink-400 hover:text-flare"
+                  className="text-xs text-ink-400 hover:text-flare dark:hover:text-flare-400"
                   aria-label="Close themed options"
                 >
                   ✕
@@ -193,7 +195,7 @@ export function EmptyTrackMessage({ position, trackType, onRandom, onPartialMatc
         <h4 className="display-sm text-[11px] text-ink-400 dark:text-ink-500">
           {trackType}
         </h4>
-        <span className="pill-off text-flare border-flare-200">
+        <span className="pill-off text-accent border-flare-200">
           No themed match
         </span>
       </div>
