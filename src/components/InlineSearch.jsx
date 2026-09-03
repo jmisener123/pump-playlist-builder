@@ -37,18 +37,18 @@ export function InlineSearch() {
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search by song title or artist..."
+        placeholder="Song title or artist"
         className="input-field"
       />
       {searchTerm.trim() && (
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <p className="eyebrow mt-2 tabular">
           {displayTracks.length > 0
-            ? `${displayTracks.length} track${displayTracks.length !== 1 ? 's' : ''} found`
-            : 'No tracks found — try different terms'}
+            ? `${displayTracks.length} result${displayTracks.length !== 1 ? 's' : ''}`
+            : 'No matches'}
         </p>
       )}
       {searchTerm.trim() && displayTracks.length > 0 && (
-        <div className="mt-2 max-h-72 overflow-y-auto space-y-2">
+        <div className="mt-2 max-h-72 overflow-y-auto border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800">
           {displayTracks.map((track) => {
             const compatibleSlots = getCompatibleSlots(track)
             const availableSlots = getAvailableSlots(track)
@@ -61,31 +61,29 @@ export function InlineSearch() {
             return (
               <div
                 key={`${track.Release}_${track['Song Title']}`}
-                className="rounded-md border-l-4 border-primary p-2.5 bg-gray-50 dark:bg-gray-700/50"
+                className="px-3 py-2.5 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
               >
                 <div className="flex justify-between items-start gap-2">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-gray-900 dark:text-gray-100">"{track['Song Title']}"</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-xs">{track.Artist}</p>
+                    <p className="font-semibold text-sm text-ink-900 dark:text-ink-100 truncate">{track['Song Title']}</p>
+                    <p className="text-ink-500 dark:text-ink-400 text-xs truncate">{track.Artist}</p>
                     <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                       {compatibleSlots.map(i => (
-                        <span key={i} className="text-xs font-semibold bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 px-1.5 py-0.5 rounded">
+                        <span key={i} className="pill-off text-accent border-flare-200">
                           {getBodyPart(TRACK_TYPES[i])}
                         </span>
                       ))}
-                      <span className="text-gray-400 dark:text-gray-500 text-xs">
+                      <span className="text-ink-400 text-xs tabular">
                         R{track.Release} · {track.Duration} · {track.Genre}
                       </span>
                     </div>
                   </div>
                   <div className="flex-shrink-0">
                     {alreadyInPlaylist ? (
-                      <span className="text-xs bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 px-2 py-1 rounded font-medium">
-                        ✓ Added
-                      </span>
+                      <span className="eyebrow text-ink-400">Added</span>
                     ) : canAdd ? (
                       <Button variant="primary" size="sm" onClick={() => addToPlaylist(track)}>
-                        + Add
+                        Add
                       </Button>
                     ) : hasFilledSlot ? (
                       <Button variant="outline" size="sm" onClick={() => addToSlot(track, compatibleSlots[0])}>

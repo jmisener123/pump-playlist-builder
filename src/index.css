@@ -2,42 +2,155 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: #667eea;
-  --secondary: #4ecdc4;
-  --accent: #f97316;
-}
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  body {
+    @apply bg-paper text-ink-900 dark:bg-ink-950 dark:text-ink-100;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
+  }
+
+  /* Editorial display type: heavy, tight, uppercase */
+  h1, h2, h3 {
+    font-family: 'Archivo', system-ui, sans-serif;
+  }
+
+  /* Durations, release numbers and counts should never shift width */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-flare ring-offset-2 ring-offset-paper dark:ring-offset-ink-950;
+  }
 }
 
 @layer components {
-  .playlist-card {
-    @apply bg-gray-50 text-gray-800 dark:bg-gray-800 dark:text-gray-100;
+  /* ---- Typography ---------------------------------------------------- */
+
+  /* Small numbered/label eyebrow that replaces "Step 1:" wizard copy */
+  .eyebrow {
+    @apply font-display text-[11px] font-bold uppercase tracking-[0.18em] text-ink-400 dark:text-ink-400;
   }
 
-  .release-number {
-    @apply text-blue-600 font-bold dark:text-secondary;
+  .display-xl {
+    @apply font-display font-black uppercase tracking-tightest leading-[0.92];
+    /* tracking-tightest also pulls -0.045em out of the space between words,
+       which fuses PUMP and PLAYLIST at black weight. Give it back, plus a
+       little extra so the two words read as separate. */
+    word-spacing: 0.09em;
+  }
+
+  .display-md {
+    @apply font-display text-xl font-extrabold uppercase tracking-[-0.02em] leading-none;
+  }
+
+  .display-sm {
+    @apply font-display text-sm font-bold uppercase tracking-[0.06em];
+  }
+
+  /* Accent as TEXT. The hero vermillion (flare-500) is only 3.81:1 on
+     paper and 4.97:1 on ink-950, so text steps down to flare-600 in light
+     mode (5.26:1) and up to flare-400 on dark (7.01:1). flare-500 stays
+     the display/rule colour where large-text and non-text 3:1 applies. */
+  .text-accent {
+    @apply text-flare-600 dark:text-flare-400;
+  }
+
+  /* ---- Surfaces ------------------------------------------------------ */
+  /* Flat panels with hairline rules. No drop shadows, no floating cards. */
+
+  .panel {
+    @apply bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded;
+  }
+
+  .panel-flush {
+    @apply bg-transparent border-t border-ink-200 dark:border-ink-800;
+  }
+
+  .hairline {
+    @apply border-ink-200 dark:border-ink-800;
+  }
+
+  /* ---- Controls ------------------------------------------------------ */
+
+  .btn-base {
+    @apply inline-flex items-center justify-center font-display font-bold uppercase
+           tracking-[0.06em] rounded transition-colors duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed;
   }
 
   .btn-primary {
-    @apply px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply btn-base px-4 py-2 text-xs bg-ink-950 text-paper
+           hover:bg-flare-600 dark:bg-paper dark:text-ink-950 dark:hover:bg-flare-600 dark:hover:text-paper;
+  }
+
+  .btn-accent {
+    @apply btn-base px-4 py-2 text-xs bg-flare-600 text-white hover:bg-flare-700;
+  }
+
+  .btn-outline {
+    @apply btn-base px-4 py-2 text-xs border border-ink-300 dark:border-ink-700
+           text-ink-800 dark:text-ink-200 hover:border-ink-950 hover:bg-ink-950 hover:text-paper
+           dark:hover:border-paper dark:hover:bg-paper dark:hover:text-ink-950;
+  }
+
+  .btn-quiet {
+    @apply btn-base px-3 py-1.5 text-xs text-ink-500 dark:text-ink-400
+           hover:text-ink-950 dark:hover:text-paper hover:bg-ink-100 dark:hover:bg-ink-800;
+  }
+
+  .input-field,
+  .select-field {
+    @apply w-full px-3 py-2 text-sm rounded bg-white dark:bg-ink-900
+           border border-ink-300 dark:border-ink-700
+           text-ink-900 dark:text-ink-100
+           placeholder:text-ink-400
+           focus:border-flare focus:ring-1 focus:ring-flare focus:outline-none;
+  }
+
+  /* ---- Pills / tags -------------------------------------------------- */
+  /* Squared-off, bordered. Reads as a filter chip, not a bubble. */
+
+  .pill {
+    @apply inline-flex items-center px-2.5 py-1 text-xs font-medium rounded
+           border transition-colors duration-150;
+  }
+
+  .pill-off {
+    @apply pill border-ink-200 dark:border-ink-700 bg-transparent
+           text-ink-600 dark:text-ink-300
+           hover:border-ink-400 hover:text-ink-900 dark:hover:text-paper;
+  }
+
+  .pill-on {
+    @apply pill border-flare-600 bg-flare-600 text-white;
+  }
+
+  .pill-accent {
+    @apply pill border-flare-600 bg-flare-600 text-white;
+  }
+
+  /* Legacy hooks retained so existing markup keeps working */
+  .playlist-card {
+    @apply bg-white text-ink-900 dark:bg-ink-900 dark:text-ink-100;
+  }
+
+  .release-number {
+    @apply tabular font-display font-bold text-accent;
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-secondary text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply btn-outline;
   }
 
   .btn-icon {
-    @apply p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors;
-  }
-
-  .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent;
-  }
-
-  .select-field {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent;
+    @apply p-2 rounded text-ink-500 hover:text-ink-950 hover:bg-ink-100
+           dark:text-ink-400 dark:hover:text-paper dark:hover:bg-ink-800 transition-colors;
   }
 }

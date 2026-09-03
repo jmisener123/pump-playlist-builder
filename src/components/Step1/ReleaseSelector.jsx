@@ -2,6 +2,7 @@ import React from 'react'
 import { usePlaylist } from '../../context/PlaylistContext'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
 import { Select } from '../ui/Select'
+import { StepHeading } from '../ui/StepHeading'
 
 export function ReleaseSelector() {
   const { state, actions } = usePlaylist()
@@ -9,28 +10,28 @@ export function ReleaseSelector() {
 
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-r from-orange-50 via-pink-100 to-rose-100 dark:from-orange-900/30 dark:via-pink-900/30 dark:to-rose-900/30 rounded-md shadow-lg p-4 md:p-6 mb-4">
-        <div className="animate-pulse">
-          <div className="h-6 bg-white/50 rounded w-1/2 mb-2"></div>
-          <div className="h-4 bg-white/50 rounded w-3/4"></div>
+      <div>
+        <StepHeading number={1} title="Choose your catalog" />
+        <div className="panel p-5 animate-pulse">
+          <div className="h-4 bg-ink-100 dark:bg-ink-800 rounded w-1/2 mb-3"></div>
+          <div className="h-9 bg-ink-100 dark:bg-ink-800 rounded w-full"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-gradient-to-r from-orange-50 via-pink-100 to-rose-100 dark:from-orange-900/30 dark:via-pink-900/30 dark:to-rose-900/30 rounded-md shadow-lg p-4 md:p-6 mb-4">
-      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-1">
-        Step 1: Select Your Catalog
-      </h2>
-      <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
-        Choose the oldest release you own. We'll use everything newer.
-      </p>
+    <div>
+      <StepHeading
+        number={1}
+        title="Choose your catalog"
+        hint="Pick the oldest release you own. We'll use everything newer."
+      />
 
-      <div className="flex items-center gap-3 mb-4">
-        <div className="flex-1">
-          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Oldest release I own
+      <div className="panel p-5">
+        <div className="max-w-xs mb-5">
+          <label className="eyebrow block mb-1.5">
+            Oldest release owned
           </label>
           <Select
             value={state.earliestRelease}
@@ -38,32 +39,32 @@ export function ReleaseSelector() {
             options={releases}
           />
         </div>
-      </div>
 
-      <div className="space-y-2 text-sm">
-        <label className="flex items-center gap-2 cursor-pointer">
+        <div className="space-y-2.5 text-sm border-t border-ink-200 dark:border-ink-800 pt-4">
+        <label className="group flex items-center gap-2.5 cursor-pointer">
           <input
             type="checkbox"
             checked={state.excludeNewest}
             onChange={(e) => actions.setExcludeNewest(e.target.checked)}
-            className="w-4 h-4 text-primary rounded focus:ring-primary"
+            className="w-4 h-4 accent-flare rounded-none border-ink-300"
           />
-          <span className="text-gray-700 dark:text-gray-300">
-            Exclude newest release ({latestRelease})
+          <span className="text-ink-700 dark:text-ink-300 group-hover:text-ink-950 dark:group-hover:text-paper transition-colors">
+            Exclude newest release <span className="tabular text-ink-400">({latestRelease})</span>
           </span>
         </label>
 
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label className="group flex items-center gap-2.5 cursor-pointer">
           <input
             type="checkbox"
             checked={state.onlyRecent10}
             onChange={(e) => actions.setOnlyRecent10(e.target.checked)}
-            className="w-4 h-4 text-primary rounded focus:ring-primary"
+            className="w-4 h-4 accent-flare rounded-none border-ink-300"
           />
-          <span className="text-gray-700 dark:text-gray-300">
+          <span className="text-ink-700 dark:text-ink-300 group-hover:text-ink-950 dark:group-hover:text-paper transition-colors">
             Only use my 10 most recent releases
           </span>
         </label>
+        </div>
       </div>
     </div>
   )

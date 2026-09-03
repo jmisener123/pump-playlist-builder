@@ -18,7 +18,7 @@ export function Select({
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          className="eyebrow block mb-1.5"
         >
           {label}
         </label>
@@ -71,7 +71,7 @@ export function MultiSelect({
   return (
     <div className={className}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="eyebrow block mb-1.5">
           {label}
         </label>
       )}
@@ -87,12 +87,8 @@ export function MultiSelect({
               type="button"
               disabled={disabled}
               onClick={() => toggleOption(optionValue)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors
-                ${isSelected
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                }
-                ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+              className={`${isSelected ? 'pill-on' : 'pill-off'}
+                ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
               {optionLabel}
@@ -101,7 +97,7 @@ export function MultiSelect({
         })}
       </div>
       {value.length === 0 && (
-        <p className="text-sm text-gray-500 mt-1">{placeholder}</p>
+        <p className="text-xs text-ink-400 mt-1.5">{placeholder}</p>
       )}
     </div>
   )

@@ -62,7 +62,7 @@ export function GlobalSearch({ isOpen, onClose }) {
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="🔍 Search Catalog"
+      title="Search catalog"
       size="xl"
     >
       <div className="space-y-4">
@@ -72,29 +72,28 @@ export function GlobalSearch({ isOpen, onClose }) {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by song title, artist, or both (e.g., 'Lady Gaga' or 'Born This Way')..."
+            placeholder="Song title or artist"
             className="input-field text-base"
             autoFocus
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="eyebrow mt-2 tabular">
             {searchTerm ? (
               displayTracks.length > 0 
-                ? `${displayTracks.length} track${displayTracks.length !== 1 ? 's' : ''} found`
-                : 'No tracks found - try different search terms'
+                ? `${displayTracks.length} result${displayTracks.length !== 1 ? 's' : ''}`
+                : 'No matches'
             ) : (
-              `Search across all ${filteredTracks.length} tracks in your catalog`
+              `${filteredTracks.length} tracks in your catalog`
             )}
           </p>
         </div>
 
         {/* Results */}
-        <div className="max-h-[500px] overflow-y-auto space-y-2">
+        <div className="max-h-[500px] overflow-y-auto divide-y divide-ink-100 dark:divide-ink-800 border-t border-ink-200 dark:border-ink-800">
           {!searchTerm.trim() ? (
-            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-              <p className="text-2xl mb-2">🔍</p>
-              <p className="font-medium">Start typing to search</p>
-              <p className="text-sm mt-1">
-                Search for any song or artist across your entire catalog
+            <div className="text-center py-14 text-ink-400">
+              <p className="display-sm text-ink-500 dark:text-ink-400">Start typing to search</p>
+              <p className="text-sm mt-1.5">
+                Any song or artist across your whole catalog
               </p>
             </div>
           ) : displayTracks.length > 0 ? (
@@ -110,15 +109,15 @@ export function GlobalSearch({ isOpen, onClose }) {
               return (
                 <div
                   key={`${track.Release}_${track['Song Title']}`}
-                  className="playlist-card rounded-md border-l-4 border-primary p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  className="px-3 py-2.5 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
                 >
                   <div className="flex justify-between items-start gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 dark:text-gray-100">
-                        "{track['Song Title']}"
+                      <p className="font-semibold text-sm text-ink-900 dark:text-ink-100">
+                        {track['Song Title']}
                       </p>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        by {track.Artist}
+                      <p className="text-ink-500 dark:text-ink-400 text-xs">
+                        {track.Artist}
                       </p>
                       <div className="flex flex-wrap items-center gap-2 mt-1">
                         {compatibleSlots.map(slotIndex => {
@@ -127,16 +126,16 @@ export function GlobalSearch({ isOpen, onClose }) {
                           return (
                             <span 
                               key={slotIndex}
-                              className="text-sm font-semibold bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 px-2.5 py-1 rounded"
+                              className="pill-off text-accent border-flare-200"
                             >
                               {bodyPart}
                             </span>
                           )
                         })}
-                        <p className="text-gray-500 dark:text-gray-500 text-xs">
-                          Release: <span className="release-number">{track.Release}</span>
-                          {' | '}Duration: {track.Duration}
-                          {' | '}{track.Genre}
+                        <p className="text-ink-400 text-xs tabular">
+                          <span className="release-number">R{track.Release}</span>
+                          {' · '}{track.Duration}
+                          {' · '}{track.Genre}
                         </p>
                       </div>
                       {track.Tags && (
@@ -147,20 +146,18 @@ export function GlobalSearch({ isOpen, onClose }) {
                     </div>
                     <div className="flex flex-col gap-1">
                       {alreadyInPlaylist ? (
-                        <span className="text-xs bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 px-3 py-1.5 rounded font-medium">
-                          ✓ In Playlist
-                        </span>
+                        <span className="eyebrow whitespace-nowrap">In playlist</span>
                       ) : canAdd ? (
                         <Button
                           variant="primary"
                           size="sm"
                           onClick={() => addToPlaylist(track)}
                         >
-                          + Add
+                          Add
                         </Button>
                       ) : hasFilledSlot ? (
                         <>
-                          <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 px-3 py-1.5 rounded text-center">
+                          <span className="eyebrow text-center block py-1.5">
                             Slot filled
                           </span>
                           <Button
@@ -184,10 +181,10 @@ export function GlobalSearch({ isOpen, onClose }) {
               )
             })
           ) : (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-10 text-ink-400">
               <p className="font-medium">No tracks found</p>
               <p className="text-sm mt-1">
-                Try different search terms or check your spelling
+                Try different terms or check the spelling
               </p>
             </div>
           )}

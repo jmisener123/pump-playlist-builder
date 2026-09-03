@@ -9,31 +9,33 @@ export function Button({
   className = '',
   ...props
 }) {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-2'
+  const base = 'btn-base'
 
+  // Legacy variant names are aliased so existing call sites keep working.
   const variantClasses = {
-    primary: 'bg-primary text-white hover:opacity-90 focus:ring-primary disabled:opacity-50',
-    secondary: 'bg-secondary text-white hover:opacity-90 focus:ring-secondary disabled:opacity-50',
-    accent: 'bg-accent text-white hover:opacity-90 focus:ring-accent disabled:opacity-50',
-    outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary disabled:opacity-50',
-    blue: 'bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400 disabled:opacity-50',
-    'blue-outline': 'border-2 border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white focus:ring-blue-400 disabled:opacity-50 dark:text-blue-400 dark:border-blue-400',
-    ghost: 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 focus:ring-gray-400 disabled:opacity-50',
-    icon: 'p-2 text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 rounded-md disabled:opacity-50'
+    primary: 'bg-ink-950 text-paper hover:bg-flare-600 dark:bg-paper dark:text-ink-950 dark:hover:bg-flare-600 dark:hover:text-paper',
+    accent: 'bg-flare-600 text-white hover:bg-flare-600',
+    secondary: 'bg-flare-600 text-white hover:bg-flare-600',
+    blue: 'bg-ink-950 text-paper hover:bg-flare-600 dark:bg-paper dark:text-ink-950 dark:hover:bg-flare-600 dark:hover:text-paper',
+    outline: 'border border-ink-300 dark:border-ink-700 text-ink-800 dark:text-ink-200 hover:bg-ink-950 hover:text-paper hover:border-ink-950 dark:hover:bg-paper dark:hover:text-ink-950 dark:hover:border-paper',
+    'blue-outline': 'border border-ink-300 dark:border-ink-700 text-ink-800 dark:text-ink-200 hover:bg-ink-950 hover:text-paper hover:border-ink-950 dark:hover:bg-paper dark:hover:text-ink-950 dark:hover:border-paper',
+    ghost: 'text-ink-500 dark:text-ink-400 hover:text-ink-950 dark:hover:text-paper hover:bg-ink-100 dark:hover:bg-ink-800',
+    icon: 'p-2 text-ink-500 hover:text-ink-950 hover:bg-ink-100 dark:text-ink-400 dark:hover:text-paper dark:hover:bg-ink-800',
   }
 
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
-    icon: 'p-2'
+    sm: 'px-2.5 py-1.5 text-[11px]',
+    md: 'px-4 py-2 text-xs',
+    lg: 'px-6 py-3 text-sm',
+    icon: 'p-2',
   }
 
-  const classes = `${baseClasses} ${variantClasses[variant]} ${variant !== 'icon' ? sizeClasses[size] : sizeClasses.icon} ${className}`
+  const variantCls = variantClasses[variant] || variantClasses.primary
+  const sizeCls = variant === 'icon' ? sizeClasses.icon : (sizeClasses[size] || sizeClasses.md)
 
   return (
     <button
-      className={classes}
+      className={`${base} ${variantCls} ${sizeCls} ${className}`}
       disabled={disabled}
       onClick={onClick}
       {...props}

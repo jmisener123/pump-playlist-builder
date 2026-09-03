@@ -49,7 +49,7 @@ export function TrackSearch({ position, trackType, onSelect, onClose, browseMode
             className="input-field"
             autoFocus={!browseMode}
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="eyebrow mt-2 tabular">
             {searchTerm ? `${displayTracks.length} of ${positionTracks.length} tracks` : `${displayTracks.length} tracks in your catalog`}
           </p>
         </div>
@@ -60,18 +60,18 @@ export function TrackSearch({ position, trackType, onSelect, onClose, browseMode
             displayTracks.map((track) => (
               <div
                 key={`${track.Release}_${track['Song Title']}`}
-                className="playlist-card rounded-md border-l-4 border-primary p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="px-3 py-2.5 cursor-pointer hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
                 onClick={() => handleSelect(track)}
               >
                 <div className="flex justify-between items-start gap-2">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 dark:text-gray-100">
+                    <p className="font-semibold text-sm text-ink-900 dark:text-ink-100">
                       {track['Song Title']}
                     </p>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                    <p className="text-ink-500 dark:text-ink-400 text-xs">
                       by {track.Artist}
                     </p>
-                    <p className="text-gray-500 dark:text-gray-500 text-xs mt-1">
+                    <p className="text-ink-400 text-xs mt-1 tabular">
                       Release: <span className="release-number">{track.Release}</span>
                       {' | '}Duration: {track.Duration}
                       {' | '}{track.Genre}
@@ -96,7 +96,7 @@ export function TrackSearch({ position, trackType, onSelect, onClose, browseMode
               </div>
             ))
           ) : (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-10 text-ink-400">
               <p className="font-medium">No tracks found</p>
               {searchTerm && (
                 <p className="text-sm mt-1">

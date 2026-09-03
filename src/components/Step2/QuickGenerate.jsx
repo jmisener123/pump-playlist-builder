@@ -8,7 +8,7 @@ import { THEME_TAGS, INSTRUCTOR_TAGS } from '../../utils/themes'
 
 export function QuickGenerate({ onPlaylistGenerated }) {
   const { state, actions } = usePlaylist()
-  const { generateRandom, generateThemed, hasAnyTracks } = usePlaylistBuilder()
+  const { generateThemed } = usePlaylistBuilder()
   const { availableTags, genres } = usePlaylistData()
 
   const availableThemeTags = THEME_TAGS.filter(tag => availableTags.includes(tag))
@@ -46,19 +46,8 @@ export function QuickGenerate({ onPlaylistGenerated }) {
     state.instructorTags.length > 0 ||
     state.selectedGenres.length > 0
 
-  const pillBase = 'px-3 py-1 rounded-full text-sm font-medium transition-colors'
-  const pillUnselected = 'bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600'
-
-  const RandomSection = () => (
-    <div>
-      <Button variant="primary" onClick={() => {
-        generateRandom()
-        if (onPlaylistGenerated) onPlaylistGenerated()
-      }} className="w-full">
-        Fill All Randomly
-      </Button>
-    </div>
-  )
+  const pillOn = 'pill-on'
+  const pillOff = 'pill-off'
 
   const ApplyBar = () => (
     <div className="flex gap-2 mb-3">
@@ -66,11 +55,11 @@ export function QuickGenerate({ onPlaylistGenerated }) {
         generateThemed()
         if (onPlaylistGenerated) onPlaylistGenerated()
       }} className="flex-1" disabled={!hasFilters}>
-        Apply Theme & Fill
+        Apply theme &amp; fill
       </Button>
       {hasFilters
         ? <Button variant="ghost" onClick={clearAll} className="text-xs px-2">Clear</Button>
-        : <span className="text-xs text-gray-400 self-center">Select filters first</span>
+        : <span className="text-xs text-ink-400 self-center">Pick a filter first</span>
       }
     </div>
   )
@@ -83,35 +72,41 @@ export function QuickGenerate({ onPlaylistGenerated }) {
       </div>
 
       <div className="mb-3">
-        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">Themes</label>
+        <label className="eyebrow block mb-2">Themes</label>
         <div className="flex flex-wrap gap-1.5">
           {availableThemeTags.map(tag => (
             <button key={tag} onClick={(e) => toggleThemeTag(tag, e)}
-              className={`${pillBase} ${state.themeTags.includes(tag) ? 'bg-primary text-white' : pillUnselected}`}>
-              {TAG_EMOJIS[tag] || ''} {tag}
+              className={state.themeTags.includes(tag) ? pillOn : pillOff}>
+              {TAG_EMOJIS[tag] && (
+                <span aria-hidden="true" className="mr-1.5 text-[13px] leading-none">{TAG_EMOJIS[tag]}</span>
+              )}
+              {tag}
             </button>
           ))}
         </div>
       </div>
 
       <div className="mb-3">
-        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">Difficulty & Length</label>
+        <label className="eyebrow block mb-2">Difficulty &amp; length</label>
         <div className="flex flex-wrap gap-1.5">
           {availableInstructorTags.map(tag => (
             <button key={tag} onClick={(e) => toggleInstructorTag(tag, e)}
-              className={`${pillBase} ${state.instructorTags.includes(tag) ? 'bg-primary text-white' : pillUnselected}`}>
-              {TAG_EMOJIS[tag] || ''} {getTagDisplayName(tag)}
+              className={state.instructorTags.includes(tag) ? pillOn : pillOff}>
+              {TAG_EMOJIS[tag] && (
+                <span aria-hidden="true" className="mr-1.5 text-[13px] leading-none">{TAG_EMOJIS[tag]}</span>
+              )}
+              {getTagDisplayName(tag)}
             </button>
           ))}
         </div>
       </div>
 
       <div className="mb-3">
-        <label className="block text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">Genres</label>
+        <label className="eyebrow block mb-2">Genres</label>
         <div className="flex flex-wrap gap-1.5">
           {genres.map(genre => (
             <button key={genre} onClick={(e) => toggleGenre(genre, e)}
-              className={`${pillBase} ${state.selectedGenres.includes(genre) ? 'bg-secondary text-white' : pillUnselected}`}>
+              className={state.selectedGenres.includes(genre) ? pillOn : pillOff}>
               {genre}
             </button>
           ))}
@@ -127,31 +122,14 @@ export function QuickGenerate({ onPlaylistGenerated }) {
 
   return (
     <div>
-      {/* Mobile: random fill + themes */}
-      <div className="lg:hidden bg-gradient-to-r from-blue-50 via-sky-100 to-blue-100 dark:from-blue-900/30 dark:via-sky-900/30 dark:to-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md p-4">
-        <div className="mb-4">
-          <RandomSection />
-        </div>
-        <div className="border-t border-blue-200 dark:border-blue-700 pt-4">
-          <ThemeSection />
-        </div>
+      {/* Mobile: themes only — random fill lives in the playlist panel */}
+      <div className="lg:hidden panel p-4">
+        <ThemeSection />
       </div>
 
-      {/* Desktop: two option cards */}
-      <div className="hidden lg:flex lg:flex-col lg:gap-3">
-        {/* Option 2: Track by track */}
-        <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4">
-          <div className="text-base font-bold text-gray-800 dark:text-gray-200 mb-0.5">Build track by track</div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">Use the Random, Browse, or Search buttons on each slot. Or fill all at once:</p>
-          <RandomSection />
-        </div>
-
-        {/* Option 3: Fill with a theme */}
-        <div className="bg-white dark:bg-gray-800 rounded-md shadow p-4">
-          <div className="text-base font-bold text-gray-800 dark:text-gray-200 mb-0.5">Fill with a theme</div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">Filter by vibe, genre, or difficulty, then fill your playlist.</p>
-          <ThemeSection />
-        </div>
+      <div className="hidden lg:block panel p-4">
+        <h3 className="display-sm text-ink-950 dark:text-paper mb-3">Fill with a theme</h3>
+        <ThemeSection />
       </div>
     </div>
   )
