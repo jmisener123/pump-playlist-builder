@@ -9,12 +9,12 @@ export function Footer() {
           with, endorsed by, or associated with Les Mills or the BodyPump program.
         </p>
         <a
-          href="https://github.com/jmisener123/pump-playlist-builder/"
+          href="https://jessicamisener.com/contact"
           target="_blank"
           rel="noopener noreferrer"
           className="display-sm text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors shrink-0"
         >
-          GitHub &amp; contact →
+          Questions? Contact me →
         </a>
       </div>
     </footer>

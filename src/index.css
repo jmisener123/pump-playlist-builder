@@ -40,6 +40,10 @@
 
   .display-xl {
     @apply font-display font-black uppercase tracking-tightest leading-[0.92];
+    /* tracking-tightest also pulls -0.045em out of the space between words,
+       which fuses PUMP and PLAYLIST at black weight. Give it back, plus a
+       little extra so the two words read as separate. */
+    word-spacing: 0.09em;
   }
 
   .display-md {
