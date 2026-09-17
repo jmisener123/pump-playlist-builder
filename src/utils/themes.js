@@ -74,6 +74,11 @@ export const THEMES = {
     emoji: "🌷",
     tags: ["Spring"]
   },
+  fall: {
+    name: "Fall",
+    emoji: "🍂",
+    tags: ["Fall"]
+  },
   winter: {
     name: "Winter",
     emoji: "❄️",
@@ -91,6 +96,7 @@ export const THEME_TAGS = [
   "Beast Mode",
   "Break-Up Songs",
   "Emo",
+  "Fall",
   "Halloween",
   "New Year's Eve",
   "P!nk",
