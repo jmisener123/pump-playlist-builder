@@ -68,10 +68,10 @@ export function PlaylistBuilder({ mode = 'random' }) {
     if (!showThemedOptions) return []
     const themedTracks = getThemedTracksForSlot(index)
     const currentTrack = playlist[index]
-    // Exclude current track from options
-    return themedTracks.filter(t =>
-      !currentTrack || t['Song Title'] !== currentTrack['Song Title']
-    )
+    // Newest first: the likeliest swap is a recent release.
+    return themedTracks
+      .filter(t => !currentTrack || t['Song Title'] !== currentTrack['Song Title'])
+      .sort((a, b) => b.SortKey - a.SortKey)
   }
 
   // With no theme pill and no bulk actions, this row would render as an empty
