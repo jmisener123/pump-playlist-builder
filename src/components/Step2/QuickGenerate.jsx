@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { usePlaylist } from '../../context/PlaylistContext'
 import { usePlaylistBuilder } from '../../hooks/usePlaylistBuilder'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
@@ -7,11 +7,56 @@ import { Button } from '../ui/Button'
 import { TAG_EMOJIS, getTagDisplayName } from '../../utils/trackUtils'
 import { THEME_TAGS, INSTRUCTOR_TAGS, sortThemesBySeason } from '../../utils/themes'
 
-export function QuickGenerate({ onPlaylistGenerated }) {
+/**
+ * `autoFill` (desktop, where the playlist is visible alongside) fills the
+ * playlist as soon as a filter is picked, but only while doing so can't
+ * overwrite anything hand-picked: when the playlist is empty, or still exactly
+ * what the last auto-fill produced.
+ */
+export function QuickGenerate({ onPlaylistGenerated, autoFill = false }) {
   const { state, actions } = usePlaylist()
   const { generateThemed } = usePlaylistBuilder()
   const { availableTags, genres } = usePlaylistData()
   const showToast = useToast()
+  const [confirmingReplace, setConfirmingReplace] = useState(false)
+  // The playlist array this panel last generated; any later edit replaces the
+  // array in state, so reference equality means "untouched since".
+  const lastFillRef = useRef(null)
+  const pendingAutoFillRef = useRef(false)
+
+  const filledCount = state.playlist.filter(Boolean).length
+  const isUntouchedFill = lastFillRef.current !== null && lastFillRef.current === state.playlist
+  const canAutoFill = autoFill && (filledCount === 0 || isUntouchedFill)
+
+  const fillWithTheme = () => {
+    const result = generateThemed()
+    lastFillRef.current = result
+    setConfirmingReplace(false)
+    const filled = result.filter(Boolean).length
+    showToast(
+      filled === 10
+        ? 'Playlist filled \u2713'
+        : filled === 0
+          ? 'No tracks match this theme'
+          : `Filled ${filled} slots \u2713`,
+      filled > 0 && filled < 10 ? `${filled}/10 \u00b7 ${10 - filled} had no match` : `${filled}/10`
+    )
+    if (onPlaylistGenerated) onPlaylistGenerated()
+  }
+
+  // Filters live in shared state, so fill after they've been committed.
+  useEffect(() => {
+    if (!pendingAutoFillRef.current) return
+    pendingAutoFillRef.current = false
+    const hasAny = state.themeTags.length > 0 || state.instructorTags.length > 0 || state.selectedGenres.length > 0
+    if (hasAny) fillWithTheme()
+  }, [state.themeTags, state.instructorTags, state.selectedGenres])
+
+  const setFilters = (filters) => {
+    setConfirmingReplace(false)
+    if (canAutoFill) pendingAutoFillRef.current = true
+    actions.setThemeFilters(filters)
+  }
 
   const availableThemeTags = sortThemesBySeason(THEME_TAGS.filter(tag => availableTags.includes(tag)))
   const availableInstructorTags = INSTRUCTOR_TAGS.filter(tag => availableTags.includes(tag))
@@ -21,7 +66,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
     const newTags = state.themeTags.includes(tag)
       ? state.themeTags.filter(t => t !== tag)
       : [...state.themeTags, tag]
-    actions.setThemeFilters({ themeTags: newTags })
+    setFilters({ themeTags: newTags })
   }
 
   const toggleInstructorTag = (tag, event) => {
@@ -29,7 +74,7 @@ export function QuickGenerate({ onPlaylistGenerated }) {
     const newTags = state.instructorTags.includes(tag)
       ? state.instructorTags.filter(t => t !== tag)
       : [...state.instructorTags, tag]
-    actions.setThemeFilters({ instructorTags: newTags })
+    setFilters({ instructorTags: newTags })
   }
 
   const toggleGenre = (genre, event) => {
@@ -37,10 +82,11 @@ export function QuickGenerate({ onPlaylistGenerated }) {
     const newGenres = state.selectedGenres.includes(genre)
       ? state.selectedGenres.filter(g => g !== genre)
       : [...state.selectedGenres, genre]
-    actions.setThemeFilters({ selectedGenres: newGenres })
+    setFilters({ selectedGenres: newGenres })
   }
 
   const clearAll = () => {
+    setConfirmingReplace(false)
     actions.setThemeFilters({ themeTags: [], instructorTags: [], selectedGenres: [] })
   }
 
@@ -51,28 +97,36 @@ export function QuickGenerate({ onPlaylistGenerated }) {
   const pillOn = 'pill-on'
   const pillOff = 'pill-off'
 
-  const ApplyBar = () => (
-    <div className="flex gap-2 mb-3">
-      <Button variant="primary" onClick={() => {
-        const filled = generateThemed().filter(Boolean).length
-        showToast(
-          filled === 10
-            ? 'Playlist filled \u2713'
-            : filled === 0
-              ? 'No tracks match this theme'
-              : `Filled ${filled} slots \u2713`,
-          filled > 0 && filled < 10 ? `${filled}/10 \u00b7 ${10 - filled} had no match` : `${filled}/10`
-        )
-        if (onPlaylistGenerated) onPlaylistGenerated()
-      }} className="flex-1" disabled={!hasFilters}>
-        Apply theme &amp; fill
-      </Button>
-      {hasFilters
-        ? <Button variant="ghost" onClick={clearAll} className="text-xs px-2">Clear</Button>
-        : <span className="text-xs text-ink-400 self-center">Pick a filter first</span>
-      }
-    </div>
-  )
+  const handleApply = () => {
+    // Hand-picked tracks would be lost with no undo, so confirm first.
+    if (filledCount > 0 && !isUntouchedFill) setConfirmingReplace(true)
+    else fillWithTheme()
+  }
+
+  const ApplyBar = () => {
+    if (hasFilters && confirmingReplace) {
+      return (
+        <div className="flex items-center gap-3 mb-3 min-h-[2.25rem]">
+          <span className="text-sm text-ink-700 dark:text-ink-300 flex-1">
+            Replace {filledCount} {filledCount === 1 ? 'track' : 'tracks'}?
+          </span>
+          <Button variant="primary" size="sm" onClick={fillWithTheme} autoFocus>Replace</Button>
+          <Button variant="ghost" size="sm" onClick={() => setConfirmingReplace(false)}>Cancel</Button>
+        </div>
+      )
+    }
+    return (
+      <div className="flex gap-2 mb-3">
+        <Button variant="primary" onClick={handleApply} className="flex-1" disabled={!hasFilters}>
+          {isUntouchedFill ? 'Shuffle again' : 'Apply theme & fill'}
+        </Button>
+        {hasFilters
+          ? <Button variant="ghost" onClick={clearAll} className="text-xs px-2">Clear</Button>
+          : <span className="text-xs text-ink-400 self-center">{autoFill && filledCount === 0 ? 'Pick a filter to fill' : 'Pick a filter first'}</span>
+        }
+      </div>
+    )
+  }
 
   const ThemeSection = () => (
     <div>
