@@ -177,3 +177,16 @@ export function formatReleaseShort(release) {
   const value = String(release ?? '').trim()
   return /^\d+(\.\d+)?$/.test(value) ? `R${value}` : value
 }
+
+/**
+ * Human label for the active theme filters, e.g. "🎃 Halloween • EDM".
+ * Genres have no emoji; pass `emoji: false` for a plain-text label.
+ */
+export function formatThemeLabel({ themeTags = [], instructorTags = [], selectedGenres = [] }, { emoji = true } = {}) {
+  const withEmoji = (tag) => (emoji && TAG_EMOJIS[tag] ? `${TAG_EMOJIS[tag]} ${tag}` : tag)
+  return [
+    themeTags.map(withEmoji).join(', '),
+    instructorTags.map(withEmoji).join(', '),
+    selectedGenres.join(', '),
+  ].filter(Boolean).join(' • ')
+}
