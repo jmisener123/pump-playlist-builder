@@ -25,7 +25,8 @@ export function StepHeading({ number, title, total = 2, hint }) {
 
         <span className="flex-1 border-t border-ink-200 dark:border-ink-800" />
 
-        <span className="eyebrow shrink-0 whitespace-nowrap">
+        {/* The numbered badge already carries the sequence on narrow screens. */}
+        <span aria-hidden="true" className="eyebrow shrink-0 whitespace-nowrap hidden sm:inline">
           Step {number} of {total}
         </span>
       </div>

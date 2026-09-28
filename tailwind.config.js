@@ -46,6 +46,20 @@ export default {
       letterSpacing: {
         tightest: '-0.045em',
       },
+      keyframes: {
+        'toast-in': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'count-bump': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '40%': { transform: 'scale(1.25)' },
+        },
+      },
+      animation: {
+        'toast-in': 'toast-in 180ms ease-out',
+        'count-bump': 'count-bump 320ms ease-out',
+      },
       borderRadius: {
         DEFAULT: '2px',
         md: '3px',

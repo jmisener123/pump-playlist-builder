@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { formatReleaseShort } from '../../utils/trackUtils'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
 
@@ -7,7 +8,6 @@ export function TrackSlot({
   trackType,
   track,
   onRandom,
-  onSearch,
   onClear,
   onBrowse,
   themedOptions = [],
@@ -24,6 +24,8 @@ export function TrackSlot({
   const hasThemedOptions = themedOptions.length > 0
   const noThemedTrackAvailable = hasThemeFilters && !hasThemedOptions
   const [showActions, setShowActions] = useState(false)
+  // Name the theme instead of saying "themed"; fall back for long combos.
+  const themeLabel = activeThemeText && activeThemeText.length <= 18 ? activeThemeText : 'Theme'
 
   return (
     <div className="border-b border-ink-200 dark:border-ink-800 last:border-b-0 px-3 py-2.5">
@@ -33,18 +35,9 @@ export function TrackSlot({
           {trackType}
         </h4>
         <div className="flex items-center gap-2">
-          {hasThemedOptions && (
-            <button
-              onClick={() => setShowThemedDropdown(!showThemedDropdown)}
-              className="pill-off tabular cursor-pointer"
-              title="Click to view themed tracks"
-            >
-              Swap themed ({themedOptions.length})
-            </button>
-          )}
           {noThemedTrackAvailable && isEmpty && (
-            <span className="pill-off text-accent border-flare-200">
-              No themed match
+            <span className="text-xs text-ink-400">
+              No {themeLabel === 'Theme' ? 'theme' : themeLabel} match
             </span>
           )}
           {track && (
@@ -61,19 +54,16 @@ export function TrackSlot({
           {/* Wraps instead of squeezing: a rigid 4-col grid clipped the
               longer "Browse all" label on narrow screens. */}
           <div className="flex flex-wrap gap-1">
-            <Button variant="blue" size="sm" onClick={onRandom} className="flex-1 min-w-[4.5rem] whitespace-nowrap">
+            <Button variant="outline" size="sm" onClick={onRandom} className="flex-1 min-w-[4.5rem] whitespace-nowrap">
               Random
             </Button>
             {hasThemedOptions && (
-              <Button variant="secondary" size="sm" onClick={onRandomThemed} className="flex-1 min-w-[4.5rem] whitespace-nowrap">
-                Themed
+              <Button variant="secondary" size="sm" onClick={onRandomThemed} className="flex-1 min-w-[4.5rem] whitespace-nowrap" title={`Random ${activeThemeText} track`}>
+                {themeLabel}
               </Button>
             )}
             <Button variant="blue-outline" size="sm" onClick={onBrowse} className="flex-1 min-w-[7rem] whitespace-nowrap">
               Browse all ({availableCount})
-            </Button>
-            <Button variant="blue-outline" size="sm" onClick={onSearch} className="flex-1 min-w-[4.5rem] whitespace-nowrap">
-              Search
             </Button>
           </div>
         </div>
@@ -90,24 +80,34 @@ export function TrackSlot({
                 {track.Artist}
               </p>
               <p className="text-xs text-ink-400 mt-1 tabular">
-                <span className="release-number">R{track.Release}</span>
+                <span className="release-number">{formatReleaseShort(track.Release)}</span>
                 {' · '}{track.Genre || 'Unknown'}
               </p>
               {track.Tags && (() => {
-                const filtered = track.Tags.split(',').map(t => t.trim()).filter(t => t && t !== 'nan' && !activeFilterTags.includes(t)).join(', ')
-                return filtered ? <div className="mt-1"><TagList tags={filtered} size="sm" /></div> : null
+                // Tags matching the active theme lead and take the accent, so
+                // you can see why each track made the cut.
+                const tags = track.Tags.split(',').map(t => t.trim()).filter(t => t && t !== 'nan')
+                const ordered = [
+                  ...tags.filter(t => activeFilterTags.includes(t)),
+                  ...tags.filter(t => !activeFilterTags.includes(t)),
+                ]
+                return ordered.length > 0
+                  ? <div className="mt-1"><TagList tags={ordered} size="sm" activeTags={activeFilterTags} /></div>
+                  : null
               })()}
             </div>
             <div className="flex items-center gap-1 shrink-0">
               <button
-                onClick={() => setShowActions(!showActions)}
-                className={`px-1.5 py-1 text-xs rounded transition-colors ${showActions ? 'bg-ink-100 dark:bg-ink-800 text-ink-900 dark:text-paper' : 'text-ink-400 hover:text-ink-900 dark:hover:text-paper'}`}
-                title="Change track"
-                aria-label="Change track"
+                onClick={() => {
+                  setShowActions(!showActions)
+                  setShowThemedDropdown(false)
+                }}
+                aria-expanded={showActions}
+                className={`px-2 py-1 display-sm text-[11px] rounded border transition-colors ${showActions
+                  ? 'bg-ink-950 dark:bg-paper text-paper dark:text-ink-950 border-ink-950 dark:border-paper'
+                  : 'text-ink-600 dark:text-ink-300 border-ink-200 dark:border-ink-700 hover:border-ink-950 hover:text-ink-950 dark:hover:border-paper dark:hover:text-paper'}`}
               >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 4H4v16h16v-7M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                </svg>
+                Change
               </button>
               <button
                 onClick={onClear}
@@ -124,37 +124,24 @@ export function TrackSlot({
 
           {/* Action Buttons — collapsed by default */}
           {showActions && (
-            <div className="flex items-center gap-1 mt-2 pt-2 border-t border-ink-100 dark:border-ink-800">
-              <span className="eyebrow mr-1">Change</span>
+            <div className="flex flex-wrap items-center gap-1 mt-2 pt-2 border-t border-ink-100 dark:border-ink-800">
               <button onClick={onRandom} className="btn-quiet">Random</button>
               {hasThemedOptions && (
                 <button
                   onClick={() => setShowThemedDropdown(!showThemedDropdown)}
-                  className={`btn-quiet ${showThemedDropdown ? 'text-accent' : ''}`}
+                  className={`btn-quiet tabular whitespace-nowrap ${showThemedDropdown ? 'text-accent' : ''}`}
+                  aria-expanded={showThemedDropdown}
                 >
-                  Themed
+                  {themeLabel} ({themedOptions.length})
                 </button>
               )}
               <button onClick={onBrowse} className="btn-quiet">Browse</button>
-              <button onClick={onSearch} className="btn-quiet">Search</button>
             </div>
           )}
 
-          {/* Themed Swap Dropdown */}
-          {showThemedDropdown && hasThemedOptions && (
-            <div className="mt-2 pt-2 border-t border-ink-200 dark:border-ink-800 bg-ink-50 dark:bg-ink-900 -mx-3 -mb-2.5 px-3 pb-2.5">
-              <div className="flex items-center justify-between mb-1">
-                <span className="eyebrow tabular">
-                  Themed options ({themedOptions.length})
-                </span>
-                <button
-                  onClick={() => setShowThemedDropdown(false)}
-                  className="text-xs text-ink-400 hover:text-flare dark:hover:text-flare-400"
-                  aria-label="Close themed options"
-                >
-                  ✕
-                </button>
-              </div>
+          {/* Theme swap: picks from the other tracks matching the active theme */}
+          {showActions && showThemedDropdown && hasThemedOptions && (
+            <div className="mt-2">
               <select
                 className="select-field text-xs py-1.5"
                 value=""
@@ -166,17 +153,18 @@ export function TrackSlot({
                     if (selected) {
                       onThemedSwap(selected)
                       setShowThemedDropdown(false)
+                      setShowActions(false)
                     }
                   }
                 }}
               >
-                <option value="">Select a themed track...</option>
+                <option value="">Pick a {themeLabel === 'Theme' ? 'matching' : themeLabel} track…</option>
                 {themedOptions.map((t) => (
                   <option
                     key={`${t.Release}_${t['Song Title']}`}
                     value={`${t.Release}_${t['Song Title']}`}
                   >
-                    R{t.Release} — {t['Song Title']} · {t.Artist}
+                    {formatReleaseShort(t.Release)} — {t['Song Title']} · {t.Artist}
                   </option>
                 ))}
               </select>
@@ -200,7 +188,7 @@ export function EmptyTrackMessage({ position, trackType, onRandom, onPartialMatc
         </span>
       </div>
       <div className="flex gap-2 mt-1">
-        <Button variant="blue" size="sm" onClick={onRandom}>
+        <Button variant="outline" size="sm" onClick={onRandom}>
           Random
         </Button>
         {hasPartialMatches && (

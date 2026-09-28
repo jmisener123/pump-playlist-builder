@@ -28,7 +28,7 @@ export function usePlaylistBuilder() {
 
   // Generate themed playlist
   const generateThemed = () => {
-    actions.generateThemedPlaylist()
+    return actions.generateThemedPlaylist()
   }
 
   // Set track at a position

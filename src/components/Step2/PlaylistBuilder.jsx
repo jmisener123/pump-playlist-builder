@@ -14,7 +14,6 @@ export function PlaylistBuilder({ mode = 'random' }) {
   const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, generateRandom, hasAnyTracks } = usePlaylistBuilder()
   const { getTracksForSlot, getThemedTracksForSlot } = usePlaylistData()
   const [searchPosition, setSearchPosition] = useState(null)
-  const [browseMode, setBrowseMode] = useState(false)
   // Both bulk actions destroy hand-picked tracks with no undo, so they swap
   // the row in place for a confirmation instead of firing immediately.
   const [pending, setPending] = useState(null)
@@ -49,13 +48,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
     return parts.join(' • ')
   }
 
-  const handleSearch = (position) => {
-    setBrowseMode(false)
-    setSearchPosition(position)
-  }
-
   const handleBrowse = (position) => {
-    setBrowseMode(true)
     setSearchPosition(position)
   }
 
@@ -68,7 +61,6 @@ export function PlaylistBuilder({ mode = 'random' }) {
 
   const handleCloseSearch = () => {
     setSearchPosition(null)
-    setBrowseMode(false)
   }
 
   // Get themed options for a position (excluding current track)
@@ -172,7 +164,6 @@ export function PlaylistBuilder({ mode = 'random' }) {
               trackType={trackType}
               track={track}
               onRandom={() => randomizeTrack(index, false)}
-              onSearch={() => handleSearch(index)}
               onBrowse={() => handleBrowse(index)}
               onClear={() => clearTrack(index)}
               themedOptions={themedOptions}
@@ -194,14 +185,13 @@ export function PlaylistBuilder({ mode = 'random' }) {
 
       <PlaylistExport />
 
-      {/* Search/Browse Modal */}
+      {/* Browse Modal */}
       {searchPosition !== null && (
         <TrackSearch
           position={searchPosition}
           trackType={TRACK_TYPES[searchPosition]}
           onSelect={handleSelectTrack}
           onClose={handleCloseSearch}
-          browseMode={browseMode}
         />
       )}
     </div>
