@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { PlaylistProvider, usePlaylist } from './context/PlaylistContext'
 import { ToastProvider } from './context/ToastContext'
 import { usePlaylistBuilder } from './hooks/usePlaylistBuilder'
@@ -17,6 +17,33 @@ function PlaylistApp() {
   const filledCount = playlist.filter(Boolean).length
   const [mobileTab, setMobileTab] = useState('playlist')
   const [searchFocusRequest, setSearchFocusRequest] = useState(0)
+  // Sits where the mobile tab bar naturally starts; used to detect when the
+  // bar is pinned and to scroll back to the top of the tab content.
+  const tabSentinelRef = useRef(null)
+  const [isTabBarStuck, setIsTabBarStuck] = useState(false)
+
+  useEffect(() => {
+    const sentinel = tabSentinelRef.current
+    if (!sentinel) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsTabBarStuck(!entry.isIntersecting && entry.boundingClientRect.top < 0)
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [state.isLoading])
+
+  // Switching tabs from deep in a long list would otherwise leave you
+  // mid-way down the new tab, so jump to its top when the bar is pinned.
+  const selectTab = (id) => {
+    setMobileTab(id)
+    const sentinel = tabSentinelRef.current
+    if (!sentinel) return
+    // The pinned bar starts 8px above the sentinel (its -mt-2).
+    const top = sentinel.getBoundingClientRect().top + window.scrollY - 8
+    if (window.scrollY > top) {
+      requestAnimationFrame(() => window.scrollTo({ top }))
+    }
+  }
 
   // The header search icon is a shortcut into the Search tab, not a separate
   // search. Focus after the tab has rendered its input.
@@ -90,15 +117,19 @@ function PlaylistApp() {
           {/* Mobile: Search and Themes are tools that feed one destination,
               so they're grouped and an arrow points at the playlist, which
               carries a live filled-count badge to show it persists. */}
-          <div className="lg:hidden mb-4">
-            <div className="flex items-stretch border border-ink-200 dark:border-ink-800 rounded overflow-hidden">
+          <div ref={tabSentinelRef} className="lg:hidden" aria-hidden="true" />
+          <div
+            className={`lg:hidden sticky top-0 z-30 -mx-5 px-5 py-2 -mt-2 bg-paper dark:bg-ink-950 transition-shadow
+              ${isTabBarStuck ? 'shadow-[0_1px_0_0] shadow-ink-200 dark:shadow-ink-800' : ''}`}
+          >
+            <div className="flex items-stretch border border-ink-200 dark:border-ink-800 rounded overflow-hidden bg-paper dark:bg-ink-950">
               {[
                 { id: 'search', label: 'Search' },
                 { id: 'themes', label: 'Themes' },
               ].map(({ id, label }) => (
                 <button
                   key={id}
-                  onClick={() => setMobileTab(id)}
+                  onClick={() => selectTab(id)}
                   className={`flex-1 py-2.5 display-sm transition-colors border-r border-ink-200 dark:border-ink-800
                     ${mobileTab === id
                       ? 'bg-flare-600 text-white'
@@ -116,7 +147,7 @@ function PlaylistApp() {
               </span>
 
               <button
-                onClick={() => setMobileTab('playlist')}
+                onClick={() => selectTab('playlist')}
                 className={`flex-[1.3] py-2.5 display-sm transition-colors flex items-center justify-center gap-1.5
                   ${mobileTab === 'playlist'
                     ? 'bg-flare-600 text-white'
@@ -136,11 +167,11 @@ function PlaylistApp() {
                 </span>
               </button>
             </div>
-
-            <p className="eyebrow mt-1.5 normal-case tracking-normal text-ink-400">
-              Add tracks from either tab.
-            </p>
           </div>
+
+          <p className="lg:hidden eyebrow mt-0.5 mb-4 normal-case tracking-normal text-ink-400">
+            Add tracks from either tab.
+          </p>
 
           {/* Desktop: tools left, playlist right */}
           <div className="hidden lg:grid lg:grid-cols-[1fr_1.1fr] gap-8">
@@ -166,7 +197,7 @@ function PlaylistApp() {
             {mobileTab === 'search' && <InlineSearch />}
             {mobileTab === 'themes' && (
               <div data-themes-panel>
-                <QuickGenerate onPlaylistGenerated={() => setMobileTab('playlist')} />
+                <QuickGenerate onPlaylistGenerated={() => selectTab('playlist')} />
               </div>
             )}
           </div>
@@ -176,7 +207,7 @@ function PlaylistApp() {
           {mobileTab !== 'playlist' && filledCount > 0 && (
             <div className="lg:hidden sticky bottom-4 z-30 mt-4">
               <button
-                onClick={() => setMobileTab('playlist')}
+                onClick={() => selectTab('playlist')}
                 className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded
                            bg-ink-950 dark:bg-paper text-paper dark:text-ink-950 shadow-lg"
               >
