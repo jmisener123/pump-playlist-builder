@@ -4,7 +4,7 @@ import { usePlaylistBuilder } from '../hooks/usePlaylistBuilder'
 import { useToast } from '../context/ToastContext'
 import { searchTracks } from '../data/loadPlaylistData'
 import { Button } from './ui/Button'
-import { TRACK_TYPES, getBodyPart, formatReleaseShort } from '../utils/trackUtils'
+import { TRACK_TYPES, getBodyPart, formatTrackRelease } from '../utils/trackUtils'
 
 export function InlineSearch() {
   const { filteredTracks } = usePlaylistData()
@@ -86,7 +86,7 @@ export function InlineSearch() {
                         </span>
                       ))}
                       <span className="text-ink-400 text-xs tabular">
-                        {formatReleaseShort(track.Release)} · {track.Duration} · {track.Genre}
+                        {formatTrackRelease(track)} · {track.Duration} · {track.Genre}
                       </span>
                     </div>
                   </div>

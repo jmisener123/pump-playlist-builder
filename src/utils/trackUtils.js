@@ -179,6 +179,16 @@ export function formatReleaseShort(release) {
 }
 
 /**
+ * Release label for a track, including its Bonus/Alt version: "R122 Alt".
+ * Pass `short: false` for the plain release ("122 Alt").
+ */
+export function formatTrackRelease(track, { short = true } = {}) {
+  if (!track) return ''
+  const release = short ? formatReleaseShort(track.Release) : String(track.Release ?? '').trim()
+  return track.Version ? `${release} ${track.Version}` : release
+}
+
+/**
  * Human label for the active theme filters, e.g. "🎃 Halloween • EDM".
  * Genres have no emoji; pass `emoji: false` for a plain-text label.
  */

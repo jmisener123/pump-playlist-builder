@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { formatReleaseShort } from '../../utils/trackUtils'
+import { formatTrackRelease } from '../../utils/trackUtils'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
 
@@ -84,7 +84,7 @@ export function TrackSlot({
                 {track.Artist}
               </p>
               <p className="text-xs text-ink-400 mt-1 tabular">
-                <span className="release-number">{formatReleaseShort(track.Release)}</span>
+                <span className="release-number">{formatTrackRelease(track)}</span>
                 {' · '}{track.Genre || 'Unknown'}
               </p>
               {track.Tags && (() => {
@@ -165,7 +165,7 @@ export function TrackSlot({
                           {t['Song Title']}
                         </span>
                         <span className="block text-xs text-ink-500 dark:text-ink-400 truncate tabular">
-                          {t.Artist} · {formatReleaseShort(t.Release)} · {t.Duration}
+                          {t.Artist} · {formatTrackRelease(t)} · {t.Duration}
                         </span>
                       </span>
                       <span className="display-sm text-[11px] text-accent shrink-0">Current</span>
@@ -184,7 +184,7 @@ export function TrackSlot({
                         {t['Song Title']}
                       </span>
                       <span className="block text-xs text-ink-500 dark:text-ink-400 truncate tabular">
-                        {t.Artist} · {formatReleaseShort(t.Release)} · {t.Duration}
+                        {t.Artist} · {formatTrackRelease(t)} · {t.Duration}
                       </span>
                     </span>
                     <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400 shrink-0">Swap</span>

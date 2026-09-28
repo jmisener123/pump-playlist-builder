@@ -34,18 +34,32 @@ function getSortKey(release) {
 }
 
 /**
+ * "Bonus" or "Alt" from the spreadsheet's Bonus/Alt column, else null.
+ */
+function getVersion(value) {
+  const v = String(value ?? '').trim().toLowerCase()
+  if (v.startsWith('bonus')) return 'Bonus'
+  if (v.startsWith('alt')) return 'Alt'
+  return null
+}
+
+/**
  * Process raw CSV data into tracks
  */
 function processRawTracks(rawTracks) {
-  // Process and normalize tracks
-  const tracks = rawTracks.map(track => ({
-    ...track,
-    'Song Title': normalizeFeaturing(normalizeText(track['Song Title'])),
-    'Artist': normalizeFeaturing(normalizeText(track['Artist'])),
-    'Genre': normalizeText(track['Genre']),
-    'Tags': cleanTags(track['Tags']),
-    'SortKey': getSortKey(track['Release'])
-  }))
+  // Process and normalize tracks, skipping stray spreadsheet rows with no
+  // release, slot or title.
+  const tracks = rawTracks
+    .filter(track => [track['Release'], track['Track No#'], track['Song Title']].every(v => String(v ?? '').trim()))
+    .map(track => ({
+      ...track,
+      'Song Title': normalizeFeaturing(normalizeText(track['Song Title'])),
+      'Artist': normalizeFeaturing(normalizeText(track['Artist'])),
+      'Genre': normalizeText(track['Genre']),
+      'Tags': cleanTags(track['Tags']),
+      'Version': getVersion(track['Bonus/Alt track']),
+      'SortKey': getSortKey(track['Release'])
+    }))
 
   // Sort by release number
   tracks.sort((a, b) => a.SortKey - b.SortKey)
