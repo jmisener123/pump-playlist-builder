@@ -4,12 +4,16 @@ import { usePlaylistBuilder } from '../hooks/usePlaylistBuilder'
 import { useToast } from '../context/ToastContext'
 import { searchTracks } from '../data/loadPlaylistData'
 import { Button } from './ui/Button'
+import { TagList } from './ui/TagPill'
+import { usePlaylist } from '../context/PlaylistContext'
 import { TRACK_TYPES, getBodyPart, formatTrackRelease } from '../utils/trackUtils'
 
 export function InlineSearch() {
   const { filteredTracks } = usePlaylistData()
   const { playlist, setTrack } = usePlaylistBuilder()
   const showToast = useToast()
+  const { state } = usePlaylist()
+  const activeTags = [...state.themeTags, ...state.instructorTags]
   const [searchTerm, setSearchTerm] = useState('')
 
   const displayTracks = useMemo(() => {
@@ -89,6 +93,12 @@ export function InlineSearch() {
                         {formatTrackRelease(track)} · {track.Duration} · {track.Genre}
                       </span>
                     </div>
+                    {track.Tags && (() => {
+                      // Tags matching the active theme lead, as in the playlist.
+                      const tags = track.Tags.split(',').map(t => t.trim()).filter(Boolean)
+                      const ordered = [...tags.filter(t => activeTags.includes(t)), ...tags.filter(t => !activeTags.includes(t))]
+                      return <TagList tags={ordered} size="sm" max={3} activeTags={activeTags} className="mt-1" />
+                    })()}
                   </div>
                   <div className="flex-shrink-0">
                     {alreadyInPlaylist ? (

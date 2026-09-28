@@ -130,7 +130,7 @@ function PlaylistApp() {
                 <button
                   key={id}
                   onClick={() => selectTab(id)}
-                  className={`flex-1 py-2.5 display-sm transition-colors border-r border-ink-200 dark:border-ink-800
+                  className={`flex-1 min-w-0 px-2 py-2.5 display-sm transition-colors border-r border-ink-200 dark:border-ink-800
                     ${mobileTab === id
                       ? 'bg-flare-600 text-white'
                       : 'text-ink-500 dark:text-ink-400'}`}
@@ -141,14 +141,14 @@ function PlaylistApp() {
 
               <span
                 aria-hidden="true"
-                className="flex items-center px-2 text-ink-300 dark:text-ink-600 border-r border-ink-200 dark:border-ink-800 select-none"
+                className="max-[379px]:hidden flex items-center px-2 text-ink-300 dark:text-ink-600 border-r border-ink-200 dark:border-ink-800 select-none"
               >
                 &rarr;
               </span>
 
               <button
                 onClick={() => selectTab('playlist')}
-                className={`flex-[1.3] py-2.5 display-sm transition-colors flex items-center justify-center gap-1.5
+                className={`shrink-0 px-3 py-2.5 display-sm transition-colors flex items-center justify-center gap-1.5
                   ${mobileTab === 'playlist'
                     ? 'bg-flare-600 text-white'
                     : 'text-ink-500 dark:text-ink-400'}`}

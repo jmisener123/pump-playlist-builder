@@ -142,7 +142,7 @@ export function QuickGenerate({ onPlaylistGenerated, autoFill = false }) {
             <button key={tag} onClick={(e) => toggleThemeTag(tag, e)}
               className={state.themeTags.includes(tag) ? pillOn : pillOff}>
               {TAG_EMOJIS[tag] && (
-                <span aria-hidden="true" className="mr-1.5 text-[13px] leading-none">{TAG_EMOJIS[tag]}</span>
+                <span aria-hidden="true" className="mr-1 text-[13px] leading-none">{TAG_EMOJIS[tag]}</span>
               )}
               {tag}
             </button>
@@ -157,7 +157,7 @@ export function QuickGenerate({ onPlaylistGenerated, autoFill = false }) {
             <button key={tag} onClick={(e) => toggleInstructorTag(tag, e)}
               className={state.instructorTags.includes(tag) ? pillOn : pillOff}>
               {TAG_EMOJIS[tag] && (
-                <span aria-hidden="true" className="mr-1.5 text-[13px] leading-none">{TAG_EMOJIS[tag]}</span>
+                <span aria-hidden="true" className="mr-1 text-[13px] leading-none">{TAG_EMOJIS[tag]}</span>
               )}
               {getTagDisplayName(tag)}
             </button>
