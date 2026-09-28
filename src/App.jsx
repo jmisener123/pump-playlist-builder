@@ -181,7 +181,7 @@ function PlaylistApp() {
                 <InlineSearch />
               </div>
               <div data-themes-panel>
-                <QuickGenerate />
+                <QuickGenerate autoFill />
               </div>
             </div>
 
