@@ -69,17 +69,17 @@ export function PlaylistBuilder({ mode = 'random' }) {
   return (
     <div className="panel">
       {showToolbar && (
-        <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-ink-200 dark:border-ink-800 min-h-[2.5rem]">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-3 py-2 border-b border-ink-200 dark:border-ink-800 min-h-[2.5rem]">
+          <div className="flex items-center gap-2 min-w-0 max-w-full">
             {hasThemeFilters && (
-              <span className="pill-accent truncate" title={getActiveThemeText()}>
-                {formatThemeLabel(state)}
+              <span className="pill-accent max-w-full" title={getActiveThemeText()}>
+                <span className="truncate">{formatThemeLabel(state)}</span>
               </span>
             )}
           </div>
           {hasAnyTracks && (
             pending ? (
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 ml-auto">
                 <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400">
                   {pending === 'refill' ? 'Replace' : 'Clear'} all {filledCount}?
                 </span>
@@ -103,7 +103,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3 shrink-0">
+              <div className="flex items-center gap-3 shrink-0 ml-auto">
                 <button
                   onClick={() => setPending('refill')}
                   className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
