@@ -1,6 +1,6 @@
 import { usePlaylist } from '../context/PlaylistContext'
 import { usePlaylistData } from './usePlaylistData'
-import { calculateTotalDuration, TRACK_TYPES, formatThemeLabel } from '../utils/trackUtils'
+import { calculateTotalDuration, TRACK_TYPES, formatThemeLabel, formatTrackRelease } from '../utils/trackUtils'
 
 /**
  * Hook for playlist building operations
@@ -76,7 +76,7 @@ export function usePlaylistBuilder() {
 
     playlist.forEach((track, index) => {
       if (track) {
-        text += `${track.Release} - ${track['Track No#']}: ${track['Song Title']} — ${track.Artist} (${track.Duration})\n`
+        text += `${formatTrackRelease(track, { short: false })} - ${track['Track No#']}: ${track['Song Title']} — ${track.Artist} (${track.Duration})\n`
       } else {
         text += `${TRACK_TYPES[index]}: [Empty]\n`
       }

@@ -4,6 +4,7 @@ import { searchTracks, getTracksForPosition } from '../../data/loadPlaylistData'
 import { Modal } from '../ui/Modal'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
+import { formatTrackRelease } from '../../utils/trackUtils'
 
 export function TrackSearch({ position, trackType, onSelect, onClose }) {
   const { filteredTracks } = usePlaylistData()
@@ -69,7 +70,7 @@ export function TrackSearch({ position, trackType, onSelect, onClose }) {
                       by {track.Artist}
                     </p>
                     <p className="text-ink-400 text-xs mt-1 tabular">
-                      Release: <span className="release-number">{track.Release}</span>
+                      Release: <span className="release-number">{formatTrackRelease(track, { short: false })}</span>
                       {' | '}Duration: {track.Duration}
                       {' | '}{track.Genre}
                     </p>
