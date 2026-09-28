@@ -26,6 +26,10 @@ export function TrackSlot({
   const [showActions, setShowActions] = useState(false)
   // Name the theme instead of saying "themed"; fall back for long combos.
   const themeLabel = activeThemeText && activeThemeText.length <= 18 ? activeThemeText : 'Theme'
+  // Show the current track in its place so the newest-first order reads clearly.
+  const themedListItems = track
+    ? [...themedOptions, { ...track, isCurrent: true }].sort((a, b) => b.SortKey - a.SortKey)
+    : themedOptions
 
   return (
     <div className="border-b border-ink-200 dark:border-ink-800 last:border-b-0 px-3 py-2.5">
@@ -149,8 +153,24 @@ export function TrackSlot({
               be scanned and swapped in with one tap. */}
           {showThemedDropdown && hasThemedOptions && (
             <ul className="mt-2 border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800 max-h-64 overflow-y-auto">
-              {themedOptions.map((t) => (
+              {themedListItems.map((t) => (
                 <li key={`${t.Release}_${t['Song Title']}`}>
+                  {t.isCurrent ? (
+                    <div
+                      aria-current="true"
+                      className="flex items-center justify-between gap-3 px-3 py-2 bg-ink-50 dark:bg-ink-800/60"
+                    >
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold text-ink-900 dark:text-ink-100 truncate">
+                          {t['Song Title']}
+                        </span>
+                        <span className="block text-xs text-ink-500 dark:text-ink-400 truncate tabular">
+                          {t.Artist} · {formatReleaseShort(t.Release)} · {t.Duration}
+                        </span>
+                      </span>
+                      <span className="display-sm text-[11px] text-accent shrink-0">Current</span>
+                    </div>
+                  ) : (
                   <button
                     onClick={() => {
                       onThemedSwap(t)
@@ -169,6 +189,7 @@ export function TrackSlot({
                     </span>
                     <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400 shrink-0">Swap</span>
                   </button>
+                  )}
                 </li>
               ))}
             </ul>

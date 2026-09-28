@@ -118,7 +118,7 @@ export function QuickGenerate({ onPlaylistGenerated, autoFill = false }) {
     return (
       <div className="flex gap-2 mb-3">
         <Button variant="primary" onClick={handleApply} className="flex-1" disabled={!hasFilters}>
-          {isUntouchedFill ? 'Shuffle again' : 'Apply theme & fill'}
+          Apply theme & fill
         </Button>
         {hasFilters
           ? <Button variant="ghost" onClick={clearAll} className="text-xs px-2">Clear</Button>

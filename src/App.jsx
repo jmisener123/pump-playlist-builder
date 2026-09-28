@@ -202,24 +202,6 @@ function PlaylistApp() {
             )}
           </div>
 
-          {/* Mobile: keep the playlist present while the tools are open, so it
-              reads as an accumulating destination rather than a third tab. */}
-          {mobileTab !== 'playlist' && filledCount > 0 && (
-            <div className="lg:hidden sticky bottom-4 z-30 mt-4">
-              <button
-                onClick={() => selectTab('playlist')}
-                className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded
-                           bg-ink-950 dark:bg-paper text-paper dark:text-ink-950 shadow-lg"
-              >
-                <span className="display-sm text-[11px] tabular">
-                  {filledCount}/10 slots filled
-                </span>
-                <span className="display-sm text-[11px]">
-                  View playlist &rarr;
-                </span>
-              </button>
-            </div>
-          )}
         </section>
 
         <Footer />
