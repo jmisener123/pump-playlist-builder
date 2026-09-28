@@ -5,7 +5,7 @@ import { Modal } from '../ui/Modal'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
 
-export function TrackSearch({ position, trackType, onSelect, onClose, browseMode = false }) {
+export function TrackSearch({ position, trackType, onSelect, onClose }) {
   const { filteredTracks } = usePlaylistData()
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -27,9 +27,7 @@ export function TrackSearch({ position, trackType, onSelect, onClose, browseMode
     onClose()
   }
 
-  const title = browseMode
-    ? `Browse ${trackType} Tracks (${positionTracks.length})`
-    : `Search ${trackType} Tracks`
+  const title = `Browse ${trackType} Tracks (${positionTracks.length})`
 
   return (
     <Modal
@@ -45,9 +43,8 @@ export function TrackSearch({ position, trackType, onSelect, onClose, browseMode
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={browseMode ? "Filter by title or artist..." : "Search by song title or artist..."}
+            placeholder="Filter by title or artist..."
             className="input-field"
-            autoFocus={!browseMode}
           />
           <p className="eyebrow mt-2 tabular">
             {searchTerm ? `${displayTracks.length} of ${positionTracks.length} tracks` : `${displayTracks.length} tracks in your catalog`}

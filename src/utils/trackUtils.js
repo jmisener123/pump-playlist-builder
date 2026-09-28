@@ -168,3 +168,12 @@ export function getBodyPart(trackType) {
   const parts = trackType.split(' - ')
   return parts[1] || trackType
 }
+
+/**
+ * Compact release label: "R138" for numbered releases, the name as-is for
+ * special releases like "United".
+ */
+export function formatReleaseShort(release) {
+  const value = String(release ?? '').trim()
+  return /^\d+(\.\d+)?$/.test(value) ? `R${value}` : value
+}

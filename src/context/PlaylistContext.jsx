@@ -17,6 +17,25 @@ const ActionTypes = {
   SET_LOADING: 'SET_LOADING'
 }
 
+const CATALOG_STORAGE_KEY = 'pump.catalogSettings.v1'
+
+function loadSavedCatalog() {
+  try {
+    const raw = localStorage.getItem(CATALOG_STORAGE_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function saveCatalog(settings) {
+  try {
+    localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(settings))
+  } catch {
+    // Storage may be unavailable (private mode, quota); settings just won't persist.
+  }
+}
+
 // Initial state
 const initialState = {
   // Data
@@ -30,6 +49,8 @@ const initialState = {
   earliestRelease: '60',
   excludeNewest: false,
   onlyRecent10: false,
+  // True when catalog settings were restored from a previous visit
+  hasSavedCatalog: false,
 
   // Playlist (Step 2)
   playlist: Array(10).fill(null),
@@ -48,17 +69,23 @@ const initialState = {
 // Reducer
 function playlistReducer(state, action) {
   switch (action.type) {
-    case ActionTypes.SET_TRACKS:
+    case ActionTypes.SET_TRACKS: {
+      const { releases, saved } = action.payload
+      const savedIsValid = saved && releases.includes(String(saved.earliestRelease))
       return {
         ...state,
         tracks: action.payload.tracks,
         latestRelease: action.payload.latestRelease,
-        releases: action.payload.releases,
+        releases,
         genres: action.payload.genres || [],
         availableTags: action.payload.availableTags || [],
-        earliestRelease: action.payload.releases[0] || '60',
+        earliestRelease: savedIsValid ? String(saved.earliestRelease) : (releases[0] || '60'),
+        excludeNewest: savedIsValid ? !!saved.excludeNewest : state.excludeNewest,
+        onlyRecent10: savedIsValid ? !!saved.onlyRecent10 : state.onlyRecent10,
+        hasSavedCatalog: !!savedIsValid,
         isLoading: false
       }
+    }
 
     case ActionTypes.SET_EARLIEST_RELEASE:
       return {
@@ -168,13 +195,24 @@ export function PlaylistProvider({ children }) {
           latestRelease,
           releases,
           genres: Array.from(genreSet).sort(),
-          availableTags: Array.from(tagSet).sort()
+          availableTags: Array.from(tagSet).sort(),
+          saved: loadSavedCatalog()
         }
       })
     }
 
     loadData()
   }, [])
+
+  // Persist catalog settings once loaded, so return visits skip Step 1
+  useEffect(() => {
+    if (state.isLoading) return
+    saveCatalog({
+      earliestRelease: state.earliestRelease,
+      excludeNewest: state.excludeNewest,
+      onlyRecent10: state.onlyRecent10
+    })
+  }, [state.isLoading, state.earliestRelease, state.excludeNewest, state.onlyRecent10])
 
   // Get filtered tracks based on current filters
   const getFilteredTracks = () => {
@@ -259,6 +297,7 @@ export function PlaylistProvider({ children }) {
         return track
       })
       dispatch({ type: ActionTypes.SET_PLAYLIST, payload: newPlaylist })
+      return newPlaylist
     },
 
     randomizeTrack: (position) => {

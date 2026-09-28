@@ -1,19 +1,16 @@
 import React from 'react'
 import { usePlaylistData } from '../hooks/usePlaylistData'
-import { THEME_TAGS, INSTRUCTOR_TAGS } from '../utils/themes'
+import { THEME_TAGS, INSTRUCTOR_TAGS, sortThemesBySeason } from '../utils/themes'
 import { TAG_EMOJIS } from '../utils/trackUtils'
 
 // How many themes to name before collapsing the rest into a count.
 const TEASER_COUNT = 4
 
-// THEME_TAGS is alphabetical, which would lead with "Beast Mode, Break-Up
-// Songs, Emo". Lead with the most evocative ones instead; anything not listed
-// still counts toward the "+N more" total.
+// Seasonal themes lead while in season (and are skipped otherwise); this sets
+// the order of the evergreen ones that fill in behind them. Anything not
+// listed still counts toward the "and more themes" total.
 const FEATURED_ORDER = [
-  'Halloween',
   'Easy to Learn',
-  'Summer',
-  "Valentine's Day",
   'Beast Mode',
   'Sing-Along',
   'Women of Pop',
@@ -29,8 +26,10 @@ export function Header({ onSearchClick, onThemeSelect }) {
     availableTags.includes(t)
   )
   const featured = FEATURED_ORDER.filter((t) => themes.includes(t))
-  const shown = [...featured, ...themes.filter((t) => !featured.includes(t))]
-    .slice(0, TEASER_COUNT)
+  const shown = sortThemesBySeason(
+    [...featured, ...themes.filter((t) => !featured.includes(t))],
+    { includeOffSeason: false }
+  ).slice(0, TEASER_COUNT)
   const remaining = themes.length - shown.length
 
   return (
@@ -42,13 +41,13 @@ export function Header({ onSearchClick, onThemeSelect }) {
           <span className="block">Builder<span className="text-accent">.</span></span>
         </h1>
 
-        {/* Desktop keeps a persistent search panel in the left column, so this
-            modal trigger would duplicate it; it only earns its place on mobile. */}
+        {/* Shortcut to the Search tab. Desktop shows the search panel
+            permanently in the left column, so the icon is mobile-only. */}
         <button
           type="button"
           onClick={onSearchClick}
           className="btn-outline mb-2 shrink-0 gap-2 lg:hidden"
-          aria-label="Search the full catalog"
+          aria-label="Go to search"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />

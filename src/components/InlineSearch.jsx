@@ -1,13 +1,15 @@
 import React, { useState, useMemo } from 'react'
 import { usePlaylistData } from '../hooks/usePlaylistData'
 import { usePlaylistBuilder } from '../hooks/usePlaylistBuilder'
+import { useToast } from '../context/ToastContext'
 import { searchTracks } from '../data/loadPlaylistData'
 import { Button } from './ui/Button'
-import { TRACK_TYPES, getBodyPart } from '../utils/trackUtils'
+import { TRACK_TYPES, getBodyPart, formatReleaseShort } from '../utils/trackUtils'
 
 export function InlineSearch() {
   const { filteredTracks } = usePlaylistData()
   const { playlist, setTrack } = usePlaylistBuilder()
+  const showToast = useToast()
   const [searchTerm, setSearchTerm] = useState('')
 
   const displayTracks = useMemo(() => {
@@ -24,12 +26,20 @@ export function InlineSearch() {
     return getCompatibleSlots(track).filter(i => !playlist[i])
   }
 
-  const addToPlaylist = (track) => {
-    const available = getAvailableSlots(track)
-    if (available.length > 0) setTrack(available[0], track)
+  const placeTrack = (track, slotIndex) => {
+    const wasEmpty = !playlist[slotIndex]
+    setTrack(slotIndex, track)
+    const filled = playlist.filter(Boolean).length + (wasEmpty ? 1 : 0)
+    const part = getBodyPart(TRACK_TYPES[slotIndex])
+    showToast(wasEmpty ? `Added to ${part} \u2713` : `Replaced ${part} \u2713`, `${filled}/10`)
   }
 
-  const addToSlot = (track, slotIndex) => setTrack(slotIndex, track)
+  const addToPlaylist = (track) => {
+    const available = getAvailableSlots(track)
+    if (available.length > 0) placeTrack(track, available[0])
+  }
+
+  const addToSlot = (track, slotIndex) => placeTrack(track, slotIndex)
 
   return (
     <div>
@@ -39,6 +49,8 @@ export function InlineSearch() {
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Song title or artist"
         className="input-field"
+        aria-label="Search your catalog by song title or artist"
+        data-search-input
       />
       {searchTerm.trim() && (
         <p className="eyebrow mt-2 tabular">
@@ -74,7 +86,7 @@ export function InlineSearch() {
                         </span>
                       ))}
                       <span className="text-ink-400 text-xs tabular">
-                        R{track.Release} · {track.Duration} · {track.Genre}
+                        {formatReleaseShort(track.Release)} · {track.Duration} · {track.Genre}
                       </span>
                     </div>
                   </div>

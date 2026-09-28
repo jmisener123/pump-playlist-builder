@@ -5,7 +5,7 @@ import { usePlaylistData } from '../../hooks/usePlaylistData'
 import { searchTracks, getTracksForPosition } from '../../data/loadPlaylistData'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
-import { TRACK_TYPES } from '../../utils/trackUtils'
+import { TRACK_TYPES, formatReleaseShort } from '../../utils/trackUtils'
 
 export function TrackByTrackBuilder() {
   const { state } = usePlaylist()
@@ -152,7 +152,7 @@ export function TrackByTrackBuilder() {
                                 {track['Song Title']}
                               </p>
                               <p className="text-xs text-ink-500 dark:text-ink-400 tabular">
-                                {track.Artist} · R{track.Release} · {track.Duration}
+                                {track.Artist} · {formatReleaseShort(track.Release)} · {track.Duration}
                               </p>
                               {track.Tags && (
                                 <div className="mt-1">

@@ -2,16 +2,18 @@ import React from 'react'
 import { usePlaylist } from '../../context/PlaylistContext'
 import { usePlaylistBuilder } from '../../hooks/usePlaylistBuilder'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
+import { useToast } from '../../context/ToastContext'
 import { Button } from '../ui/Button'
 import { TAG_EMOJIS, getTagDisplayName } from '../../utils/trackUtils'
-import { THEME_TAGS, INSTRUCTOR_TAGS } from '../../utils/themes'
+import { THEME_TAGS, INSTRUCTOR_TAGS, sortThemesBySeason } from '../../utils/themes'
 
 export function QuickGenerate({ onPlaylistGenerated }) {
   const { state, actions } = usePlaylist()
   const { generateThemed } = usePlaylistBuilder()
   const { availableTags, genres } = usePlaylistData()
+  const showToast = useToast()
 
-  const availableThemeTags = THEME_TAGS.filter(tag => availableTags.includes(tag))
+  const availableThemeTags = sortThemesBySeason(THEME_TAGS.filter(tag => availableTags.includes(tag)))
   const availableInstructorTags = INSTRUCTOR_TAGS.filter(tag => availableTags.includes(tag))
 
   const toggleThemeTag = (tag, event) => {
@@ -52,7 +54,15 @@ export function QuickGenerate({ onPlaylistGenerated }) {
   const ApplyBar = () => (
     <div className="flex gap-2 mb-3">
       <Button variant="primary" onClick={() => {
-        generateThemed()
+        const filled = generateThemed().filter(Boolean).length
+        showToast(
+          filled === 10
+            ? 'Playlist filled \u2713'
+            : filled === 0
+              ? 'No tracks match this theme'
+              : `Filled ${filled} slots \u2713`,
+          filled > 0 && filled < 10 ? `${filled}/10 \u00b7 ${10 - filled} had no match` : `${filled}/10`
+        )
         if (onPlaylistGenerated) onPlaylistGenerated()
       }} className="flex-1" disabled={!hasFilters}>
         Apply theme &amp; fill

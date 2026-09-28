@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { PlaylistProvider, usePlaylist } from './context/PlaylistContext'
+import { ToastProvider } from './context/ToastContext'
 import { usePlaylistBuilder } from './hooks/usePlaylistBuilder'
 import { INSTRUCTOR_TAGS } from './utils/themes'
 import { Header } from './components/Header'
@@ -7,7 +8,6 @@ import { Footer } from './components/Footer'
 import { ReleaseSelector } from './components/Step1/ReleaseSelector'
 import { QuickGenerate } from './components/Step2/QuickGenerate'
 import { PlaylistBuilder } from './components/Step2/PlaylistBuilder'
-import { GlobalSearch } from './components/GlobalSearch'
 import { InlineSearch } from './components/InlineSearch'
 import { StepHeading } from './components/ui/StepHeading'
 
@@ -16,7 +16,25 @@ function PlaylistApp() {
   const { playlist } = usePlaylistBuilder()
   const filledCount = playlist.filter(Boolean).length
   const [mobileTab, setMobileTab] = useState('playlist')
-  const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false)
+  const [searchFocusRequest, setSearchFocusRequest] = useState(0)
+
+  // The header search icon is a shortcut into the Search tab, not a separate
+  // search. Focus after the tab has rendered its input.
+  useEffect(() => {
+    if (searchFocusRequest === 0) return
+    const input = Array.from(
+      document.querySelectorAll('[data-search-input]')
+    ).find((el) => el.offsetParent !== null)
+    if (input) {
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      input.focus({ preventScroll: true })
+    }
+  }, [searchFocusRequest])
+
+  const handleSearchClick = () => {
+    setMobileTab('search')
+    setSearchFocusRequest((n) => n + 1)
+  }
 
   // Masthead theme links jump straight into the themes UI with that one filter
   // applied. Instructor tags (difficulty/length) live in a different slice of
@@ -54,7 +72,7 @@ function PlaylistApp() {
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-12">
         <Header
-          onSearchClick={() => setIsGlobalSearchOpen(true)}
+          onSearchClick={handleSearchClick}
           onThemeSelect={handleThemeSelect}
         />
 
@@ -106,7 +124,8 @@ function PlaylistApp() {
               >
                 Playlist
                 <span
-                  className={`tabular text-[11px] font-bold px-1.5 py-0.5 rounded
+                  key={filledCount}
+                  className={`tabular text-[11px] font-bold px-1.5 py-0.5 rounded ${filledCount > 0 ? 'motion-safe:animate-count-bump' : ''}
                     ${mobileTab === 'playlist'
                       ? 'bg-white/25 text-white'
                       : filledCount > 0
@@ -175,11 +194,6 @@ function PlaylistApp() {
         <Footer />
       </div>
 
-      <GlobalSearch
-        isOpen={isGlobalSearchOpen}
-        onClose={() => setIsGlobalSearchOpen(false)}
-      />
-
     </div>
   )
 }
@@ -187,7 +201,9 @@ function PlaylistApp() {
 function App() {
   return (
     <PlaylistProvider>
-      <PlaylistApp />
+      <ToastProvider>
+        <PlaylistApp />
+      </ToastProvider>
     </PlaylistProvider>
   )
 }
