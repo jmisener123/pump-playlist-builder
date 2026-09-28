@@ -7,7 +7,7 @@ import { TrackSlot, EmptyTrackMessage } from './TrackSlot'
 import { TotalDuration } from './TotalDuration'
 import { TrackSearch } from './TrackSearch'
 import { PlaylistExport } from './PlaylistExport'
-import { TRACK_TYPES } from '../../utils/trackUtils'
+import { TRACK_TYPES, formatThemeLabel } from '../../utils/trackUtils'
 
 export function PlaylistBuilder({ mode = 'random' }) {
   const { state } = usePlaylist()
@@ -34,19 +34,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
   const showThemedOptions = hasThemeFilters && hasAnyTracks
 
   // Get active theme description
-  const getActiveThemeText = () => {
-    const parts = []
-    if (state.themeTags.length > 0) {
-      parts.push(state.themeTags.join(', '))
-    }
-    if (state.instructorTags.length > 0) {
-      parts.push(state.instructorTags.join(', '))
-    }
-    if (state.selectedGenres.length > 0) {
-      parts.push(state.selectedGenres.join(', '))
-    }
-    return parts.join(' • ')
-  }
+  const getActiveThemeText = () => formatThemeLabel(state, { emoji: false })
 
   const handleBrowse = (position) => {
     setSearchPosition(position)
@@ -85,7 +73,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
           <div className="flex items-center gap-2 min-w-0">
             {hasThemeFilters && (
               <span className="pill-accent truncate" title={getActiveThemeText()}>
-                {getActiveThemeText()}
+                {formatThemeLabel(state)}
               </span>
             )}
           </div>

@@ -1,6 +1,6 @@
 import { usePlaylist } from '../context/PlaylistContext'
 import { usePlaylistData } from './usePlaylistData'
-import { calculateTotalDuration, TRACK_TYPES } from '../utils/trackUtils'
+import { calculateTotalDuration, TRACK_TYPES, formatThemeLabel } from '../utils/trackUtils'
 
 /**
  * Hook for playlist building operations
@@ -71,7 +71,8 @@ export function usePlaylistBuilder() {
   const getExportText = () => {
     if (!hasAnyTracks) return ''
 
-    let text = `Pump Playlist - Total Time: ${totalDuration}\n`
+    const theme = formatThemeLabel(state)
+    let text = `${theme ? `${theme} ` : ''}Pump Playlist - Total Time: ${totalDuration}\n`
 
     playlist.forEach((track, index) => {
       if (track) {

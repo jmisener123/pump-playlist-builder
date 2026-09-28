@@ -1,8 +1,7 @@
 import React from 'react'
 
 /**
- * Numbered section heading. The solid numeral plus the explicit
- * "Step N of total" marker make the sequence unmistakable, while the
+ * Numbered section heading. The solid numeral carries the sequence, and the
  * rule-fill keeps it reading as editorial rather than as a wizard.
  */
 export function StepHeading({ number, title, total = 2, hint }) {
@@ -24,11 +23,6 @@ export function StepHeading({ number, title, total = 2, hint }) {
         </h2>
 
         <span className="flex-1 border-t border-ink-200 dark:border-ink-800" />
-
-        {/* The numbered badge already carries the sequence on narrow screens. */}
-        <span aria-hidden="true" className="eyebrow shrink-0 whitespace-nowrap hidden sm:inline">
-          Step {number} of {total}
-        </span>
       </div>
 
       {hint && (
