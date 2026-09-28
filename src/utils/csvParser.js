@@ -42,5 +42,6 @@ export function parseCSV(csvString) {
  */
 export function normalizeText(text) {
   if (!text || typeof text !== 'string') return text
-  return text.normalize('NFC')
+  // Collapse stray line breaks and doubled spaces from spreadsheet cells.
+  return text.normalize('NFC').replace(/\s+/g, ' ').trim()
 }

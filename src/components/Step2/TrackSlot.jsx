@@ -95,6 +95,21 @@ export function TrackSlot({
                   ? <div className="mt-1"><TagList tags={ordered} size="sm" activeTags={activeFilterTags} /></div>
                   : null
               })()}
+              {hasThemedOptions && (
+                <button
+                  onClick={() => {
+                    setShowThemedDropdown(!showThemedDropdown)
+                    setShowActions(false)
+                  }}
+                  aria-expanded={showThemedDropdown}
+                  className="mt-1.5 text-xs font-semibold text-accent hover:underline underline-offset-2 tabular"
+                >
+                  {showThemedDropdown ? 'Hide' : 'See'} {themedOptions.length} more{' '}
+                  {themeLabel === 'Theme' ? 'matching' : themeLabel}{' '}
+                  {themedOptions.length === 1 ? 'track' : 'tracks'}
+                  <span aria-hidden="true" className="ml-1">{showThemedDropdown ? '\u25B4' : '\u25BE'}</span>
+                </button>
+              )}
             </div>
             <div className="flex items-center gap-1 shrink-0">
               <button
@@ -126,49 +141,37 @@ export function TrackSlot({
           {showActions && (
             <div className="flex flex-wrap items-center gap-1 mt-2 pt-2 border-t border-ink-100 dark:border-ink-800">
               <button onClick={onRandom} className="btn-quiet">Random</button>
-              {hasThemedOptions && (
-                <button
-                  onClick={() => setShowThemedDropdown(!showThemedDropdown)}
-                  className={`btn-quiet tabular whitespace-nowrap ${showThemedDropdown ? 'text-accent' : ''}`}
-                  aria-expanded={showThemedDropdown}
-                >
-                  {themeLabel} ({themedOptions.length})
-                </button>
-              )}
               <button onClick={onBrowse} className="btn-quiet">Browse</button>
             </div>
           )}
 
-          {/* Theme swap: picks from the other tracks matching the active theme */}
-          {showActions && showThemedDropdown && hasThemedOptions && (
-            <div className="mt-2">
-              <select
-                className="select-field text-xs py-1.5"
-                value=""
-                onChange={(e) => {
-                  if (e.target.value) {
-                    const selected = themedOptions.find(
-                      t => `${t.Release}_${t['Song Title']}` === e.target.value
-                    )
-                    if (selected) {
-                      onThemedSwap(selected)
+          {/* Other tracks matching the active theme, shown inline so they can
+              be scanned and swapped in with one tap. */}
+          {showThemedDropdown && hasThemedOptions && (
+            <ul className="mt-2 border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800 max-h-64 overflow-y-auto">
+              {themedOptions.map((t) => (
+                <li key={`${t.Release}_${t['Song Title']}`}>
+                  <button
+                    onClick={() => {
+                      onThemedSwap(t)
                       setShowThemedDropdown(false)
-                      setShowActions(false)
-                    }
-                  }
-                }}
-              >
-                <option value="">Pick a {themeLabel === 'Theme' ? 'matching' : themeLabel} track…</option>
-                {themedOptions.map((t) => (
-                  <option
-                    key={`${t.Release}_${t['Song Title']}`}
-                    value={`${t.Release}_${t['Song Title']}`}
+                    }}
+                    className="w-full flex items-center justify-between gap-3 px-3 py-2 text-left
+                               hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
                   >
-                    {formatReleaseShort(t.Release)} — {t['Song Title']} · {t.Artist}
-                  </option>
-                ))}
-              </select>
-            </div>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-ink-900 dark:text-ink-100 truncate">
+                        {t['Song Title']}
+                      </span>
+                      <span className="block text-xs text-ink-500 dark:text-ink-400 truncate tabular">
+                        {t.Artist} · {formatReleaseShort(t.Release)} · {t.Duration}
+                      </span>
+                    </span>
+                    <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400 shrink-0">Swap</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       )}
