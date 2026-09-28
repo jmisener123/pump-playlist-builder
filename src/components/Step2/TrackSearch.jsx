@@ -9,9 +9,9 @@ export function TrackSearch({ position, trackType, onSelect, onClose }) {
   const { filteredTracks } = usePlaylistData()
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Get tracks for this position
+  // Newest first, matching the themed swap lists.
   const positionTracks = useMemo(() => {
-    return getTracksForPosition(filteredTracks, trackType)
+    return [...getTracksForPosition(filteredTracks, trackType)].sort((a, b) => b.SortKey - a.SortKey)
   }, [filteredTracks, trackType])
 
   // Apply search filter

@@ -24,11 +24,10 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={showToast}>
       {children}
-      {/* Mobile sits above the sticky "View playlist" bar. */}
       <div
         role="status"
         aria-live="polite"
-        className="pointer-events-none fixed inset-x-0 bottom-24 lg:bottom-8 z-50 flex justify-center px-5"
+        className="pointer-events-none fixed inset-x-0 bottom-8 z-50 flex justify-center px-5"
       >
         {toast && (
           <div
