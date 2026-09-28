@@ -45,3 +45,16 @@ export function normalizeText(text) {
   // Collapse stray line breaks and doubled spaces from spreadsheet cells.
   return text.normalize('NFC').replace(/\s+/g, ' ').trim()
 }
+
+/**
+ * Standardize "ft.", "Feat", "featuring" etc. to "feat.". Requires a name to
+ * follow, so a title like "6 ft." is left alone.
+ */
+export function normalizeFeaturing(text) {
+  if (!text || typeof text !== 'string') return text
+  // Also absorbs a stray slash, e.g. "X / Featuring Y" or "X feat / Y".
+  return text.replace(
+    /(\s*\/\s*)?\b(?:featuring|feat|ft)\b\.?(?:\s*\/)?(?=\s+\S)/gi,
+    (_, slash) => (slash ? ' ' : '') + 'feat.'
+  )
+}

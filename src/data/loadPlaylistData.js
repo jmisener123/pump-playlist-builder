@@ -1,4 +1,4 @@
-import { parseCSV, normalizeText } from '../utils/csvParser'
+import { parseCSV, normalizeText, normalizeFeaturing } from '../utils/csvParser'
 
 /**
  * Clean and normalize tags from raw CSV data
@@ -40,8 +40,8 @@ function processRawTracks(rawTracks) {
   // Process and normalize tracks
   const tracks = rawTracks.map(track => ({
     ...track,
-    'Song Title': normalizeText(track['Song Title']),
-    'Artist': normalizeText(track['Artist']),
+    'Song Title': normalizeFeaturing(normalizeText(track['Song Title'])),
+    'Artist': normalizeFeaturing(normalizeText(track['Artist'])),
     'Genre': normalizeText(track['Genre']),
     'Tags': cleanTags(track['Tags']),
     'SortKey': getSortKey(track['Release'])
