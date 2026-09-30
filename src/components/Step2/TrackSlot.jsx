@@ -3,6 +3,19 @@ import { formatTrackRelease } from '../../utils/trackUtils'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
 
+/**
+ * Artist truncates on its own; release and duration stay pinned so a long
+ * artist name can't push them out of view on narrow screens.
+ */
+function TrackMeta({ track }) {
+  return (
+    <span className="flex items-baseline gap-1 text-xs text-ink-500 dark:text-ink-400 tabular">
+      <span className="min-w-0 truncate">{track.Artist}</span>
+      <span className="shrink-0">{'\u00B7'} {formatTrackRelease(track)} {'\u00B7'} {track.Duration}</span>
+    </span>
+  )
+}
+
 export function TrackSlot({
   position,
   trackType,
@@ -164,9 +177,7 @@ export function TrackSlot({
                         <span className="block text-sm font-semibold text-ink-900 dark:text-ink-100 truncate">
                           {t['Song Title']}
                         </span>
-                        <span className="block text-xs text-ink-500 dark:text-ink-400 truncate tabular">
-                          {t.Artist} · {formatTrackRelease(t)} · {t.Duration}
-                        </span>
+                        <TrackMeta track={t} />
                       </span>
                       <span className="display-sm text-[11px] text-accent shrink-0">Current</span>
                     </div>
@@ -183,9 +194,7 @@ export function TrackSlot({
                       <span className="block text-sm font-semibold text-ink-900 dark:text-ink-100 truncate">
                         {t['Song Title']}
                       </span>
-                      <span className="block text-xs text-ink-500 dark:text-ink-400 truncate tabular">
-                        {t.Artist} · {formatTrackRelease(t)} · {t.Duration}
-                      </span>
+                      <TrackMeta track={t} />
                     </span>
                     <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400 shrink-0">Swap</span>
                   </button>
