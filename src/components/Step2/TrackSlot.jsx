@@ -77,6 +77,10 @@ export function TrackSlot({
   const [showThemedDropdown, setShowThemedDropdown] = useState(false)
 
   const hasThemedOptions = themedOptions.length > 0
+  // Only worth its own line when the slot otherwise looks like a dead end.
+  // With swappable options present it would just stack a near-identical
+  // disclosure under the existing one, so the count moves into that list.
+  const showOlderNote = olderThemedOptions.length > 0 && !hasThemedOptions
   const noThemedTrackAvailable = hasThemeFilters && !hasThemedOptions
   const [showActions, setShowActions] = useState(false)
   // Name the theme instead of saying "themed"; fall back for long combos.
@@ -126,7 +130,7 @@ export function TrackSlot({
             </Button>
           </div>
           <OlderMatchesNote
-            tracks={olderThemedOptions}
+            tracks={showOlderNote ? olderThemedOptions : []}
             earliestRelease={earliestRelease}
             className="mt-2"
           />
@@ -251,8 +255,16 @@ export function TrackSlot({
             </ul>
           )}
 
+          {/* Once the list is open, the count rides along as a footnote rather
+              than claiming a disclosure line of its own. */}
+          {showThemedDropdown && hasThemedOptions && olderThemedOptions.length > 0 && (
+            <p className="mt-1 text-[11px] text-ink-400 dark:text-ink-500 tabular">
+              {olderThemedOptions.length} more before release {earliestRelease}, outside your releases.
+            </p>
+          )}
+
           <OlderMatchesNote
-            tracks={olderThemedOptions}
+            tracks={showOlderNote ? olderThemedOptions : []}
             earliestRelease={earliestRelease}
             className="mt-2"
           />
