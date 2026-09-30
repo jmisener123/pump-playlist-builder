@@ -16,46 +16,6 @@ function TrackMeta({ track }) {
   )
 }
 
-/**
- * Read-only note for theme matches that sit below the earliest-release
- * cutoff. Collapsed by default: at a recent cutoff these can outnumber the
- * usable options, and none of them are selectable.
- */
-function OlderMatchesNote({ tracks, earliestRelease, className = '' }) {
-  const [open, setOpen] = useState(false)
-  if (tracks.length === 0) return null
-
-  return (
-    <div className={className}>
-      <button
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        className="text-xs text-ink-400 dark:text-ink-500 hover:text-ink-700 dark:hover:text-ink-300 transition-colors tabular"
-      >
-        {tracks.length} more before release {earliestRelease}
-        <span aria-hidden="true" className="ml-1">{open ? '\u25B4' : '\u25BE'}</span>
-      </button>
-      {open && (
-        <div className="mt-1.5">
-          <ul className="border border-dashed border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800 max-h-48 overflow-y-auto opacity-70">
-            {tracks.map((t) => (
-              <li key={`${t.Release}_${t['Song Title']}`} className="px-3 py-2 min-w-0">
-                <span className="block text-sm font-semibold text-ink-700 dark:text-ink-300 truncate">
-                  {t['Song Title']}
-                </span>
-                <TrackMeta track={t} />
-              </li>
-            ))}
-          </ul>
-          <p className="mt-1 text-[11px] text-ink-400 dark:text-ink-500">
-            Outside your releases — lower your earliest release to use these.
-          </p>
-        </div>
-      )}
-    </div>
-  )
-}
-
 export function TrackSlot({
   position,
   trackType,
@@ -64,8 +24,6 @@ export function TrackSlot({
   onClear,
   onBrowse,
   themedOptions = [],
-  olderThemedOptions = [],
-  earliestRelease,
   availableCount = 0,
   onThemedSwap,
   onRandomThemed,
@@ -77,10 +35,6 @@ export function TrackSlot({
   const [showThemedDropdown, setShowThemedDropdown] = useState(false)
 
   const hasThemedOptions = themedOptions.length > 0
-  // Only worth its own line when the slot otherwise looks like a dead end.
-  // With swappable options present it would just stack a near-identical
-  // disclosure under the existing one, so the count moves into that list.
-  const showOlderNote = olderThemedOptions.length > 0 && !hasThemedOptions
   const noThemedTrackAvailable = hasThemeFilters && !hasThemedOptions
   const [showActions, setShowActions] = useState(false)
   // Name the theme instead of saying "themed"; fall back for long combos.
@@ -129,11 +83,6 @@ export function TrackSlot({
               Browse all ({availableCount})
             </Button>
           </div>
-          <OlderMatchesNote
-            tracks={showOlderNote ? olderThemedOptions : []}
-            earliestRelease={earliestRelease}
-            className="mt-2"
-          />
         </div>
       ) : (
         /* Filled State */
@@ -254,20 +203,6 @@ export function TrackSlot({
               ))}
             </ul>
           )}
-
-          {/* Once the list is open, the count rides along as a footnote rather
-              than claiming a disclosure line of its own. */}
-          {showThemedDropdown && hasThemedOptions && olderThemedOptions.length > 0 && (
-            <p className="mt-1 text-[11px] text-ink-400 dark:text-ink-500 tabular">
-              {olderThemedOptions.length} more before release {earliestRelease}, outside your releases.
-            </p>
-          )}
-
-          <OlderMatchesNote
-            tracks={showOlderNote ? olderThemedOptions : []}
-            earliestRelease={earliestRelease}
-            className="mt-2"
-          />
         </div>
       )}
     </div>

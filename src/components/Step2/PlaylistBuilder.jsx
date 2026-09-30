@@ -7,13 +7,15 @@ import { TrackSlot, EmptyTrackMessage } from './TrackSlot'
 import { TotalDuration } from './TotalDuration'
 import { TrackSearch } from './TrackSearch'
 import { PlaylistExport } from './PlaylistExport'
+import { ThemeBrowser } from './ThemeBrowser'
 import { TRACK_TYPES, formatThemeLabel } from '../../utils/trackUtils'
 
 export function PlaylistBuilder({ mode = 'random' }) {
   const { state } = usePlaylist()
   const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, generateRandom, hasAnyTracks } = usePlaylistBuilder()
-  const { getTracksForSlot, getThemedTracksForSlot, getOlderThemedTracksForSlot } = usePlaylistData()
+  const { getTracksForSlot, getThemedTracksForSlot, allThemedTracks } = usePlaylistData()
   const [searchPosition, setSearchPosition] = useState(null)
+  const [showThemeBrowser, setShowThemeBrowser] = useState(false)
   // Both bulk actions destroy hand-picked tracks with no undo, so they swap
   // the row in place for a confirmation instead of firing immediately.
   const [pending, setPending] = useState(null)
@@ -62,13 +64,6 @@ export function PlaylistBuilder({ mode = 'random' }) {
       .sort((a, b) => b.SortKey - a.SortKey)
   }
 
-  // Theme matches that only the earliest-release setting rules out, so a slot
-  // can say they exist rather than looking like a dead end.
-  const getOlderThemedForSlot = (index) => {
-    if (!showThemedOptions) return []
-    return getOlderThemedTracksForSlot(index).sort((a, b) => b.SortKey - a.SortKey)
-  }
-
   // With no theme pill and no bulk actions, this row would render as an empty
   // 40px strip with a rule under it, so only show it when it has content.
   const showToolbar = hasThemeFilters || hasAnyTracks
@@ -82,6 +77,14 @@ export function PlaylistBuilder({ mode = 'random' }) {
               <span className="pill-accent max-w-full" title={getActiveThemeText()}>
                 <span className="truncate">{formatThemeLabel(state)}</span>
               </span>
+            )}
+            {hasThemeFilters && allThemedTracks.length > 0 && (
+              <button
+                onClick={() => setShowThemeBrowser(true)}
+                className="text-xs font-semibold text-accent hover:underline underline-offset-2 whitespace-nowrap tabular"
+              >
+                See all {allThemedTracks.length}
+              </button>
             )}
           </div>
           {hasAnyTracks && (
@@ -162,8 +165,6 @@ export function PlaylistBuilder({ mode = 'random' }) {
               onBrowse={() => handleBrowse(index)}
               onClear={() => clearTrack(index)}
               themedOptions={themedOptions}
-              olderThemedOptions={getOlderThemedForSlot(index)}
-              earliestRelease={state.earliestRelease}
               availableCount={availableTracks.length}
               onThemedSwap={(newTrack) => setTrack(index, newTrack)}
               onRandomThemed={() => {
@@ -189,6 +190,17 @@ export function PlaylistBuilder({ mode = 'random' }) {
           trackType={TRACK_TYPES[searchPosition]}
           onSelect={handleSelectTrack}
           onClose={handleCloseSearch}
+        />
+      )}
+
+      {/* Every track matching the theme, across all releases */}
+      {showThemeBrowser && (
+        <ThemeBrowser
+          themeLabel={getActiveThemeText()}
+          onSelect={(index, track) => {
+            if (index >= 0) setTrack(index, track)
+          }}
+          onClose={() => setShowThemeBrowser(false)}
         />
       )}
     </div>

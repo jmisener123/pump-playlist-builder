@@ -193,44 +193,6 @@ export function filterByTheme(tracks, options = {}) {
 }
 
 /**
- * Theme matches that only the earliest-release setting rules out.
- *
- * Without this the UI can't tell "no track has this tag" from "none in your
- * releases" — so a slot reads as a dead end when older releases do have one.
- * Deliberate scoping ("exclude newest", "only recent 10") still applies:
- * surfacing what those hide would just be noise.
- */
-export function getOlderThemeMatches(tracks, options = {}) {
-  const {
-    earliestRelease = null,
-    excludeNewest = false,
-    latestRelease = null,
-    onlyRecent10 = false,
-    allReleases = [],
-    themeTags = [],
-    instructorTags = [],
-    genres = []
-  } = options
-
-  if (!earliestRelease) return []
-  if (themeTags.length === 0 && instructorTags.length === 0 && genres.length === 0) return []
-
-  const earliestSortKey = getSortKey(earliestRelease)
-  const passesOtherFilters = filterTracks(tracks, {
-    earliestRelease: null,
-    excludeNewest,
-    latestRelease,
-    onlyRecent10,
-    allReleases
-  })
-
-  return filterByTheme(
-    passesOtherFilters.filter(track => track.SortKey < earliestSortKey),
-    { themeTags, instructorTags, genres }
-  )
-}
-
-/**
  * Search tracks by song title or artist
  */
 export function searchTracks(tracks, searchTerm) {
