@@ -12,7 +12,7 @@ import { TRACK_TYPES, formatThemeLabel } from '../../utils/trackUtils'
 export function PlaylistBuilder({ mode = 'random' }) {
   const { state } = usePlaylist()
   const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, generateRandom, hasAnyTracks } = usePlaylistBuilder()
-  const { getTracksForSlot, getThemedTracksForSlot } = usePlaylistData()
+  const { getTracksForSlot, getThemedTracksForSlot, getOlderThemedTracksForSlot } = usePlaylistData()
   const [searchPosition, setSearchPosition] = useState(null)
   // Both bulk actions destroy hand-picked tracks with no undo, so they swap
   // the row in place for a confirmation instead of firing immediately.
@@ -60,6 +60,13 @@ export function PlaylistBuilder({ mode = 'random' }) {
     return themedTracks
       .filter(t => !currentTrack || t['Song Title'] !== currentTrack['Song Title'])
       .sort((a, b) => b.SortKey - a.SortKey)
+  }
+
+  // Theme matches that only the earliest-release setting rules out, so a slot
+  // can say they exist rather than looking like a dead end.
+  const getOlderThemedForSlot = (index) => {
+    if (!showThemedOptions) return []
+    return getOlderThemedTracksForSlot(index).sort((a, b) => b.SortKey - a.SortKey)
   }
 
   // With no theme pill and no bulk actions, this row would render as an empty
@@ -155,6 +162,8 @@ export function PlaylistBuilder({ mode = 'random' }) {
               onBrowse={() => handleBrowse(index)}
               onClear={() => clearTrack(index)}
               themedOptions={themedOptions}
+              olderThemedOptions={getOlderThemedForSlot(index)}
+              earliestRelease={state.earliestRelease}
               availableCount={availableTracks.length}
               onThemedSwap={(newTrack) => setTrack(index, newTrack)}
               onRandomThemed={() => {

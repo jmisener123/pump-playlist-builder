@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react'
-import { loadPlaylistDataAsync, filterTracks, filterByTheme, pickRandomTrack } from '../data/loadPlaylistData'
+import { loadPlaylistDataAsync, filterTracks, filterByTheme, getOlderThemeMatches, pickRandomTrack } from '../data/loadPlaylistData'
 import { TRACK_TYPES } from '../utils/trackUtils'
 
 // Action types
@@ -235,6 +235,20 @@ export function PlaylistProvider({ children }) {
     })
   }
 
+  // Theme matches hidden only by the earliest-release setting
+  const getOlderThemedTracks = () => {
+    return getOlderThemeMatches(state.tracks, {
+      earliestRelease: state.earliestRelease,
+      excludeNewest: state.excludeNewest,
+      latestRelease: state.latestRelease,
+      onlyRecent10: state.onlyRecent10,
+      allReleases: state.releases,
+      themeTags: state.themeTags,
+      instructorTags: state.instructorTags,
+      genres: state.selectedGenres
+    })
+  }
+
   // Actions
   const actions = {
     setEarliestRelease: (release) => {
@@ -346,7 +360,8 @@ export function PlaylistProvider({ children }) {
     state,
     actions,
     getFilteredTracks,
-    getThemedTracks
+    getThemedTracks,
+    getOlderThemedTracks
   }
 
   return (
