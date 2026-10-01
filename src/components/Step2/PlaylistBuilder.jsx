@@ -78,14 +78,6 @@ export function PlaylistBuilder({ mode = 'random' }) {
                 <span className="truncate">{formatThemeLabel(state)}</span>
               </span>
             )}
-            {hasThemeFilters && allThemedTracks.length > 0 && (
-              <button
-                onClick={() => setShowThemeBrowser(true)}
-                className="text-xs font-semibold text-accent hover:underline underline-offset-2 whitespace-nowrap tabular"
-              >
-                See all {allThemedTracks.length}
-              </button>
-            )}
           </div>
           {hasAnyTracks && (
             pending ? (
@@ -180,6 +172,18 @@ export function PlaylistBuilder({ mode = 'random' }) {
           )
         })}
       </div>
+
+      {hasThemeFilters && allThemedTracks.length > 0 && (
+        <button
+          onClick={() => setShowThemeBrowser(true)}
+          className="flex items-center justify-between gap-3 w-full text-left px-3 py-2.5 border-t border-ink-200 dark:border-ink-800 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
+        >
+          <span className="display-sm text-ink-950 dark:text-paper">
+            Browse all <span className="tabular">{allThemedTracks.length}</span> matching tracks from every release
+          </span>
+          <span className="text-ink-400 text-lg leading-none w-4 text-center">→</span>
+        </button>
+      )}
 
       <PlaylistExport />
 
