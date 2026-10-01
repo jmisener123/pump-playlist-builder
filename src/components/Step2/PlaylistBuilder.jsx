@@ -38,6 +38,13 @@ export function PlaylistBuilder({ mode = 'random' }) {
   // Get active theme description
   const getActiveThemeText = () => formatThemeLabel(state, { emoji: false })
 
+  // The browse row sits far below the theme pill, so name the filter outright
+  // when it's a single tag. Stacked filters would run too long, so they fall
+  // back to the generic wording.
+  const singleFilterName = [...state.themeTags, ...state.instructorTags, ...state.selectedGenres].length === 1
+    ? [...state.themeTags, ...state.instructorTags, ...state.selectedGenres][0]
+    : null
+
   const handleBrowse = (position) => {
     setSearchPosition(position)
   }
@@ -179,7 +186,8 @@ export function PlaylistBuilder({ mode = 'random' }) {
           className="flex items-center justify-between gap-3 w-full text-left px-3 py-2.5 border-t border-ink-200 dark:border-ink-800 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
         >
           <span className="display-sm text-ink-950 dark:text-paper">
-            Browse all <span className="tabular">{allThemedTracks.length}</span> matching tracks from every release
+            Browse all <span className="tabular">{allThemedTracks.length}</span>{' '}
+            {singleFilterName ? `${singleFilterName} tracks` : 'matching tracks'} from every release
           </span>
           <span className="text-ink-400 text-lg leading-none w-4 text-center">→</span>
         </button>
