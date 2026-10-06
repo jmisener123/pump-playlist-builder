@@ -88,6 +88,11 @@ export function PlaylistBuilder({ mode = 'random' }) {
     .filter(g => g.length > 0).length
   const matchSummaryLabel = activeFilterGroups > 1 ? 'match all filters' : 'on theme'
 
+  // Explain the compromise once, above the list, instead of repeating a
+  // sentence on every badged row — the badges mark which rows, this says why.
+  const compromisedCount = themeMatches.filter(m => m === 'partial' || m === 'off').length
+  const themeName = getActiveThemeText().length <= 24 ? getActiveThemeText() : 'theme'
+
   // With no theme pill and no bulk actions, this row would render as an empty
   // 40px strip with a rule under it, so only show it when it has content.
   const showToolbar = hasThemeFilters || hasAnyTracks
@@ -154,6 +159,15 @@ export function PlaylistBuilder({ mode = 'random' }) {
             )
           )}
         </div>
+      )}
+
+      {compromisedCount > 0 && (
+        <p className="px-3 py-2 text-xs text-ink-500 dark:text-ink-400 border-b border-ink-200 dark:border-ink-800 bg-ink-50/60 dark:bg-ink-900/40">
+          No {themeName} track was available for{' '}
+          <span className="tabular">{compromisedCount}</span>{' '}
+          {compromisedCount === 1 ? 'slot' : 'slots'}, so the closest{' '}
+          {compromisedCount === 1 ? 'match is' : 'matches are'} used below. Swap any of them from its row.
+        </p>
       )}
 
       {!hasAnyTracks && (
