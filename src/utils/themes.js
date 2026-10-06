@@ -135,6 +135,7 @@ export const THEME_SEASONS = {
   "Summer": { start: [6, 1], end: [8, 31] },
   "Fall": { start: [9, 1], end: [11, 30] },
   "Halloween": { start: [9, 15], end: [10, 31] },
+  "Heaven and Hell": { start: [10, 1], end: [11, 2] },
   "Winter": { start: [12, 1], end: [2, 28] },
 }
 
