@@ -123,10 +123,10 @@ export function TrackSlot({
           {/* Track Info */}
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="font-display font-extrabold text-[15px] leading-tight text-ink-950 dark:text-paper truncate">
+              <p className="font-display font-extrabold text-[15px] leading-tight text-ink-950 dark:text-paper break-words">
                 {track['Song Title']}
               </p>
-              <p className="text-sm text-ink-600 dark:text-ink-300 truncate">
+              <p className="text-sm text-ink-600 dark:text-ink-300 break-words">
                 {track.Artist}
               </p>
               <p className="text-xs text-ink-400 mt-1 tabular">
