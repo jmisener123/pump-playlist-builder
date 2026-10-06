@@ -18,6 +18,39 @@ function TrackMeta({ track }) {
   )
 }
 
+/**
+ * Splits "2 - Squats" into its number and body-part name so the slot header
+ * can lead with a badge instead of a faint run-on label.
+ */
+function splitTrackType(trackType) {
+  const match = /^(\d+)\s*-\s*(.*)$/.exec(trackType)
+  return match ? { number: match[1], name: match[2] } : { number: '', name: trackType }
+}
+
+function SlotHeading({ trackType, filled }) {
+  const { number, name } = splitTrackType(trackType)
+  return (
+    <div className="flex items-center gap-2 min-w-0">
+      {number && (
+        <span
+          aria-hidden="true"
+          className={`shrink-0 w-5 h-5 rounded-sm flex items-center justify-center font-display font-bold text-[11px] tabular ${filled
+            ? 'bg-ink-950 dark:bg-paper text-paper dark:text-ink-950'
+            : 'border border-ink-300 dark:border-ink-700 text-ink-400 dark:text-ink-500'}`}
+        >
+          {number}
+        </span>
+      )}
+      <h4 className={`display-sm text-xs truncate ${filled
+        ? 'text-ink-950 dark:text-paper'
+        : 'text-ink-400 dark:text-ink-500'}`}
+      >
+        {name}
+      </h4>
+    </div>
+  )
+}
+
 export function TrackSlot({
   position,
   trackType,
@@ -47,12 +80,10 @@ export function TrackSlot({
     : themedOptions
 
   return (
-    <div className="border-b border-ink-200 dark:border-ink-800 last:border-b-0 px-3 py-2.5">
+    <div className={`border-b border-ink-200 dark:border-ink-800 last:border-b-0 px-3 py-2.5 ${isEmpty ? 'bg-ink-50/60 dark:bg-ink-900/40' : ''}`}>
       {/* Track Type Header */}
       <div className="flex items-center justify-between gap-2">
-        <h4 className="display-sm text-[11px] text-ink-400 dark:text-ink-500">
-          {trackType}
-        </h4>
+        <SlotHeading trackType={trackType} filled={!isEmpty} />
         <div className="flex items-center gap-2">
           {noThemedTrackAvailable && isEmpty && (
             <span className="text-xs text-ink-400">
@@ -215,9 +246,7 @@ export function EmptyTrackMessage({ position, trackType, onRandom, onPartialMatc
   return (
     <div className="border-b border-ink-200 dark:border-ink-800 last:border-b-0 px-3 py-2.5">
       <div className="flex items-center justify-between">
-        <h4 className="display-sm text-[11px] text-ink-400 dark:text-ink-500">
-          {trackType}
-        </h4>
+        <SlotHeading trackType={trackType} filled={false} />
         <span className="pill-off text-accent border-flare-200">
           No themed match
         </span>
