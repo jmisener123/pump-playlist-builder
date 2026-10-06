@@ -58,14 +58,14 @@ export function Header({ onSearchClick, onThemeSelect }) {
 
       {/* Rule + standfirst, newspaper-style */}
       <div className="border-t-2 border-flare pt-2">
-        <p className="text-sm text-ink-500 dark:text-ink-400">
+        <p className="text-base sm:text-lg text-ink-600 dark:text-ink-300">
           The fastest way to plan your next Pump class.
         </p>
 
         {shown.length > 0 && (
-          <p className="text-xs text-ink-400 dark:text-ink-500 mt-1.5">
+          <p className="text-sm text-ink-500 dark:text-ink-400 mt-2">
             {shown.map((tag, i) => (
-              <span key={tag} className="whitespace-nowrap">
+              <span key={tag} className="whitespace-nowrap inline-block py-0.5">
                 <button
                   type="button"
                   onClick={() => onThemeSelect && onThemeSelect(tag)}
@@ -84,7 +84,7 @@ export function Header({ onSearchClick, onThemeSelect }) {
               </span>
             ))}
             {remaining > 0 && (
-              <span className="whitespace-nowrap">
+              <span className="whitespace-nowrap inline-block py-0.5">
                 <span className="mx-1.5 text-ink-300 dark:text-ink-700">·</span>
                 <span>and more themes</span>
               </span>
