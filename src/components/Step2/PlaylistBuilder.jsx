@@ -8,7 +8,7 @@ import { TotalDuration } from './TotalDuration'
 import { TrackSearch } from './TrackSearch'
 import { PlaylistExport } from './PlaylistExport'
 import { ThemeBrowser } from './ThemeBrowser'
-import { TRACK_TYPES, formatThemeLabel } from '../../utils/trackUtils'
+import { TRACK_TYPES, formatThemeLabel, getTagDisplayName } from '../../utils/trackUtils'
 
 export function PlaylistBuilder({ mode = 'random' }) {
   const { state } = usePlaylist()
@@ -42,7 +42,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
   // when it's a single tag. Stacked filters would run too long, so they fall
   // back to the generic wording.
   const singleFilterName = [...state.themeTags, ...state.instructorTags, ...state.selectedGenres].length === 1
-    ? [...state.themeTags, ...state.instructorTags, ...state.selectedGenres][0]
+    ? getTagDisplayName([...state.themeTags, ...state.instructorTags, ...state.selectedGenres][0])
     : null
 
   const handleBrowse = (position) => {

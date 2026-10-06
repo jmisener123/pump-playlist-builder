@@ -3,7 +3,7 @@
  */
 export const TAG_EMOJIS = {
   "Halloween": "🎃",
-  "Heaven and Hell": "😇",
+  "Heaven and Hell": "😇😈",
   "Women of Pop": "👩‍🎤",
   "Break-Up Songs": "💔",
   "Beast Mode": "💪",
@@ -95,11 +95,18 @@ export function parseTags(tagString) {
 }
 
 /**
+ * Display names for tags whose data value reads awkwardly in the UI.
+ */
+const TAG_DISPLAY_NAMES = {
+  "Hard": "Hard Workout",
+  "Heaven and Hell": "Heaven & Hell",
+}
+
+/**
  * Get display name for a tag (e.g., "Hard" -> "Hard Workout")
  */
 export function getTagDisplayName(tag) {
-  if (tag === "Hard") return "Hard Workout"
-  return tag
+  return TAG_DISPLAY_NAMES[tag] || tag
 }
 
 /**
@@ -195,7 +202,10 @@ export function formatTrackRelease(track, { short = true } = {}) {
  * Genres have no emoji; pass `emoji: false` for a plain-text label.
  */
 export function formatThemeLabel({ themeTags = [], instructorTags = [], selectedGenres = [] }, { emoji = true } = {}) {
-  const withEmoji = (tag) => (emoji && TAG_EMOJIS[tag] ? `${TAG_EMOJIS[tag]} ${tag}` : tag)
+  const withEmoji = (tag) => {
+    const name = getTagDisplayName(tag)
+    return emoji && TAG_EMOJIS[tag] ? `${TAG_EMOJIS[tag]} ${name}` : name
+  }
   return [
     themeTags.map(withEmoji).join(', '),
     instructorTags.map(withEmoji).join(', '),

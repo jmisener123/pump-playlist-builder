@@ -6,7 +6,7 @@ export const THEMES = {
   },
   heavenAndHell: {
     name: "Heaven and Hell",
-    emoji: "😇",
+    emoji: "😇😈",
     tags: ["Heaven and Hell"]
   },
   eighties: {

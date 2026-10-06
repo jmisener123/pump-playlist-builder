@@ -1,7 +1,7 @@
 import React from 'react'
 import { usePlaylistData } from '../hooks/usePlaylistData'
 import { THEME_TAGS, INSTRUCTOR_TAGS, sortThemesBySeason } from '../utils/themes'
-import { TAG_EMOJIS } from '../utils/trackUtils'
+import { TAG_EMOJIS, getTagDisplayName } from '../utils/trackUtils'
 
 // How many themes to name before collapsing the rest into a count.
 const TEASER_COUNT = 4
@@ -71,12 +71,12 @@ export function Header({ onSearchClick, onThemeSelect }) {
                   onClick={() => onThemeSelect && onThemeSelect(tag)}
                   className="hover:text-accent underline decoration-ink-200 dark:decoration-ink-700
                              underline-offset-2 hover:decoration-current transition-colors"
-                  title={`Fill your playlist with ${tag} tracks`}
+                  title={`Fill your playlist with ${getTagDisplayName(tag)} tracks`}
                 >
                   {TAG_EMOJIS[tag] && (
                     <span aria-hidden="true" className="mr-1">{TAG_EMOJIS[tag]}</span>
                   )}
-                  {tag}
+                  {getTagDisplayName(tag)}
                 </button>
                 {i < shown.length - 1 && (
                   <span className="mx-1.5 text-ink-300 dark:text-ink-700">·</span>

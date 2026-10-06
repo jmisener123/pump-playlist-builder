@@ -144,7 +144,7 @@ export function QuickGenerate({ onPlaylistGenerated, autoFill = false }) {
               {TAG_EMOJIS[tag] && (
                 <span aria-hidden="true" className="mr-1 text-[13px] leading-none">{TAG_EMOJIS[tag]}</span>
               )}
-              {tag}
+              {getTagDisplayName(tag)}
             </button>
           ))}
         </div>
