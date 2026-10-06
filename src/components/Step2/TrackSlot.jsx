@@ -59,6 +59,8 @@ export function TrackSlot({
   onClear,
   onBrowse,
   themedOptions = [],
+  themedOptionsRelaxed = false,
+  themeMatch = null,
   availableCount = 0,
   onThemedSwap,
   onRandomThemed,
@@ -74,6 +76,13 @@ export function TrackSlot({
   const [showActions, setShowActions] = useState(false)
   // Name the theme instead of saying "themed"; fall back for long combos.
   const themeLabel = activeThemeText && activeThemeText.length <= 18 ? activeThemeText : 'Theme'
+  // The theme couldn't fill this slot, so say which compromise was made
+  // rather than letting an off-theme track pass as a match.
+  const offThemeNote = themeMatch === 'partial'
+    ? 'Closest match'
+    : themeMatch === 'off'
+      ? 'Off theme'
+      : null
   // Show the current track in its place so the newest-first order reads clearly.
   const themedListItems = track
     ? [...themedOptions, { ...track, isCurrent: true }].sort((a, b) => b.SortKey - a.SortKey)
@@ -88,6 +97,16 @@ export function TrackSlot({
           {noThemedTrackAvailable && isEmpty && (
             <span className="text-xs text-ink-400">
               No {themeLabel === 'Theme' ? 'theme' : themeLabel} match
+            </span>
+          )}
+          {offThemeNote && (
+            <span
+              className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.04em] whitespace-nowrap ${themeMatch === 'off'
+                ? 'border-flare-200 dark:border-flare-400/40 text-accent'
+                : 'border-ink-200 dark:border-ink-700 text-ink-500 dark:text-ink-400'}`}
+              title={`No ${themeLabel === 'Theme' ? 'theme' : themeLabel} track was available for this slot`}
+            >
+              {offThemeNote}
             </span>
           )}
           {track && (
@@ -108,8 +127,8 @@ export function TrackSlot({
               Random
             </Button>
             {hasThemedOptions && (
-              <Button variant="secondary" size="sm" onClick={onRandomThemed} className="flex-1 min-w-[4.5rem] whitespace-nowrap" title={`Random ${activeThemeText} track`}>
-                {themeLabel}
+              <Button variant="secondary" size="sm" onClick={onRandomThemed} className="flex-1 min-w-[4.5rem] whitespace-nowrap" title={themedOptionsRelaxed ? 'Random closest-match track' : `Random ${activeThemeText} track`}>
+                {themedOptionsRelaxed ? 'Closest' : themeLabel}
               </Button>
             )}
             <Button variant="blue-outline" size="sm" onClick={onBrowse} className="flex-1 min-w-[7rem] whitespace-nowrap">
@@ -154,8 +173,10 @@ export function TrackSlot({
                   aria-expanded={showThemedDropdown}
                   className="mt-1.5 text-xs font-semibold text-accent hover:underline underline-offset-2 tabular"
                 >
-                  {showThemedDropdown ? 'Hide' : 'See'} {themedOptions.length} more{' '}
-                  {themeLabel === 'Theme' ? 'matching' : themeLabel}{' '}
+                  {showThemedDropdown ? 'Hide' : 'See'} {themedOptions.length}{' '}
+                  {themedOptionsRelaxed
+                    ? 'closest'
+                    : <>more {themeLabel === 'Theme' ? 'matching' : themeLabel}</>}{' '}
                   {themedOptions.length === 1 ? 'track' : 'tracks'}
                   <span aria-hidden="true" className="ml-1">{showThemedDropdown ? '\u25B4' : '\u25BE'}</span>
                 </button>

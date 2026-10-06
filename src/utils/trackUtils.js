@@ -110,6 +110,55 @@ export function getTagDisplayName(tag) {
 }
 
 /**
+ * How well a track answers the active theme filters:
+ *   'exact'   — satisfies every active filter category
+ *   'partial' — satisfies some but not all of them
+ *   'off'     — satisfies none
+ * Returns null when no filters are active, so callers can skip the badge.
+ *
+ * Derived from the track rather than stored on the playlist, so a hand-picked
+ * swap is judged by the same rule as a generated one.
+ */
+export function getThemeMatch(track, { themeTags = [], instructorTags = [], selectedGenres = [] } = {}) {
+  if (!track) return null
+
+  const checks = [
+    [themeTags.length > 0, () => themeTags.some(t => parseTags(track.Tags).includes(t))],
+    [instructorTags.length > 0, () => instructorTags.some(t => parseTags(track.Tags).includes(t))],
+    [selectedGenres.length > 0, () => selectedGenres.includes(track.Genre)],
+  ].filter(([active]) => active)
+
+  if (checks.length === 0) return null
+
+  const matched = checks.filter(([, passes]) => passes()).length
+  if (matched === checks.length) return 'exact'
+  return matched > 0 ? 'partial' : 'off'
+}
+
+/**
+ * Filter sets to try in order when the exact theme has no track for a slot:
+ * drop the narrowest constraint first (genre, then difficulty/length) so the
+ * named theme is the last thing to go. Ends with the unfiltered catalog.
+ */
+export function relaxedThemeFilters({ themeTags = [], instructorTags = [], selectedGenres = [] } = {}) {
+  const variants = [
+    { themeTags, instructorTags, genres: selectedGenres },
+    { themeTags, instructorTags, genres: [] },
+    { themeTags, instructorTags: [], genres: [] },
+    { themeTags: [], instructorTags: [], genres: [] },
+  ]
+
+  // Drop variants that don't actually loosen anything.
+  const seen = new Set()
+  return variants.filter(v => {
+    const key = JSON.stringify([v.themeTags, v.instructorTags, v.genres])
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+/**
  * Get color for a tag
  */
 export function getTagColor(tag) {

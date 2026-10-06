@@ -8,12 +8,12 @@ import { TotalDuration } from './TotalDuration'
 import { TrackSearch } from './TrackSearch'
 import { PlaylistExport } from './PlaylistExport'
 import { ThemeBrowser } from './ThemeBrowser'
-import { TRACK_TYPES, formatThemeLabel, getTagDisplayName } from '../../utils/trackUtils'
+import { TRACK_TYPES, formatThemeLabel, getTagDisplayName, getThemeMatch } from '../../utils/trackUtils'
 
 export function PlaylistBuilder({ mode = 'random' }) {
   const { state } = usePlaylist()
   const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, generateRandom, hasAnyTracks } = usePlaylistBuilder()
-  const { getTracksForSlot, getThemedTracksForSlot, allThemedTracks } = usePlaylistData()
+  const { getTracksForSlot, getThemedTracksForSlot, getRelaxedTracksForSlot, allThemedTracks } = usePlaylistData()
   const [searchPosition, setSearchPosition] = useState(null)
   const [showThemeBrowser, setShowThemeBrowser] = useState(false)
   // Both bulk actions destroy hand-picked tracks with no undo, so they swap
@@ -60,16 +60,33 @@ export function PlaylistBuilder({ mode = 'random' }) {
     setSearchPosition(null)
   }
 
-  // Get themed options for a position (excluding current track)
+  // Get themed options for a position (excluding current track). When the
+  // exact theme has nothing left for this slot, offer the closest matches so
+  // a swap is still one tap away instead of a trip to Browse.
   const getThemedOptionsForSlot = (index) => {
-    if (!showThemedOptions) return []
-    const themedTracks = getThemedTracksForSlot(index)
+    if (!showThemedOptions) return { options: [], relaxed: false }
     const currentTrack = playlist[index]
+    const notCurrent = (t) => !currentTrack || t['Song Title'] !== currentTrack['Song Title']
     // Newest first: the likeliest swap is a recent release.
-    return themedTracks
-      .filter(t => !currentTrack || t['Song Title'] !== currentTrack['Song Title'])
-      .sort((a, b) => b.SortKey - a.SortKey)
+    const newestFirst = (list) => [...list].sort((a, b) => b.SortKey - a.SortKey)
+
+    const exact = getThemedTracksForSlot(index).filter(notCurrent)
+    if (exact.length > 0) return { options: newestFirst(exact), relaxed: false }
+
+    const relaxed = getRelaxedTracksForSlot(index).filter(notCurrent)
+    return { options: newestFirst(relaxed), relaxed: relaxed.length > 0 }
   }
+
+  // Honest summary before you scroll: how much of this playlist is actually
+  // on theme, given slots the theme couldn't fill. With several filters
+  // stacked, "on theme" would overstate it — name the real bar instead.
+  const themeMatches = playlist.map(track =>
+    hasThemeFilters ? getThemeMatch(track, state) : null
+  )
+  const onThemeCount = themeMatches.filter(m => m === 'exact').length
+  const activeFilterGroups = [state.themeTags, state.instructorTags, state.selectedGenres]
+    .filter(g => g.length > 0).length
+  const matchSummaryLabel = activeFilterGroups > 1 ? 'match all filters' : 'on theme'
 
   // With no theme pill and no bulk actions, this row would render as an empty
   // 40px strip with a rule under it, so only show it when it has content.
@@ -83,6 +100,11 @@ export function PlaylistBuilder({ mode = 'random' }) {
             {hasThemeFilters && (
               <span className="pill-accent max-w-full" title={getActiveThemeText()}>
                 <span className="truncate">{formatThemeLabel(state)}</span>
+              </span>
+            )}
+            {hasThemeFilters && hasAnyTracks && (
+              <span className="display-sm text-[11px] text-ink-400 dark:text-ink-500 whitespace-nowrap tabular">
+                {onThemeCount} of {filledCount} {matchSummaryLabel}
               </span>
             )}
           </div>
@@ -151,7 +173,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
       <div className="space-y-0">
         {TRACK_TYPES.map((trackType, index) => {
           const track = playlist[index]
-          const themedOptions = getThemedOptionsForSlot(index)
+          const { options: themedOptions, relaxed: themedOptionsRelaxed } = getThemedOptionsForSlot(index)
           const availableTracks = getTracksForSlot(index)
 
           return (
@@ -164,6 +186,8 @@ export function PlaylistBuilder({ mode = 'random' }) {
               onBrowse={() => handleBrowse(index)}
               onClear={() => clearTrack(index)}
               themedOptions={themedOptions}
+              themedOptionsRelaxed={themedOptionsRelaxed}
+              themeMatch={themeMatches[index]}
               availableCount={availableTracks.length}
               onThemedSwap={(newTrack) => setTrack(index, newTrack)}
               onRandomThemed={() => {

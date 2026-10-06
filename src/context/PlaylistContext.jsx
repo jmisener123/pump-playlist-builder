@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react'
 import { loadPlaylistDataAsync, filterTracks, filterByTheme, pickRandomTrack } from '../data/loadPlaylistData'
-import { TRACK_TYPES } from '../utils/trackUtils'
+import { TRACK_TYPES, relaxedThemeFilters } from '../utils/trackUtils'
 
 // Action types
 const ActionTypes = {
@@ -300,10 +300,23 @@ export function PlaylistProvider({ children }) {
     },
 
     generateThemedPlaylist: () => {
-      const themedTracks = getThemedTracks()
+      // Never leave a hole: a class needs all ten tracks, so when the theme
+      // has nothing for a slot, fall back through progressively looser
+      // filters. The row badges itself from the track it ends up with.
+      const baseFiltered = getFilteredTracks()
+      const pools = relaxedThemeFilters({
+        themeTags: state.themeTags,
+        instructorTags: state.instructorTags,
+        selectedGenres: state.selectedGenres
+      }).map(filters => filterByTheme(baseFiltered, filters))
+
       const usedTitles = []
       const newPlaylist = TRACK_TYPES.map(trackType => {
-        const track = pickRandomTrack(themedTracks, trackType, usedTitles)
+        let track = null
+        for (const pool of pools) {
+          track = pickRandomTrack(pool, trackType, usedTitles)
+          if (track) break
+        }
         if (track) {
           usedTitles.push(track['Song Title'])
         }

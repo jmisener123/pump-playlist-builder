@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { usePlaylist } from '../context/PlaylistContext'
-import { searchTracks, getTracksForPosition } from '../data/loadPlaylistData'
+import { searchTracks, getTracksForPosition, filterByTheme } from '../data/loadPlaylistData'
+import { TRACK_TYPES, relaxedThemeFilters } from '../utils/trackUtils'
 
 /**
  * Hook for accessing and filtering playlist data
@@ -44,6 +45,26 @@ export function usePlaylistData() {
     return trackType ? getTracksForPosition(themedTracks, trackType) : []
   }
 
+  // Closest-match tracks for a slot the exact theme can't fill: loosen the
+  // filters a step at a time and return the first pool that has something.
+  // Never falls all the way back to the unfiltered catalog — that's Browse.
+  const getRelaxedTracksForSlot = (position) => {
+    const trackType = TRACK_TYPES[position]
+    if (!trackType) return []
+
+    const variants = relaxedThemeFilters({
+      themeTags: state.themeTags,
+      instructorTags: state.instructorTags,
+      selectedGenres: state.selectedGenres
+    }).filter(v => v.themeTags.length || v.instructorTags.length || v.genres.length)
+
+    for (const variant of variants) {
+      const pool = getTracksForPosition(filterByTheme(filteredTracks, variant), trackType)
+      if (pool.length > 0) return pool
+    }
+    return []
+  }
+
   // Count available tracks by position
   const trackCounts = useMemo(() => {
     const counts = {}
@@ -69,6 +90,7 @@ export function usePlaylistData() {
     searchInFiltered,
     getTracksForSlot,
     getThemedTracksForSlot,
+    getRelaxedTracksForSlot,
     allThemedTracks,
     trackCounts
   }
