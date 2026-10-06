@@ -3,6 +3,7 @@
  */
 export const TAG_EMOJIS = {
   "Halloween": "🎃",
+  "Heaven and Hell": "😇",
   "Women of Pop": "👩‍🎤",
   "Break-Up Songs": "💔",
   "Beast Mode": "💪",
@@ -31,6 +32,7 @@ export const TAG_COLORS = {
   "Women of Pop": "#ffd1e7",
   "Valentine's Day": "#ffb6c1",
   "Halloween": "#ffe5b4",
+  "Heaven and Hell": "#d8c7f0",
   "Beast Mode": "#b3e0ff",
   "Sing-Along": "#fde68a",
   "New Year's Eve": "#b9fbc0",

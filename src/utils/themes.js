@@ -4,6 +4,11 @@ export const THEMES = {
     emoji: "🎃",
     tags: ["Halloween"]
   },
+  heavenAndHell: {
+    name: "Heaven and Hell",
+    emoji: "😇",
+    tags: ["Heaven and Hell"]
+  },
   eighties: {
     name: "80s",
     emoji: "🎸",
@@ -98,6 +103,7 @@ export const THEME_TAGS = [
   "Emo",
   "Fall",
   "Halloween",
+  "Heaven and Hell",
   "New Year's Eve",
   "P!nk",
   "Positive Vibes",
