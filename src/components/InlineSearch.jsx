@@ -13,6 +13,9 @@ import { ChoreoBrowser } from './ChoreoBrowser'
 import { usePlaylist } from '../context/PlaylistContext'
 import { TRACK_TYPES, getBodyPart, formatTrackRelease } from '../utils/trackUtils'
 
+// One of each kind of search the box understands: artist, song, move.
+const EXAMPLE_SEARCHES = ['Lady Gaga', 'Somebody to Love', 'rotator raises']
+
 export function InlineSearch() {
   const { filteredTracks } = usePlaylistData()
   const { playlist, setTrack } = usePlaylistBuilder()
@@ -67,9 +70,19 @@ export function InlineSearch() {
         data-search-input
       />
       {!hasQuery && (
-        <p className="eyebrow mt-2">
-          Try searching: Lady Gaga, Somebody to Love, rotator raises
-        </p>
+        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+          <span className="eyebrow">Try</span>
+          {EXAMPLE_SEARCHES.map((example) => (
+            <button
+              key={example}
+              type="button"
+              onClick={() => setSearchTerm(example)}
+              className="pill-off hover:border-flare-600 hover:text-accent"
+            >
+              {example}
+            </button>
+          ))}
+        </div>
       )}
       <MoveFilterBar filters={filters} onRemove={removeFilter} onClear={clearFilters} />
       <ChoreoBrowser
