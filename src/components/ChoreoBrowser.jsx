@@ -15,6 +15,21 @@ function scopePrefix(group) {
 }
 
 /**
+ * Picks travel as objects so the caller can show them as chips. The query is
+ * carried along rather than rebuilt later, since only this component knows
+ * whether the list was already scoped to a track.
+ */
+function toFilter(group, { id, label, query }) {
+  return {
+    id: `${group.id}::${id}`,
+    trackId: group.id,
+    bodyPart: group.bodyPart,
+    label,
+    query: scopePrefix(group) + query,
+  }
+}
+
+/**
  * Collapsible list of the moves in the catalog, so you don't have to guess
  * what's searchable. Clicking one drops it into the search box.
  *
@@ -27,7 +42,7 @@ function scopePrefix(group) {
  * too loosely - "no squats" shouldn't pull in every squat track whose title
  * happens to contain "no".
  */
-export function ChoreoBrowser({ tracks, onPick, slot = null }) {
+export function ChoreoBrowser({ tracks, onPick, slot = null, activeIds = [] }) {
   const [open, setOpen] = useState(false)
   const [showAll, setShowAll] = useState(false)
 
@@ -79,27 +94,41 @@ export function ChoreoBrowser({ tracks, onPick, slot = null }) {
               <div key={group.id}>
                 {!slot && <p className="eyebrow text-ink-400 mb-1.5">{group.label}</p>}
                 <div className="flex flex-wrap gap-1.5">
-                  {group.items.map(item => (
-                    <button
-                      key={item.value}
-                      type="button"
-                      onClick={() => onPick(scopePrefix(group) + `"${item.value}"`)}
-                      className="pill-off"
-                    >
-                      {item.value}
-                    </button>
-                  ))}
-                  {group.negatives.map(negative => (
-                    <button
-                      key={negative.id}
-                      type="button"
-                      onClick={() => onPick(scopePrefix(group) + negative.query)}
-                      className="pill-off border-dashed"
-                      title="Rule this move out"
-                    >
-                      {negative.label}
-                    </button>
-                  ))}
+                  {group.items.map(item => {
+                    const filter = toFilter(group, {
+                      id: item.value,
+                      label: item.value,
+                      query: `"${item.value}"`,
+                    })
+                    const active = activeIds.includes(filter.id)
+                    return (
+                      <button
+                        key={item.value}
+                        type="button"
+                        onClick={() => onPick(filter)}
+                        className={active ? 'pill-on' : 'pill-off'}
+                        aria-pressed={active}
+                      >
+                        {item.value}
+                      </button>
+                    )
+                  })}
+                  {group.negatives.map(negative => {
+                    const filter = toFilter(group, negative)
+                    const active = activeIds.includes(filter.id)
+                    return (
+                      <button
+                        key={negative.id}
+                        type="button"
+                        onClick={() => onPick(filter)}
+                        className={`${active ? 'pill-on' : 'pill-off'} border-dashed`}
+                        aria-pressed={active}
+                        title="Rule this move out"
+                      >
+                        {negative.label}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             ))}

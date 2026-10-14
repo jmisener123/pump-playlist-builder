@@ -2,11 +2,13 @@ import React, { useState, useMemo } from 'react'
 import { usePlaylistData } from '../hooks/usePlaylistData'
 import { usePlaylistBuilder } from '../hooks/usePlaylistBuilder'
 import { useToast } from '../context/ToastContext'
-import { searchTracks, getSearchWords, appendSearchTerm } from '../data/loadPlaylistData'
+import { searchTracks, getSearchWords } from '../data/loadPlaylistData'
 import { matchedChoreoValues } from '../utils/choreo'
+import { useMoveFilters, buildMoveQuery } from '../hooks/useMoveFilters'
 import { Button } from './ui/Button'
 import { TagList } from './ui/TagPill'
 import { SearchInput } from './ui/SearchInput'
+import { MoveFilterBar } from './ui/MoveFilterBar'
 import { ChoreoBrowser } from './ChoreoBrowser'
 import { usePlaylist } from '../context/PlaylistContext'
 import { TRACK_TYPES, getBodyPart, formatTrackRelease } from '../utils/trackUtils'
@@ -18,13 +20,17 @@ export function InlineSearch() {
   const { state } = usePlaylist()
   const activeTags = [...state.themeTags, ...state.instructorTags]
   const [searchTerm, setSearchTerm] = useState('')
+  const { filters, toggleFilter, removeFilter, clearFilters } = useMoveFilters()
+
+  const query = useMemo(() => buildMoveQuery(filters, searchTerm), [filters, searchTerm])
+  const hasQuery = query.trim().length > 0
 
   const displayTracks = useMemo(() => {
-    if (!searchTerm.trim()) return []
-    return searchTracks(filteredTracks, searchTerm)
-  }, [filteredTracks, searchTerm])
+    if (!hasQuery) return []
+    return searchTracks(filteredTracks, query)
+  }, [filteredTracks, query, hasQuery])
 
-  const searchWords = useMemo(() => getSearchWords(searchTerm), [searchTerm])
+  const searchWords = useMemo(() => getSearchWords(query), [query])
 
   const getCompatibleSlots = (track) => {
     const trackTypeIndex = TRACK_TYPES.findIndex(t => t === track['Track No#'])
@@ -60,23 +66,25 @@ export function InlineSearch() {
         aria-label="Search your catalog by song title, artist or choreography"
         data-search-input
       />
-      {!searchTerm.trim() && (
+      {!hasQuery && (
         <p className="eyebrow mt-2">
-          You can search moves too, like “rotator raises”.
+          Try searching: Lady Gaga, Somebody to Love, rotator raises
         </p>
       )}
+      <MoveFilterBar filters={filters} onRemove={removeFilter} onClear={clearFilters} />
       <ChoreoBrowser
         tracks={filteredTracks}
-        onPick={(term) => setSearchTerm(current => appendSearchTerm(current, term))}
+        onPick={toggleFilter}
+        activeIds={filters.map(f => f.id)}
       />
-      {searchTerm.trim() && (
+      {hasQuery && (
         <p className="eyebrow mt-2 tabular">
           {displayTracks.length > 0
             ? `${displayTracks.length} result${displayTracks.length !== 1 ? 's' : ''}`
             : 'No matches'}
         </p>
       )}
-      {searchTerm.trim() && displayTracks.length > 0 && (
+      {hasQuery && displayTracks.length > 0 && (
         <div className="mt-2 max-h-72 overflow-y-auto border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800">
           {displayTracks.map((track) => {
             const compatibleSlots = getCompatibleSlots(track)

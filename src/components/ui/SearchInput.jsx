@@ -20,14 +20,14 @@ export function SearchInput({ value, onChange, onClear, className = '', ...input
         type="text"
         value={value}
         onChange={onChange}
-        className={`input-field ${value ? 'pr-9' : ''} ${className}`}
+        className={`input-field ${value ? 'pr-9 input-clearable' : ''} ${className}`}
         {...inputProps}
       />
       {value && (
         <button
           type="button"
           onClick={handleClear}
-          className="absolute inset-y-0 right-0 flex items-center px-2.5 text-ink-400 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
+          className="touch-target absolute inset-y-0 right-0 flex items-center justify-center px-2.5 text-ink-400 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
           title="Clear search"
           aria-label="Clear search"
         >

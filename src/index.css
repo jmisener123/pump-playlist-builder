@@ -136,6 +136,39 @@
     @apply pill border-flare-600 bg-flare-600 text-white;
   }
 
+  /* ---- Touch accommodations ------------------------------------------ */
+  /* Keyed to pointer type rather than screen width: a tablet is wide
+     enough for the desktop layout but still has the same fat-finger and
+     zoom problems as a phone. */
+  @media (pointer: coarse) {
+    /* iOS zooms the page on focus for any input under 16px, which yanks
+       the layout sideways mid-tap. 16px is the threshold, not a taste
+       choice - desktop keeps the smaller text. */
+    .input-field,
+    .select-field {
+      font-size: 1rem;
+    }
+
+    /* Pills are laid out in dense wrapped rows, so they need a floor on
+       height. Not the full 44px guideline - that would turn the move
+       browser into a wall - but enough to separate neighbours. */
+    .pill {
+      min-height: 2.25rem;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+
+    .touch-target {
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+    }
+
+    /* Keeps text from running under a clear button that just got wider. */
+    .input-clearable {
+      padding-right: 2.75rem;
+    }
+  }
+
   /* Legacy hooks retained so existing markup keeps working */
   .playlist-card {
     @apply bg-white text-ink-900 dark:bg-ink-900 dark:text-ink-100;

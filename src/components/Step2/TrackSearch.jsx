@@ -1,32 +1,38 @@
 import React, { useState, useMemo } from 'react'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
-import { searchTracks, getTracksForPosition, getSearchWords, appendSearchTerm } from '../../data/loadPlaylistData'
+import { searchTracks, getTracksForPosition, getSearchWords } from '../../data/loadPlaylistData'
 import { matchedChoreoValues } from '../../utils/choreo'
+import { useMoveFilters, buildMoveQuery } from '../../hooks/useMoveFilters'
 import { Modal } from '../ui/Modal'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
 import { SearchInput } from '../ui/SearchInput'
+import { MoveFilterBar } from '../ui/MoveFilterBar'
 import { ChoreoBrowser } from '../ChoreoBrowser'
 import { formatTrackRelease } from '../../utils/trackUtils'
 
 export function TrackSearch({ position, trackType, onSelect, onClose }) {
   const { filteredTracks } = usePlaylistData()
   const [searchTerm, setSearchTerm] = useState('')
+  const { filters, toggleFilter, removeFilter, clearFilters } = useMoveFilters()
 
   // Newest first, matching the themed swap lists.
   const positionTracks = useMemo(() => {
     return [...getTracksForPosition(filteredTracks, trackType)].sort((a, b) => b.SortKey - a.SortKey)
   }, [filteredTracks, trackType])
 
+  const query = useMemo(() => buildMoveQuery(filters, searchTerm), [filters, searchTerm])
+  const hasQuery = query.trim().length > 0
+
   // Apply search filter
   const displayTracks = useMemo(() => {
-    if (!searchTerm.trim()) {
+    if (!hasQuery) {
       return positionTracks
     }
-    return searchTracks(positionTracks, searchTerm)
-  }, [positionTracks, searchTerm])
+    return searchTracks(positionTracks, query)
+  }, [positionTracks, query, hasQuery])
 
-  const searchWords = useMemo(() => getSearchWords(searchTerm), [searchTerm])
+  const searchWords = useMemo(() => getSearchWords(query), [query])
 
   const handleSelect = (track) => {
     onSelect(track)
@@ -51,13 +57,15 @@ export function TrackSearch({ position, trackType, onSelect, onClose }) {
             onClear={() => setSearchTerm('')}
             placeholder="Filter by title, artist or move..."
           />
+          <MoveFilterBar filters={filters} onRemove={removeFilter} onClear={clearFilters} />
           <ChoreoBrowser
             tracks={positionTracks}
-            onPick={(term) => setSearchTerm(current => appendSearchTerm(current, term))}
+            onPick={toggleFilter}
             slot={trackType}
+            activeIds={filters.map(f => f.id)}
           />
           <p className="eyebrow mt-2 tabular">
-            {searchTerm ? `${displayTracks.length} of ${positionTracks.length} tracks` : `${displayTracks.length} tracks in your catalog`}
+            {hasQuery ? `${displayTracks.length} of ${positionTracks.length} tracks` : `${displayTracks.length} tracks in your catalog`}
           </p>
         </div>
 
@@ -115,7 +123,7 @@ export function TrackSearch({ position, trackType, onSelect, onClose }) {
           ) : (
             <div className="text-center py-10 text-ink-400">
               <p className="font-medium">No tracks found</p>
-              {searchTerm && (
+              {hasQuery && (
                 <p className="text-sm mt-1">
                   Try different search terms or clear the filter.
                 </p>
