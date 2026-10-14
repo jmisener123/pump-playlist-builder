@@ -22,6 +22,7 @@ Questions/feedback? [Click here to contact me](https://jessicamisener.com/contac
 
 ## Features
 - 🎵 Three methods to build your playlist
+- 🗂️ Choose your catalog by release range, and exclude any individual releases you don’t want in your results
 - ✨ Tag-based emoji support for quick visual scanning
 - 🔁 Alternate suggestions if a track doesn’t match your vibe
 - 🔍 Search by song title, artist, or choreography (beta) — browse moves by track, or type “rotator raises”, and rule one out with “chest -pushups”. Move tags are most accurate from Release 89 up.

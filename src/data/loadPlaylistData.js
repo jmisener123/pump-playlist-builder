@@ -123,6 +123,28 @@ export function loadPlaylistData() {
 }
 
 /**
+ * The releases the range controls (oldest owned + checkboxes) resolve to.
+ * Individually excluded releases are dropped last, so callers that need the
+ * full span to choose from can leave `excludedReleases` off.
+ */
+export function getRangeReleases({ releases = [], earliestRelease, onlyRecent10, excludeNewest, latestRelease, excludedReleases = [] } = {}) {
+  const startIndex = releases.indexOf(String(earliestRelease))
+  let active = releases.slice(startIndex === -1 ? 0 : startIndex)
+  if (onlyRecent10) {
+    const recent = new Set(releases.slice(-10))
+    active = active.filter(r => recent.has(r))
+  }
+  if (excludeNewest) {
+    active = active.filter(r => String(r) !== String(latestRelease))
+  }
+  if (excludedReleases.length > 0) {
+    const excluded = new Set(excludedReleases.map(String))
+    active = active.filter(r => !excluded.has(String(r)))
+  }
+  return active
+}
+
+/**
  * Filter tracks based on release range and options
  */
 export function filterTracks(tracks, options = {}) {
@@ -131,7 +153,8 @@ export function filterTracks(tracks, options = {}) {
     excludeNewest = false,
     latestRelease = null,
     onlyRecent10 = false,
-    allReleases = []
+    allReleases = [],
+    excludedReleases = []
   } = options
 
   let filtered = [...tracks]
@@ -154,6 +177,12 @@ export function filterTracks(tracks, options = {}) {
   // Exclude newest release
   if (excludeNewest && latestRelease) {
     filtered = filtered.filter(track => String(track.Release) !== String(latestRelease))
+  }
+
+  // Drop individually excluded releases
+  if (excludedReleases.length > 0) {
+    const excluded = new Set(excludedReleases.map(String))
+    filtered = filtered.filter(track => !excluded.has(String(track.Release)))
   }
 
   return filtered

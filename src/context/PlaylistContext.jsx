@@ -8,6 +8,7 @@ const ActionTypes = {
   SET_EARLIEST_RELEASE: 'SET_EARLIEST_RELEASE',
   SET_EXCLUDE_NEWEST: 'SET_EXCLUDE_NEWEST',
   SET_ONLY_RECENT_10: 'SET_ONLY_RECENT_10',
+  SET_EXCLUDED_RELEASES: 'SET_EXCLUDED_RELEASES',
   SET_PLAYLIST: 'SET_PLAYLIST',
   SET_TRACK: 'SET_TRACK',
   CLEAR_TRACK: 'CLEAR_TRACK',
@@ -49,6 +50,8 @@ const initialState = {
   earliestRelease: '60',
   excludeNewest: false,
   onlyRecent10: false,
+  // Individual releases switched off inside the chosen range
+  excludedReleases: [],
   // True when catalog settings were restored from a previous visit
   hasSavedCatalog: false,
 
@@ -72,6 +75,10 @@ function playlistReducer(state, action) {
     case ActionTypes.SET_TRACKS: {
       const { releases, saved } = action.payload
       const savedIsValid = saved && releases.includes(String(saved.earliestRelease))
+      // Drop any saved exclusions for releases that no longer exist.
+      const savedExcluded = savedIsValid && Array.isArray(saved.excludedReleases)
+        ? saved.excludedReleases.map(String).filter(r => releases.includes(r))
+        : []
       return {
         ...state,
         tracks: action.payload.tracks,
@@ -82,6 +89,7 @@ function playlistReducer(state, action) {
         earliestRelease: savedIsValid ? String(saved.earliestRelease) : (releases[0] || '60'),
         excludeNewest: savedIsValid ? !!saved.excludeNewest : state.excludeNewest,
         onlyRecent10: savedIsValid ? !!saved.onlyRecent10 : state.onlyRecent10,
+        excludedReleases: savedExcluded,
         hasSavedCatalog: !!savedIsValid,
         isLoading: false
       }
@@ -103,6 +111,12 @@ function playlistReducer(state, action) {
       return {
         ...state,
         onlyRecent10: action.payload
+      }
+
+    case ActionTypes.SET_EXCLUDED_RELEASES:
+      return {
+        ...state,
+        excludedReleases: action.payload
       }
 
     case ActionTypes.SET_PLAYLIST:
@@ -210,9 +224,10 @@ export function PlaylistProvider({ children }) {
     saveCatalog({
       earliestRelease: state.earliestRelease,
       excludeNewest: state.excludeNewest,
-      onlyRecent10: state.onlyRecent10
+      onlyRecent10: state.onlyRecent10,
+      excludedReleases: state.excludedReleases
     })
-  }, [state.isLoading, state.earliestRelease, state.excludeNewest, state.onlyRecent10])
+  }, [state.isLoading, state.earliestRelease, state.excludeNewest, state.onlyRecent10, state.excludedReleases])
 
   // Get filtered tracks based on current filters
   const getFilteredTracks = () => {
@@ -221,7 +236,8 @@ export function PlaylistProvider({ children }) {
       excludeNewest: state.excludeNewest,
       latestRelease: state.latestRelease,
       onlyRecent10: state.onlyRecent10,
-      allReleases: state.releases
+      allReleases: state.releases,
+      excludedReleases: state.excludedReleases
     })
   }
 
@@ -260,6 +276,21 @@ export function PlaylistProvider({ children }) {
 
     setOnlyRecent10: (only) => {
       dispatch({ type: ActionTypes.SET_ONLY_RECENT_10, payload: only })
+    },
+
+    setExcludedReleases: (releases) => {
+      dispatch({ type: ActionTypes.SET_EXCLUDED_RELEASES, payload: releases })
+    },
+
+    toggleExcludedRelease: (release) => {
+      const value = String(release)
+      const current = state.excludedReleases
+      dispatch({
+        type: ActionTypes.SET_EXCLUDED_RELEASES,
+        payload: current.includes(value)
+          ? current.filter(r => r !== value)
+          : [...current, value]
+      })
     },
 
     setActiveTab: (tab) => {

@@ -3,32 +3,45 @@ import { usePlaylist } from '../../context/PlaylistContext'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
 import { Select } from '../ui/Select'
 import { StepHeading } from '../ui/StepHeading'
-
-// Mirrors filterTracks: the releases that actually feed the builder.
-function getActiveReleases(releases, { earliestRelease, onlyRecent10, excludeNewest, latestRelease }) {
-  const startIndex = Math.max(0, releases.indexOf(String(earliestRelease)))
-  let active = releases.slice(startIndex)
-  if (onlyRecent10) {
-    const recent = new Set(releases.slice(-10))
-    active = active.filter((r) => recent.has(r))
-  }
-  if (excludeNewest) {
-    active = active.filter((r) => String(r) !== String(latestRelease))
-  }
-  return active
-}
+import { getRangeReleases } from '../../data/loadPlaylistData'
 
 export function ReleaseSelector() {
   const { state, actions } = usePlaylist()
   const { releases, latestRelease, isLoading } = usePlaylistData()
   const [isCollapsed, setIsCollapsed] = useState(state.hasSavedCatalog)
+  // Reopen the exclusion list for anyone who left releases switched off.
+  const [showExclusions, setShowExclusions] = useState(state.excludedReleases.length > 0)
+
+  // The span the range controls cover, before individual exclusions - this is
+  // what you get to switch on and off.
+  const spanReleases = useMemo(
+    () => getRangeReleases({
+      releases,
+      earliestRelease: state.earliestRelease,
+      onlyRecent10: state.onlyRecent10,
+      excludeNewest: state.excludeNewest,
+      latestRelease
+    }),
+    [releases, latestRelease, state.earliestRelease, state.onlyRecent10, state.excludeNewest]
+  )
+
+  const excludedInSpan = useMemo(
+    () => spanReleases.filter((r) => state.excludedReleases.includes(String(r))),
+    [spanReleases, state.excludedReleases]
+  )
+
+  // Mirrors filterTracks: the releases that actually feed the builder.
+  const activeReleases = useMemo(
+    () => spanReleases.filter((r) => !state.excludedReleases.includes(String(r))),
+    [spanReleases, state.excludedReleases]
+  )
 
   const summary = useMemo(() => {
-    const active = getActiveReleases(releases, { ...state, latestRelease })
-    if (active.length === 0) return 'No releases selected'
-    if (active.length === 1) return `Release ${active[0]}`
-    return `Releases ${active[0]}\u2013${active[active.length - 1]}`
-  }, [releases, latestRelease, state.earliestRelease, state.onlyRecent10, state.excludeNewest])
+    if (activeReleases.length === 0) return 'No releases selected'
+    if (activeReleases.length === 1) return `Release ${activeReleases[0]}`
+    const span = `Releases ${activeReleases[0]}\u2013${activeReleases[activeReleases.length - 1]}`
+    return excludedInSpan.length > 0 ? `${span} (${excludedInSpan.length} excluded)` : span
+  }, [activeReleases, excludedInSpan])
 
   if (isLoading) {
     return (
@@ -91,29 +104,93 @@ export function ReleaseSelector() {
         </div>
 
         <div className="space-y-2.5 text-sm border-t border-ink-200 dark:border-ink-800 pt-4">
-        <label className="group flex items-center gap-2.5 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={state.excludeNewest}
-            onChange={(e) => actions.setExcludeNewest(e.target.checked)}
-            className="w-4 h-4 accent-flare rounded-none border-ink-300"
-          />
-          <span className="text-ink-700 dark:text-ink-300 group-hover:text-ink-950 dark:group-hover:text-paper transition-colors">
-            Exclude newest release <span className="tabular text-ink-400">({latestRelease})</span>
-          </span>
-        </label>
+          <label className="group flex items-center gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={state.excludeNewest}
+              onChange={(e) => actions.setExcludeNewest(e.target.checked)}
+              className="w-4 h-4 accent-flare rounded-none border-ink-300"
+            />
+            <span className="text-ink-700 dark:text-ink-300 group-hover:text-ink-950 dark:group-hover:text-paper transition-colors">
+              Exclude newest release <span className="tabular text-ink-400">({latestRelease})</span>
+            </span>
+          </label>
 
-        <label className="group flex items-center gap-2.5 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={state.onlyRecent10}
-            onChange={(e) => actions.setOnlyRecent10(e.target.checked)}
-            className="w-4 h-4 accent-flare rounded-none border-ink-300"
-          />
-          <span className="text-ink-700 dark:text-ink-300 group-hover:text-ink-950 dark:group-hover:text-paper transition-colors">
-            Only use my 10 most recent releases
-          </span>
-        </label>
+          <label className="group flex items-center gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={state.onlyRecent10}
+              onChange={(e) => actions.setOnlyRecent10(e.target.checked)}
+              className="w-4 h-4 accent-flare rounded-none border-ink-300"
+            />
+            <span className="text-ink-700 dark:text-ink-300 group-hover:text-ink-950 dark:group-hover:text-paper transition-colors">
+              Only use my 10 most recent releases
+            </span>
+          </label>
+
+          <label className="group flex items-center gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showExclusions}
+              aria-controls="release-exclusions"
+              aria-expanded={showExclusions}
+              onChange={(e) => {
+                setShowExclusions(e.target.checked)
+                // Leaving exclusions behind in a closed panel would filter
+                // the catalog invisibly.
+                if (!e.target.checked) actions.setExcludedReleases([])
+              }}
+              className="w-4 h-4 accent-flare rounded-none border-ink-300"
+            />
+            <span className="text-ink-700 dark:text-ink-300 group-hover:text-ink-950 dark:group-hover:text-paper transition-colors">
+              Exclude releases from my results
+              {excludedInSpan.length > 0 && (
+                <span className="tabular text-ink-400"> ({excludedInSpan.length})</span>
+              )}
+            </span>
+          </label>
+
+          {showExclusions && (
+            <div id="release-exclusions" className="pl-[1.625rem] pt-1">
+              <div className="flex flex-wrap gap-1.5 max-h-56 overflow-y-auto pr-1">
+                {[...spanReleases].reverse().map((release) => {
+                  const value = String(release)
+                  const isExcluded = state.excludedReleases.includes(value)
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => actions.toggleExcludedRelease(value)}
+                      aria-pressed={!isExcluded}
+                      aria-label={`${value}${isExcluded ? ' (excluded)' : ''}`}
+                      className={`${isExcluded
+                        ? 'pill-off line-through opacity-60'
+                        : 'pill-on'} tabular min-w-[3rem] justify-center`}
+                    >
+                      {value}
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div className="flex items-center justify-between gap-3 mt-2.5">
+                <p className="text-xs text-ink-500 dark:text-ink-400">
+                  {activeReleases.length === 0
+                    ? 'Keep at least one release switched on to build a playlist.'
+                    : 'Tap a release to switch it off.'}
+                </p>
+                {excludedInSpan.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => actions.setExcludedReleases([])}
+                    className="shrink-0 text-[11px] text-flare-600 hover:underline underline-offset-2"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between gap-3 mt-4 pt-4 border-t border-ink-200 dark:border-ink-800">
@@ -121,7 +198,8 @@ export function ReleaseSelector() {
           <button
             type="button"
             onClick={() => setIsCollapsed(true)}
-            className="display-sm text-[11px] px-3 py-1.5 rounded bg-ink-950 dark:bg-paper text-paper dark:text-ink-950"
+            disabled={activeReleases.length === 0}
+            className="display-sm text-[11px] px-3 py-1.5 rounded bg-ink-950 dark:bg-paper text-paper dark:text-ink-950 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Done
           </button>

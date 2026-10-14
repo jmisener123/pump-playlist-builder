@@ -12,7 +12,7 @@ export function usePlaylistData() {
   // Memoized filtered tracks
   const filteredTracks = useMemo(() => {
     return getFilteredTracks()
-  }, [state.tracks, state.earliestRelease, state.excludeNewest, state.onlyRecent10, state.releases])
+  }, [state.tracks, state.earliestRelease, state.excludeNewest, state.onlyRecent10, state.releases, state.excludedReleases])
 
   // Memoized themed tracks
   const themedTracks = useMemo(() => {
