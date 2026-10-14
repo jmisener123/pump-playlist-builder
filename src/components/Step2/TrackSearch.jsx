@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react'
 import { usePlaylistData } from '../../hooks/usePlaylistData'
-import { searchTracks, getTracksForPosition } from '../../data/loadPlaylistData'
+import { searchTracks, getTracksForPosition, getSearchWords, appendSearchTerm } from '../../data/loadPlaylistData'
+import { matchedChoreoValues } from '../../utils/choreo'
 import { Modal } from '../ui/Modal'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
+import { SearchInput } from '../ui/SearchInput'
+import { ChoreoBrowser } from '../ChoreoBrowser'
 import { formatTrackRelease } from '../../utils/trackUtils'
 
 export function TrackSearch({ position, trackType, onSelect, onClose }) {
@@ -23,6 +26,8 @@ export function TrackSearch({ position, trackType, onSelect, onClose }) {
     return searchTracks(positionTracks, searchTerm)
   }, [positionTracks, searchTerm])
 
+  const searchWords = useMemo(() => getSearchWords(searchTerm), [searchTerm])
+
   const handleSelect = (track) => {
     onSelect(track)
     onClose()
@@ -40,12 +45,16 @@ export function TrackSearch({ position, trackType, onSelect, onClose }) {
       <div className="space-y-4">
         {/* Search/Filter Input */}
         <div>
-          <input
-            type="text"
+          <SearchInput
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Filter by title or artist..."
-            className="input-field"
+            onClear={() => setSearchTerm('')}
+            placeholder="Filter by title, artist or move..."
+          />
+          <ChoreoBrowser
+            tracks={positionTracks}
+            onPick={(term) => setSearchTerm(current => appendSearchTerm(current, term))}
+            slot={trackType}
           />
           <p className="eyebrow mt-2 tabular">
             {searchTerm ? `${displayTracks.length} of ${positionTracks.length} tracks` : `${displayTracks.length} tracks in your catalog`}
@@ -79,6 +88,16 @@ export function TrackSearch({ position, trackType, onSelect, onClose }) {
                         <TagList tags={track.Tags} size="sm" />
                       </div>
                     )}
+                    {(() => {
+                      // Say why a track turned up when the match was its choreography.
+                      const moves = matchedChoreoValues(track, searchWords)
+                      if (moves.length === 0) return null
+                      return (
+                        <p className="text-ink-500 dark:text-ink-400 text-xs mt-1">
+                          🏋️ {moves.join(', ')}
+                        </p>
+                      )
+                    })()}
                   </div>
                   <Button
                     variant="primary"

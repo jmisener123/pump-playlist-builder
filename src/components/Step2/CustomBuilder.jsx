@@ -5,6 +5,7 @@ import { usePlaylistData } from '../../hooks/usePlaylistData'
 import { searchTracks, getTracksForPosition } from '../../data/loadPlaylistData'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
+import { SearchInput } from '../ui/SearchInput'
 import { TotalDuration } from './TotalDuration'
 import { PlaylistExport } from './PlaylistExport'
 import { TRACK_TYPES } from '../../utils/trackUtils'
@@ -37,12 +38,11 @@ export function CustomBuilder() {
         </h3>
 
         <div className="mb-4">
-          <input
-            type="text"
+          <SearchInput
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onClear={() => setSearchTerm('')}
             placeholder="Search by song title or artist..."
-            className="input-field"
           />
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Search for songs by title or artist name. Uses exact text matching for precise results.

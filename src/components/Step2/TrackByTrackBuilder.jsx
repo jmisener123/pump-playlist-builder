@@ -5,6 +5,7 @@ import { usePlaylistData } from '../../hooks/usePlaylistData'
 import { searchTracks, getTracksForPosition } from '../../data/loadPlaylistData'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
+import { SearchInput } from '../ui/SearchInput'
 import { TRACK_TYPES, formatReleaseShort } from '../../utils/trackUtils'
 
 export function TrackByTrackBuilder() {
@@ -109,12 +110,11 @@ export function TrackByTrackBuilder() {
             <>
               {/* Search Input */}
               <div className="mb-3">
-                <input
-                  type="text"
+                <SearchInput
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  onClear={() => setSearchTerm('')}
                   placeholder={`Search ${TRACK_TYPES[selectedPosition].split(' - ')[1]} tracks...`}
-                  className="input-field"
                 />
               </div>
 

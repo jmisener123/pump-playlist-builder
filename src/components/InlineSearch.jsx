@@ -2,9 +2,12 @@ import React, { useState, useMemo } from 'react'
 import { usePlaylistData } from '../hooks/usePlaylistData'
 import { usePlaylistBuilder } from '../hooks/usePlaylistBuilder'
 import { useToast } from '../context/ToastContext'
-import { searchTracks } from '../data/loadPlaylistData'
+import { searchTracks, getSearchWords, appendSearchTerm } from '../data/loadPlaylistData'
+import { matchedChoreoValues } from '../utils/choreo'
 import { Button } from './ui/Button'
 import { TagList } from './ui/TagPill'
+import { SearchInput } from './ui/SearchInput'
+import { ChoreoBrowser } from './ChoreoBrowser'
 import { usePlaylist } from '../context/PlaylistContext'
 import { TRACK_TYPES, getBodyPart, formatTrackRelease } from '../utils/trackUtils'
 
@@ -20,6 +23,8 @@ export function InlineSearch() {
     if (!searchTerm.trim()) return []
     return searchTracks(filteredTracks, searchTerm)
   }, [filteredTracks, searchTerm])
+
+  const searchWords = useMemo(() => getSearchWords(searchTerm), [searchTerm])
 
   const getCompatibleSlots = (track) => {
     const trackTypeIndex = TRACK_TYPES.findIndex(t => t === track['Track No#'])
@@ -47,14 +52,22 @@ export function InlineSearch() {
 
   return (
     <div>
-      <input
-        type="text"
+      <SearchInput
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Song title or artist"
-        className="input-field"
-        aria-label="Search your catalog by song title or artist"
+        onClear={() => setSearchTerm('')}
+        placeholder="Song, artist or move"
+        aria-label="Search your catalog by song title, artist or choreography"
         data-search-input
+      />
+      {!searchTerm.trim() && (
+        <p className="eyebrow mt-2">
+          You can search moves too, like “rotator raises”.
+        </p>
+      )}
+      <ChoreoBrowser
+        tracks={filteredTracks}
+        onPick={(term) => setSearchTerm(current => appendSearchTerm(current, term))}
       />
       {searchTerm.trim() && (
         <p className="eyebrow mt-2 tabular">
@@ -98,6 +111,16 @@ export function InlineSearch() {
                       const tags = track.Tags.split(',').map(t => t.trim()).filter(Boolean)
                       const ordered = [...tags.filter(t => activeTags.includes(t)), ...tags.filter(t => !activeTags.includes(t))]
                       return <TagList tags={ordered} size="sm" max={3} activeTags={activeTags} className="mt-1" />
+                    })()}
+                    {(() => {
+                      // Say why a track turned up when the match was its choreography.
+                      const moves = matchedChoreoValues(track, searchWords)
+                      if (moves.length === 0) return null
+                      return (
+                        <p className="text-ink-500 dark:text-ink-400 text-xs mt-1 truncate">
+                          🏋️ {moves.join(', ')}
+                        </p>
+                      )
                     })()}
                   </div>
                   <div className="flex-shrink-0">

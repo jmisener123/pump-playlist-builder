@@ -24,9 +24,9 @@ Questions/feedback? [Click here to contact me](https://jessicamisener.com/contac
 - 🎵 Three methods to build your playlist
 - ✨ Tag-based emoji support for quick visual scanning
 - 🔁 Alternate suggestions if a track doesn’t match your vibe
-- 🔍 Search function to find an artist or song title
+- 🔍 Search by song title, artist, or choreography (beta) — browse moves by track, or type “rotator raises”, and rule one out with “chest -pushups”. Move tags are most accurate from Release 89 up.
 - 📋 Copy/paste your playlist for easy exporting
 - ⚡ Migrated site from Python to React for faster loading/ better mobile UI using Claude Code
 
 ## Coming Soon
-- Movement-based tags (search for a song with push-ups or hang cleans)
+- Choreography data for releases before R89

@@ -1,4 +1,5 @@
 import { parseCSV, normalizeText, normalizeFeaturing } from '../utils/csvParser'
+import { parseChoreo, buildChoreoSearchText, choreoMatchesWord, hasChoreoData } from '../utils/choreo'
 
 /**
  * Clean and normalize tags from raw CSV data
@@ -51,15 +52,20 @@ function processRawTracks(rawTracks) {
   // release, slot or title.
   const tracks = rawTracks
     .filter(track => [track['Release'], track['Track No#'], track['Song Title']].every(v => String(v ?? '').trim()))
-    .map(track => ({
-      ...track,
-      'Song Title': normalizeFeaturing(normalizeText(track['Song Title'])),
-      'Artist': normalizeFeaturing(normalizeText(track['Artist'])),
-      'Genre': normalizeText(track['Genre']),
-      'Tags': cleanTags(track['Tags']),
-      'Version': getVersion(track['Bonus/Alt track']),
-      'SortKey': getSortKey(track['Release'])
-    }))
+    .map(track => {
+      const choreoList = parseChoreo(track['Choreo'])
+      return {
+        ...track,
+        'Song Title': normalizeFeaturing(normalizeText(track['Song Title'])),
+        'Artist': normalizeFeaturing(normalizeText(track['Artist'])),
+        'Genre': normalizeText(track['Genre']),
+        'Tags': cleanTags(track['Tags']),
+        'Version': getVersion(track['Bonus/Alt track']),
+        'SortKey': getSortKey(track['Release']),
+        'ChoreoList': choreoList,
+        'ChoreoSearchText': buildChoreoSearchText(choreoList)
+      }
+    })
 
   // Sort by release number
   tracks.sort((a, b) => a.SortKey - b.SortKey)
@@ -193,45 +199,174 @@ export function filterByTheme(tracks, options = {}) {
 }
 
 /**
- * Search tracks by song title or artist
+ * Add a term to an existing search without clobbering what's already there,
+ * so picking several moves in a row builds up rather than restarts.
+ *
+ * A `track:` scope is singular - picking a move from a different track swaps
+ * the scope instead of stacking a second one. Repeats are ignored.
+ */
+export function appendSearchTerm(current, addition) {
+  const tokenize = (text) => {
+    const tokens = []
+    const pattern = /-?(?:"[^"]*"|\S+)/g
+    let match
+    while ((match = pattern.exec(String(text ?? ''))) !== null) tokens.push(match[0])
+    return tokens
+  }
+
+  const isScope = (token) => /^-?track:/i.test(token)
+  const incoming = tokenize(addition)
+
+  let tokens = tokenize(current)
+  if (incoming.some(isScope)) tokens = tokens.filter(token => !isScope(token))
+
+  for (const token of incoming) {
+    if (!tokens.some(existing => existing.toLowerCase() === token.toLowerCase())) {
+      tokens.push(token)
+    }
+  }
+
+  return [...tokens.filter(isScope), ...tokens.filter(token => !isScope(token))].join(' ')
+}
+
+/**
+ * Split a search term into the terms every match must account for, separating
+ * out `-term` exclusions and `track:` scopes.
+ *
+ * Quoted text is kept together as one term, so `"no squats"` looks for that
+ * exact note instead of matching any squat track whose title contains "no".
+ *
+ * `track:chest` restricts results to a slot. It needs to be explicit because
+ * a bare "chest" legitimately matches the move "Chest Presses" in a warmup
+ * track, which is the opposite of scoping.
+ *
+ * Exclusion uses an explicit `-` rather than the word "no" because the Choreo
+ * column itself contains literal values like "No Squats" and "No Bar Overhead",
+ * so "no squats" is a real thing to search *for*.
+ */
+export function parseSearchTerm(searchTerm) {
+  const include = []
+  const exclude = []
+  const slots = []
+  const pattern = /(-?)(?:"([^"]*)"|(\S+))/g
+  const input = String(searchTerm ?? '').toLowerCase()
+
+  let match
+  while ((match = pattern.exec(input)) !== null) {
+    const raw = match[2] !== undefined ? match[2] : match[3]
+    const term = raw.replace(/"/g, '').trim().replace(/\s+/g, ' ')
+    if (!term) continue
+
+    const scoped = term.match(/^track:(.+)$/)
+    if (scoped) {
+      slots.push(scoped[1])
+      continue
+    }
+
+    ;(match[1] ? exclude : include).push(term)
+  }
+
+  return { include, exclude, slots }
+}
+
+/**
+ * The words a result should explain itself against.
+ */
+export function getSearchWords(searchTerm) {
+  return parseSearchTerm(searchTerm).include
+}
+
+// Normalize for special character matching (P!nk)
+function normalizeForSearch(text) {
+  let normalized = text.toLowerCase()
+  normalized = normalized.replace('p!nk', 'pink')
+  normalized = normalized.replace('pink', 'p!nk pink')
+  return normalized
+}
+
+/**
+ * Search tracks by title, artist or choreography.
+ *
+ * Results are ranked so the familiar matches stay on top:
+ *   3. every word is in the title
+ *   2. every word is in the artist
+ *   1. every word turns up somewhere - title, artist, track slot or moves
+ *
+ * Tier 1 is what makes searches like "chest barbell only" or "planks" work,
+ * since those words live in different fields (or in no field at all, in the
+ * case of a move family like planks matching tracks logged as Hovers).
+ *
+ * Prefixing a word with `-` excludes it, so "chest -pushups" finds chest
+ * tracks without push-ups. When the excluded word names a move, tracks whose
+ * choreography we don't know are dropped too: most tracks before Release 89
+ * have no choreo logged, and a blank means "unknown", not "doesn't have it".
+ *
+ * `track:lunges "No Squats"` pins the search to one slot, which is how the
+ * move browser keeps a track-specific note from matching anything else.
  */
 export function searchTracks(tracks, searchTerm) {
   if (!searchTerm || !searchTerm.trim()) {
     return tracks
   }
 
-  const searchLower = searchTerm.toLowerCase().trim()
+  const { include, exclude, slots } = parseSearchTerm(searchTerm)
+  if (include.length === 0 && exclude.length === 0 && slots.length === 0) return tracks
 
-  // Normalize for special character matching (P!nk)
-  const normalizeForSearch = (text) => {
-    let normalized = text.toLowerCase()
-    normalized = normalized.replace('p!nk', 'pink')
-    normalized = normalized.replace('pink', 'p!nk pink')
-    return normalized
-  }
+  // A word only triggers the unknown-choreo cull if it actually names a move
+  // somewhere in the catalog, so "-remix" doesn't wipe out the back catalog.
+  const choreoExclusions = new Set(
+    exclude.filter(word => tracks.some(track => choreoMatchesWord(track, word)))
+  )
 
-  const searchWords = searchLower.split(/\s+/).filter(w => w)
+  const scored = []
 
-  return tracks.filter(track => {
+  tracks.forEach((track, index) => {
     const title = (track['Song Title'] || '').toLowerCase()
     const artist = (track['Artist'] || '').toLowerCase()
+    const slot = String(track['Track No#'] || '').toLowerCase()
     const normalizedTitle = normalizeForSearch(title)
     const normalizedArtist = normalizeForSearch(artist)
 
-    // For multi-word searches, require ALL words
-    if (searchWords.length > 1) {
-      const titleMatch = searchWords.every(word => normalizedTitle.includes(word))
-      const artistMatch = searchWords.every(word => normalizedArtist.includes(word))
-      return titleMatch || artistMatch
+    const matchesAnywhere = (word) =>
+      normalizedTitle.includes(word) ||
+      normalizedArtist.includes(word) ||
+      slot.includes(word) ||
+      choreoMatchesWord(track, word)
+
+    if (slots.length > 0 && !slots.some(wanted => slot.includes(wanted))) return
+
+    if (include.length === 0 && exclude.length === 0) {
+      scored.push({ track, score: 1, index })
+      return
     }
 
-    // Single word search
-    const singleWord = searchWords[0] || searchLower
-    return title.includes(singleWord) ||
-           artist.includes(singleWord) ||
-           normalizedTitle.includes(singleWord) ||
-           normalizedArtist.includes(singleWord)
+    for (const word of exclude) {
+      if (matchesAnywhere(word)) return
+      // We can't promise a track is free of a move we never logged.
+      if (choreoExclusions.has(word) && !hasChoreoData(track)) return
+    }
+
+    if (include.length === 0) {
+      scored.push({ track, score: 1, index })
+      return
+    }
+
+    let score = 0
+    if (include.every(word => normalizedTitle.includes(word))) {
+      score = 3
+    } else if (include.every(word => normalizedArtist.includes(word))) {
+      score = 2
+    } else if (include.every(matchesAnywhere)) {
+      score = 1
+    }
+
+    if (score > 0) scored.push({ track, score, index })
   })
+
+  // Higher tiers first, otherwise keep the incoming release order.
+  scored.sort((a, b) => b.score - a.score || a.index - b.index)
+
+  return scored.map(entry => entry.track)
 }
 
 /**
