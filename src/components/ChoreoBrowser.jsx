@@ -3,7 +3,7 @@ import { getChoreoVocabulary, getChoreoNegatives } from '../utils/choreo'
 
 const TOP_PER_TRACK = 6
 
-const BETA_NOTE = 'Beta — move tags are most accurate from Release 89 up. Older releases may be missing moves.'
+const BETA_NOTE = 'Beta: move tags are most accurate from Release 89 up. Older releases may be missing moves.'
 
 /**
  * Picks are pinned to their track, since a bare "chest" would also match the

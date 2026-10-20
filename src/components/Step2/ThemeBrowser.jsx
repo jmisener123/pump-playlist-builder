@@ -150,8 +150,8 @@ export function ThemeBrowser({ themeLabel, onSelect, onClose }) {
 
         {unusableCount > 0 && !ownedOnly && (
           <p className="text-[11px] text-ink-400 dark:text-ink-500">
-            {outsideCount > 0 && 'Dimmed tracks sit outside your release range — lower your earliest release in Step 1 to use them. '}
-            {otherFormatCount > 0 && `Tracks marked "45 min only" or "55 min only" belong to the other class format — switch format in Step 1 to use them.`}
+            {outsideCount > 0 && 'Dimmed tracks sit outside your release range. Lower your earliest release in Step 1 to use them. '}
+            {otherFormatCount > 0 && `Tracks marked "45 min only" or "55 min only" belong to the other class format. Switch format in Step 1 to use them.`}
           </p>
         )}
       </div>

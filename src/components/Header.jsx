@@ -64,7 +64,7 @@ export function Header({ onSearchClick, onThemeSelect, onBrowseThemes }) {
 
         <p className="text-sm text-ink-500 dark:text-ink-400 mt-2 max-w-2xl">
           Pick the releases you own, choose a vibe, and get a full class playlist in
-          seconds — or search{' '}
+          seconds. Or search{' '}
           {releases.length > 0 && (
             <span className="tabular whitespace-nowrap">{releases.length.toLocaleString()} releases</span>
           )}{' '}

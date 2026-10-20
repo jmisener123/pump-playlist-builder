@@ -84,7 +84,7 @@ export function ContactModal({ isOpen, onClose }) {
         <div className="text-center py-4">
           <p className="display-md text-base text-ink-950 dark:text-paper mb-2">Message sent</p>
           <p className="text-sm text-ink-500 dark:text-ink-400 mb-5">
-            Thanks for reaching out — I'll get back to you at{' '}
+            Thanks for reaching out. I'll get back to you at{' '}
             <span className="text-ink-900 dark:text-ink-100">{form.email.trim()}</span>.
           </p>
           <Button variant="primary" onClick={handleClose}>Close</Button>

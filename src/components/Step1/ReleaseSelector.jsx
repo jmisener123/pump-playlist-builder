@@ -143,7 +143,7 @@ export function ReleaseSelector() {
           </p>
           {state.classFormat === '45' && comboReleaseCount === 0 && (
             <p className="text-xs text-flare-600 mt-1.5">
-              None of your selected releases have combo tracks — include Release {COMBO_FIRST_RELEASE} or newer to fill those slots.
+              None of your selected releases have combo tracks. Include Release {COMBO_FIRST_RELEASE} or newer to fill those slots.
             </p>
           )}
         </div>
