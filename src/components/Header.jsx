@@ -18,7 +18,7 @@ const FEATURED_ORDER = [
 ]
 
 export function Header({ onSearchClick, onThemeSelect, onBrowseThemes }) {
-  const { availableTags, releases } = usePlaylistData()
+  const { availableTags, allTracks } = usePlaylistData()
 
   // Only advertise themes that actually exist in the loaded catalog, so this
   // line stays true as the data changes instead of hardcoding names.
@@ -65,8 +65,8 @@ export function Header({ onSearchClick, onThemeSelect, onBrowseThemes }) {
         <p className="text-sm text-ink-500 dark:text-ink-400 mt-2 max-w-2xl">
           Pick the releases you own, choose a vibe, and get a full class playlist in
           seconds. Or search{' '}
-          {releases.length > 0 && (
-            <span className="tabular whitespace-nowrap">{releases.length.toLocaleString()} releases</span>
+          {allTracks.length > 0 && (
+            <span className="tabular whitespace-nowrap">{allTracks.length.toLocaleString()} tracks</span>
           )}{' '}
           by song, artist, theme, or move.
         </p>
