@@ -399,10 +399,13 @@ export function searchTracks(tracks, searchTerm) {
 }
 
 /**
- * Get tracks for a specific position
+ * Get tracks for a specific position. `position` may be a single Track No#
+ * or a list, since a slot can accept alternates - the 45-minute Core slot
+ * also takes Functional Strength tracks.
  */
 export function getTracksForPosition(tracks, position) {
-  return tracks.filter(track => track['Track No#'] === position)
+  const wanted = new Set(Array.isArray(position) ? position : [position])
+  return tracks.filter(track => wanted.has(track['Track No#']))
 }
 
 /**

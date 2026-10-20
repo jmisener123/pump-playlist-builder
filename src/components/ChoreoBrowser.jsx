@@ -46,20 +46,23 @@ export function ChoreoBrowser({ tracks, onPick, slot = null, activeIds = [] }) {
   const [open, setOpen] = useState(false)
   const [showAll, setShowAll] = useState(false)
 
+  const slotList = slot ? (Array.isArray(slot) ? slot : [slot]) : null
+
   const groups = useMemo(() => {
-    if (slot) {
-      const items = getChoreoVocabulary(tracks, { slot })
+    if (slotList && slotList.length > 0) {
+      const items = getChoreoVocabulary(tracks, { slot: slotList })
       if (!items.length) return []
+      const primary = slotList[0]
       return [{
-        id: slot,
-        label: slot,
-        bodyPart: slot.split(' - ')[1] || slot,
+        id: slotList.join('|'),
+        label: primary,
+        bodyPart: primary.split(' - ')[1] || primary,
         preScoped: true,
         items,
       }]
     }
     return getChoreoVocabulary(tracks)
-  }, [tracks, slot])
+  }, [tracks, slotList ? slotList.join('|') : null])
 
   const hiddenCount = useMemo(
     () => groups.reduce((n, g) => n + Math.max(0, g.items.length - TOP_PER_TRACK), 0),

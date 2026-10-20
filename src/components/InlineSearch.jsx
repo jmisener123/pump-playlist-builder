@@ -11,13 +11,13 @@ import { SearchInput } from './ui/SearchInput'
 import { MoveFilterBar } from './ui/MoveFilterBar'
 import { ChoreoBrowser } from './ChoreoBrowser'
 import { usePlaylist } from '../context/PlaylistContext'
-import { TRACK_TYPES, getBodyPart, formatTrackRelease } from '../utils/trackUtils'
+import { getBodyPart, formatTrackRelease, formatOnlyLabel, getTrackIndex } from '../utils/trackUtils'
 
 // One of each kind of search the box understands: artist, song, move.
 const EXAMPLE_SEARCHES = ['Lady Gaga', 'Somebody to Love', 'rotator raises']
 
 export function InlineSearch() {
-  const { filteredTracks } = usePlaylistData()
+  const { searchTracksPool, trackTypes, classFormat } = usePlaylistData()
   const { playlist, setTrack } = usePlaylistBuilder()
   const showToast = useToast()
   const { state } = usePlaylist()
@@ -30,13 +30,13 @@ export function InlineSearch() {
 
   const displayTracks = useMemo(() => {
     if (!hasQuery) return []
-    return searchTracks(filteredTracks, query)
-  }, [filteredTracks, query, hasQuery])
+    return searchTracks(searchTracksPool, query)
+  }, [searchTracksPool, query, hasQuery])
 
   const searchWords = useMemo(() => getSearchWords(query), [query])
 
   const getCompatibleSlots = (track) => {
-    const trackTypeIndex = TRACK_TYPES.findIndex(t => t === track['Track No#'])
+    const trackTypeIndex = getTrackIndex(track['Track No#'], classFormat)
     return trackTypeIndex !== -1 ? [trackTypeIndex] : []
   }
 
@@ -48,8 +48,8 @@ export function InlineSearch() {
     const wasEmpty = !playlist[slotIndex]
     setTrack(slotIndex, track)
     const filled = playlist.filter(Boolean).length + (wasEmpty ? 1 : 0)
-    const part = getBodyPart(TRACK_TYPES[slotIndex])
-    showToast(wasEmpty ? `Added to ${part} \u2713` : `Replaced ${part} \u2713`, `${filled}/10`)
+    const part = getBodyPart(trackTypes[slotIndex])
+    showToast(wasEmpty ? `Added to ${part} \u2713` : `Replaced ${part} \u2713`, `${filled}/${trackTypes.length}`)
   }
 
   const addToPlaylist = (track) => {
@@ -86,7 +86,7 @@ export function InlineSearch() {
       )}
       <MoveFilterBar filters={filters} onRemove={removeFilter} onClear={clearFilters} />
       <ChoreoBrowser
-        tracks={filteredTracks}
+        tracks={searchTracksPool}
         onPick={toggleFilter}
         activeIds={filters.map(f => f.id)}
       />
@@ -101,6 +101,9 @@ export function InlineSearch() {
         <div className="mt-2 max-h-72 overflow-y-auto border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800">
           {displayTracks.map((track) => {
             const compatibleSlots = getCompatibleSlots(track)
+            // A combo track found while building a 55-minute class (or the
+            // reverse) is worth showing, but there's no slot to put it in.
+            const otherFormat = formatOnlyLabel(track['Track No#'], classFormat)
             const availableSlots = getAvailableSlots(track)
             const canAdd = availableSlots.length > 0
             const hasFilledSlot = compatibleSlots.length > 0 && availableSlots.length === 0
@@ -118,9 +121,13 @@ export function InlineSearch() {
                     <p className="font-semibold text-sm text-ink-900 dark:text-ink-100 truncate">{track['Song Title']}</p>
                     <p className="text-ink-500 dark:text-ink-400 text-xs truncate">{track.Artist}</p>
                     <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                      {compatibleSlots.map(i => (
+                      {otherFormat ? (
+                        <span className="pill-off text-ink-400">
+                          {getBodyPart(track['Track No#'])}
+                        </span>
+                      ) : compatibleSlots.map(i => (
                         <span key={i} className="pill-off text-accent border-flare-200">
-                          {getBodyPart(TRACK_TYPES[i])}
+                          {getBodyPart(track['Track No#'])}
                         </span>
                       ))}
                       <span className="text-ink-400 text-xs tabular">
@@ -145,7 +152,9 @@ export function InlineSearch() {
                     })()}
                   </div>
                   <div className="flex-shrink-0">
-                    {alreadyInPlaylist ? (
+                    {otherFormat ? (
+                      <span className="eyebrow text-ink-400 whitespace-nowrap">{otherFormat}</span>
+                    ) : alreadyInPlaylist ? (
                       <span className="eyebrow text-ink-400">Added</span>
                     ) : canAdd ? (
                       <Button variant="primary" size="sm" onClick={() => addToPlaylist(track)}>

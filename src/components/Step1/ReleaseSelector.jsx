@@ -4,6 +4,7 @@ import { usePlaylistData } from '../../hooks/usePlaylistData'
 import { Select } from '../ui/Select'
 import { StepHeading } from '../ui/StepHeading'
 import { getRangeReleases } from '../../data/loadPlaylistData'
+import { CLASS_FORMATS, COMBO_FIRST_RELEASE } from '../../utils/trackUtils'
 
 export function ReleaseSelector() {
   const { state, actions } = usePlaylist()
@@ -37,11 +38,23 @@ export function ReleaseSelector() {
   )
 
   const summary = useMemo(() => {
-    if (activeReleases.length === 0) return 'No releases selected'
-    if (activeReleases.length === 1) return `Release ${activeReleases[0]}`
+    const format = state.classFormat === '45' ? '45 min' : '55 min'
+    if (activeReleases.length === 0) return `${format} · No releases selected`
+    if (activeReleases.length === 1) return `${format} · Release ${activeReleases[0]}`
     const span = `Releases ${activeReleases[0]}\u2013${activeReleases[activeReleases.length - 1]}`
-    return excludedInSpan.length > 0 ? `${span} (${excludedInSpan.length} excluded)` : span
-  }, [activeReleases, excludedInSpan])
+    const releaseText = excludedInSpan.length > 0 ? `${span} (${excludedInSpan.length} excluded)` : span
+    return `${format} \u00b7 ${releaseText}`
+  }, [activeReleases, excludedInSpan, state.classFormat])
+
+  // Combo tracks only exist from R103 on, so a catalog that stops short of it
+  // can't fill the 45-minute slots.
+  const comboReleaseCount = useMemo(
+    () => activeReleases.filter((r) => {
+      const n = parseFloat(r)
+      return !isNaN(n) ? n >= COMBO_FIRST_RELEASE : String(r) === 'United'
+    }).length,
+    [activeReleases]
+  )
 
   if (isLoading) {
     return (
@@ -92,6 +105,49 @@ export function ReleaseSelector() {
       />
 
       <div className="panel p-5">
+        <div className="mb-5">
+          <label className="eyebrow block mb-1.5" id="class-format-label">
+            Class format
+          </label>
+          <div
+            role="radiogroup"
+            aria-labelledby="class-format-label"
+            className="inline-flex border border-ink-200 dark:border-ink-800 rounded overflow-hidden"
+          >
+            {CLASS_FORMATS.map(({ id, label, detail }) => {
+              const isActive = state.classFormat === id
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="radio"
+                  aria-checked={isActive}
+                  onClick={() => actions.setClassFormat(id)}
+                  className={`px-3 py-2 text-left transition-colors border-r last:border-r-0 border-ink-200 dark:border-ink-800
+                    ${isActive
+                      ? 'bg-flare-600 text-white'
+                      : 'text-ink-500 dark:text-ink-400 hover:text-ink-950 dark:hover:text-paper'}`}
+                >
+                  <span className="display-sm text-[11px] block tabular">{label}</span>
+                  <span className={`text-[11px] block ${isActive ? 'text-white/80' : 'text-ink-400'}`}>
+                    {detail}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+          <p className="text-xs text-ink-500 dark:text-ink-400 mt-1.5">
+            {state.classFormat === '45'
+              ? 'Triceps/biceps and lunges/shoulders are combo tracks, available from Release 103 on.'
+              : 'Separate triceps, biceps, lunges and shoulders tracks.'}
+          </p>
+          {state.classFormat === '45' && comboReleaseCount === 0 && (
+            <p className="text-xs text-flare-600 mt-1.5">
+              None of your selected releases have combo tracks — include Release {COMBO_FIRST_RELEASE} or newer to fill those slots.
+            </p>
+          )}
+        </div>
+
         <div className="max-w-xs mb-5">
           <label className="eyebrow block mb-1.5">
             Oldest release owned
@@ -131,6 +187,18 @@ export function ReleaseSelector() {
           <label className="group flex items-center gap-2.5 cursor-pointer">
             <input
               type="checkbox"
+              checked={state.searchBothFormats}
+              onChange={(e) => actions.setSearchBothFormats(e.target.checked)}
+              className="w-4 h-4 accent-flare rounded-none border-ink-300"
+            />
+            <span className="text-ink-700 dark:text-ink-300 group-hover:text-ink-950 dark:group-hover:text-paper transition-colors">
+              Search both 55 and 45 min tracks
+            </span>
+          </label>
+
+          <label className="group flex items-center gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
               checked={showExclusions}
               aria-controls="release-exclusions"
               aria-expanded={showExclusions}
@@ -143,7 +211,7 @@ export function ReleaseSelector() {
               className="w-4 h-4 accent-flare rounded-none border-ink-300"
             />
             <span className="text-ink-700 dark:text-ink-300 group-hover:text-ink-950 dark:group-hover:text-paper transition-colors">
-              Exclude releases from my results
+              Exclude certain releases from my results
               {excludedInSpan.length > 0 && (
                 <span className="tabular text-ink-400"> ({excludedInSpan.length})</span>
               )}

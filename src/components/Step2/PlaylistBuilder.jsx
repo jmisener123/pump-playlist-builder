@@ -8,12 +8,12 @@ import { TotalDuration } from './TotalDuration'
 import { TrackSearch } from './TrackSearch'
 import { PlaylistExport } from './PlaylistExport'
 import { ThemeBrowser } from './ThemeBrowser'
-import { TRACK_TYPES, formatThemeLabel, getTagDisplayName, getThemeMatch } from '../../utils/trackUtils'
+import { formatThemeLabel, formatTrackType, getTagDisplayName, getThemeMatch } from '../../utils/trackUtils'
 
 export function PlaylistBuilder({ mode = 'random' }) {
   const { state } = usePlaylist()
   const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, generateRandom, hasAnyTracks } = usePlaylistBuilder()
-  const { getTracksForSlot, getThemedTracksForSlot, getRelaxedTracksForSlot, allThemedTracks } = usePlaylistData()
+  const { getTracksForSlot, getThemedTracksForSlot, getRelaxedTracksForSlot, getSlotTypes, allThemedTracks, trackTypes } = usePlaylistData()
   const [searchPosition, setSearchPosition] = useState(null)
   const [showThemeBrowser, setShowThemeBrowser] = useState(false)
   // Both bulk actions destroy hand-picked tracks with no undo, so they swap
@@ -185,7 +185,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
       <TotalDuration />
 
       <div className="space-y-0">
-        {TRACK_TYPES.map((trackType, index) => {
+        {trackTypes.map((trackType, index) => {
           const track = playlist[index]
           const { options: themedOptions, relaxed: themedOptionsRelaxed } = getThemedOptionsForSlot(index)
           const availableTracks = getTracksForSlot(index)
@@ -194,7 +194,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
             <TrackSlot
               key={trackType}
               position={index}
-              trackType={trackType}
+              trackType={formatTrackType(trackType, state.classFormat)}
               track={track}
               onRandom={() => randomizeTrack(index, false)}
               onBrowse={() => handleBrowse(index)}
@@ -237,7 +237,9 @@ export function PlaylistBuilder({ mode = 'random' }) {
       {searchPosition !== null && (
         <TrackSearch
           position={searchPosition}
-          trackType={TRACK_TYPES[searchPosition]}
+          trackType={trackTypes[searchPosition]}
+          slotTypes={getSlotTypes(searchPosition)}
+          trackTypeLabel={formatTrackType(trackTypes[searchPosition], state.classFormat)}
           onSelect={handleSelectTrack}
           onClose={handleCloseSearch}
         />

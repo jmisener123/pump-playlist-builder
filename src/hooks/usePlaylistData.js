@@ -1,18 +1,23 @@
 import { useMemo } from 'react'
 import { usePlaylist } from '../context/PlaylistContext'
 import { searchTracks, getTracksForPosition, filterByTheme } from '../data/loadPlaylistData'
-import { TRACK_TYPES, relaxedThemeFilters } from '../utils/trackUtils'
+import { relaxedThemeFilters, getSlotTrackTypes } from '../utils/trackUtils'
 
 /**
  * Hook for accessing and filtering playlist data
  */
 export function usePlaylistData() {
-  const { state, getFilteredTracks, getThemedTracks, getAllThemedTracks } = usePlaylist()
+  const { state, trackTypes, getFilteredTracks, getSearchTracks, getThemedTracks, getAllThemedTracks } = usePlaylist()
 
   // Memoized filtered tracks
   const filteredTracks = useMemo(() => {
     return getFilteredTracks()
   }, [state.tracks, state.earliestRelease, state.excludeNewest, state.onlyRecent10, state.releases, state.excludedReleases])
+
+  // What search and browse look through, which may span both class formats
+  const searchTracksPool = useMemo(() => {
+    return getSearchTracks()
+  }, [filteredTracks, state.classFormat, state.searchBothFormats])
 
   // Memoized themed tracks
   const themedTracks = useMemo(() => {
@@ -24,24 +29,29 @@ export function usePlaylistData() {
     return getAllThemedTracks()
   }, [state.tracks, state.themeTags, state.instructorTags, state.selectedGenres])
 
-  // Search within filtered tracks
+  // Search within the current format's tracks
   const searchInFiltered = (searchTerm) => {
-    return searchTracks(filteredTracks, searchTerm)
+    return searchTracks(searchTracksPool, searchTerm)
   }
 
-  // Get tracks for a specific position
+  // Every Track No# a slot accepts, including alternates like the 45-minute
+  // Core slot's Functional Strength tracks.
+  const getSlotTypes = (position) => {
+    const trackType = trackTypes[position]
+    return trackType ? getSlotTrackTypes(trackType, state.classFormat) : []
+  }
+
+  // Get tracks for a specific position, alternates included - this is the
+  // browse list, so a Functional Strength track is one tap away even though
+  // random fills never pick one.
   const getTracksForSlot = (position) => {
-    const trackType = state.tracks.length > 0 ?
-      ['1 - Warmup', '2 - Squats', '3 - Chest', '4 - Back', '5 - Triceps',
-       '6 - Biceps', '7 - Lunges', '8 - Shoulders', '9 - Core', '10 - Cooldown'][position] :
-      null
-    return trackType ? getTracksForPosition(filteredTracks, trackType) : []
+    const types = getSlotTypes(position)
+    return types.length > 0 ? getTracksForPosition(filteredTracks, types) : []
   }
 
   // Get themed tracks for a specific position
   const getThemedTracksForSlot = (position) => {
-    const trackType = ['1 - Warmup', '2 - Squats', '3 - Chest', '4 - Back', '5 - Triceps',
-      '6 - Biceps', '7 - Lunges', '8 - Shoulders', '9 - Core', '10 - Cooldown'][position]
+    const trackType = trackTypes[position]
     return trackType ? getTracksForPosition(themedTracks, trackType) : []
   }
 
@@ -49,7 +59,7 @@ export function usePlaylistData() {
   // filters a step at a time and return the first pool that has something.
   // Never falls all the way back to the unfiltered catalog — that's Browse.
   const getRelaxedTracksForSlot = (position) => {
-    const trackType = TRACK_TYPES[position]
+    const trackType = trackTypes[position]
     if (!trackType) return []
 
     const variants = relaxedThemeFilters({
@@ -68,19 +78,19 @@ export function usePlaylistData() {
   // Count available tracks by position
   const trackCounts = useMemo(() => {
     const counts = {}
-    const types = ['1 - Warmup', '2 - Squats', '3 - Chest', '4 - Back', '5 - Triceps',
-      '6 - Biceps', '7 - Lunges', '8 - Shoulders', '9 - Core', '10 - Cooldown']
-
-    types.forEach((type, index) => {
+    trackTypes.forEach((type, index) => {
       counts[index] = getTracksForPosition(filteredTracks, type).length
     })
-
     return counts
-  }, [filteredTracks])
+  }, [filteredTracks, state.classFormat])
 
   return {
     allTracks: state.tracks,
     filteredTracks,
+    searchTracksPool,
+    trackTypes,
+    classFormat: state.classFormat,
+    searchBothFormats: state.searchBothFormats,
     themedTracks,
     releases: state.releases,
     latestRelease: state.latestRelease,
@@ -88,6 +98,7 @@ export function usePlaylistData() {
     availableTags: state.availableTags,
     isLoading: state.isLoading,
     searchInFiltered,
+    getSlotTypes,
     getTracksForSlot,
     getThemedTracksForSlot,
     getRelaxedTracksForSlot,

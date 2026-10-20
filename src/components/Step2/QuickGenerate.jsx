@@ -16,7 +16,7 @@ import { THEME_TAGS, INSTRUCTOR_TAGS, sortThemesBySeason } from '../../utils/the
 export function QuickGenerate({ onPlaylistGenerated, autoFill = false }) {
   const { state, actions } = usePlaylist()
   const { generateThemed } = usePlaylistBuilder()
-  const { availableTags, genres } = usePlaylistData()
+  const { availableTags, genres, trackTypes } = usePlaylistData()
   const showToast = useToast()
   const [confirmingReplace, setConfirmingReplace] = useState(false)
   // The playlist array this panel last generated; any later edit replaces the
@@ -33,13 +33,16 @@ export function QuickGenerate({ onPlaylistGenerated, autoFill = false }) {
     lastFillRef.current = result
     setConfirmingReplace(false)
     const filled = result.filter(Boolean).length
+    const total = trackTypes.length
     showToast(
-      filled === 10
+      filled === total
         ? 'Playlist filled \u2713'
         : filled === 0
           ? 'No tracks match this theme'
           : `Filled ${filled} slots \u2713`,
-      filled > 0 && filled < 10 ? `${filled}/10 \u00b7 ${10 - filled} had no match` : `${filled}/10`
+      filled > 0 && filled < total
+        ? `${filled}/${total} \u00b7 ${total - filled} had no match`
+        : `${filled}/${total}`
     )
     if (onPlaylistGenerated) onPlaylistGenerated()
   }

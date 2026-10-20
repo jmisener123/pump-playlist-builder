@@ -3,7 +3,7 @@ import { usePlaylistData } from '../../hooks/usePlaylistData'
 import { Modal } from '../ui/Modal'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
-import { TRACK_TYPES, formatTrackRelease, getTrackIndex } from '../../utils/trackUtils'
+import { ALL_TRACK_TYPES, formatTrackRelease, formatTrackType, getTrackIndex, formatOnlyLabel } from '../../utils/trackUtils'
 
 /**
  * Every track matching the active theme, across all releases — including the
@@ -11,24 +11,33 @@ import { TRACK_TYPES, formatTrackRelease, getTrackIndex } from '../../utils/trac
  * theme look like", and so an in-range pick can drop straight into place.
  */
 export function ThemeBrowser({ themeLabel, onSelect, onClose }) {
-  const { allThemedTracks, filteredTracks } = usePlaylistData()
+  const { allThemedTracks, filteredTracks, trackTypes, classFormat, searchBothFormats } = usePlaylistData()
   const [ownedOnly, setOwnedOnly] = useState(false)
 
   // Same objects flow through both filters, so reference identity is enough
   // to tell an owned track from one outside the catalog.
   const ownedSet = useMemo(() => new Set(filteredTracks), [filteredTracks])
 
+  // Slots from the other format only appear when you've asked to see both,
+  // and they sit after the ones you're actually building.
+  const visibleTypes = useMemo(
+    () => (searchBothFormats
+      ? [...trackTypes, ...ALL_TRACK_TYPES.filter(t => !trackTypes.includes(t))]
+      : trackTypes),
+    [trackTypes, searchBothFormats]
+  )
+
   const groups = useMemo(() => {
-    const byType = new Map(TRACK_TYPES.map(type => [type, []]))
+    const byType = new Map(visibleTypes.map(type => [type, []]))
     allThemedTracks.forEach(track => {
       const bucket = byType.get(track['Track No#'])
       if (bucket) bucket.push(track)
     })
-    return TRACK_TYPES.map(type => ({
+    return visibleTypes.map(type => ({
       type,
       tracks: byType.get(type).sort((a, b) => b.SortKey - a.SortKey)
     }))
-  }, [allThemedTracks])
+  }, [allThemedTracks, visibleTypes])
 
   const ownedCount = allThemedTracks.filter(t => ownedSet.has(t)).length
   const outsideCount = allThemedTracks.length - ownedCount
@@ -63,11 +72,15 @@ export function ThemeBrowser({ themeLabel, onSelect, onClose }) {
           {groups.map(({ type, tracks }) => {
             const shown = ownedOnly ? tracks.filter(t => ownedSet.has(t)) : tracks
             if (shown.length === 0) return null
+            const otherFormat = formatOnlyLabel(type, classFormat)
 
             return (
               <div key={type}>
                 <h4 className="display-sm text-[11px] text-ink-400 dark:text-ink-500 sticky top-0 bg-white dark:bg-ink-900 py-1">
-                  {type} ({shown.length})
+                  {formatTrackType(type, classFormat)} ({shown.length})
+                  {otherFormat && (
+                    <span className="ml-1.5 normal-case tracking-normal text-ink-400">· {otherFormat}</span>
+                  )}
                 </h4>
                 <ul className="divide-y divide-ink-100 dark:divide-ink-800 border-t border-ink-100 dark:border-ink-800">
                   {shown.map(track => {
@@ -94,12 +107,16 @@ export function ThemeBrowser({ themeLabel, onSelect, onClose }) {
                           )}
                         </div>
                         <div className="shrink-0">
-                          {owned ? (
+                          {otherFormat ? (
+                            <span className="eyebrow text-ink-400 whitespace-nowrap">
+                              {otherFormat}
+                            </span>
+                          ) : owned ? (
                             <Button
                               variant="primary"
                               size="sm"
                               onClick={() => {
-                                onSelect(getTrackIndex(track['Track No#']), track)
+                                onSelect(getTrackIndex(track['Track No#'], classFormat), track)
                                 onClose()
                               }}
                             >

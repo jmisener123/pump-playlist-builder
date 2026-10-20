@@ -249,11 +249,13 @@ export function getChoreoCategory(value) {
  */
 export function getChoreoVocabulary(tracks = [], { slot = null } = {}) {
   const bySlot = new Map()
+  // A slot can accept more than one Track No#, so scoping takes a list too.
+  const wanted = slot ? new Set(Array.isArray(slot) ? slot : [slot]) : null
 
   for (const track of tracks) {
     if (!Array.isArray(track?.ChoreoList) || track.ChoreoList.length === 0) continue
     const trackSlot = track['Track No#']
-    if (slot && trackSlot !== slot) continue
+    if (wanted && !wanted.has(trackSlot)) continue
 
     if (!bySlot.has(trackSlot)) bySlot.set(trackSlot, new Map())
     const counts = bySlot.get(trackSlot)
@@ -267,8 +269,13 @@ export function getChoreoVocabulary(tracks = [], { slot = null } = {}) {
       .map(([value, count]) => ({ value, count, category: getChoreoCategory(value) }))
       .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))
 
-  if (slot) {
-    return bySlot.has(slot) ? toItems(bySlot.get(slot)) : []
+  if (wanted) {
+    const merged = new Map()
+    for (const [trackSlot, counts] of bySlot) {
+      if (!wanted.has(trackSlot)) continue
+      for (const [value, count] of counts) merged.set(value, (merged.get(value) || 0) + count)
+    }
+    return merged.size > 0 ? toItems(merged) : []
   }
 
   return [...bySlot.entries()]

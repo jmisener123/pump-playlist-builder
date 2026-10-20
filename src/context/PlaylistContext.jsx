@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react'
 import { loadPlaylistDataAsync, filterTracks, filterByTheme, pickRandomTrack } from '../data/loadPlaylistData'
-import { TRACK_TYPES, relaxedThemeFilters } from '../utils/trackUtils'
+import { getTrackTypes, getFormatTrackTypes, ALL_TRACK_TYPES, relaxedThemeFilters } from '../utils/trackUtils'
 
 // Action types
 const ActionTypes = {
@@ -9,6 +9,8 @@ const ActionTypes = {
   SET_EXCLUDE_NEWEST: 'SET_EXCLUDE_NEWEST',
   SET_ONLY_RECENT_10: 'SET_ONLY_RECENT_10',
   SET_EXCLUDED_RELEASES: 'SET_EXCLUDED_RELEASES',
+  SET_CLASS_FORMAT: 'SET_CLASS_FORMAT',
+  SET_SEARCH_BOTH_FORMATS: 'SET_SEARCH_BOTH_FORMATS',
   SET_PLAYLIST: 'SET_PLAYLIST',
   SET_TRACK: 'SET_TRACK',
   CLEAR_TRACK: 'CLEAR_TRACK',
@@ -52,11 +54,15 @@ const initialState = {
   onlyRecent10: false,
   // Individual releases switched off inside the chosen range
   excludedReleases: [],
+  // '55' (separate triceps/biceps/lunges/shoulders) or '45' (combo tracks)
+  classFormat: '55',
+  // Let search and browse turn up the other format's tracks too
+  searchBothFormats: false,
   // True when catalog settings were restored from a previous visit
   hasSavedCatalog: false,
 
   // Playlist (Step 2)
-  playlist: Array(10).fill(null),
+  playlist: Array(getTrackTypes('55').length).fill(null),
 
   // Theme filters (for Theme tab)
   themeTags: [],
@@ -90,6 +96,11 @@ function playlistReducer(state, action) {
         excludeNewest: savedIsValid ? !!saved.excludeNewest : state.excludeNewest,
         onlyRecent10: savedIsValid ? !!saved.onlyRecent10 : state.onlyRecent10,
         excludedReleases: savedExcluded,
+        classFormat: savedIsValid && saved.classFormat === '45' ? '45' : state.classFormat,
+        searchBothFormats: savedIsValid ? !!saved.searchBothFormats : state.searchBothFormats,
+        playlist: savedIsValid && saved.classFormat === '45'
+          ? Array(getTrackTypes('45').length).fill(null)
+          : state.playlist,
         hasSavedCatalog: !!savedIsValid,
         isLoading: false
       }
@@ -117,6 +128,30 @@ function playlistReducer(state, action) {
       return {
         ...state,
         excludedReleases: action.payload
+      }
+
+    case ActionTypes.SET_CLASS_FORMAT: {
+      const format = action.payload === '45' ? '45' : '55'
+      if (format === state.classFormat) return state
+      // The two formats share six slots, so keep whatever is already in them
+      // rather than making you rebuild the playlist from scratch.
+      const oldTypes = getTrackTypes(state.classFormat)
+      const newTypes = getTrackTypes(format)
+      const playlist = newTypes.map(type => {
+        const oldIndex = oldTypes.indexOf(type)
+        return oldIndex === -1 ? null : state.playlist[oldIndex]
+      })
+      return {
+        ...state,
+        classFormat: format,
+        playlist
+      }
+    }
+
+    case ActionTypes.SET_SEARCH_BOTH_FORMATS:
+      return {
+        ...state,
+        searchBothFormats: action.payload
       }
 
     case ActionTypes.SET_PLAYLIST:
@@ -225,9 +260,22 @@ export function PlaylistProvider({ children }) {
       earliestRelease: state.earliestRelease,
       excludeNewest: state.excludeNewest,
       onlyRecent10: state.onlyRecent10,
-      excludedReleases: state.excludedReleases
+      excludedReleases: state.excludedReleases,
+      classFormat: state.classFormat,
+      searchBothFormats: state.searchBothFormats
     })
-  }, [state.isLoading, state.earliestRelease, state.excludeNewest, state.onlyRecent10, state.excludedReleases])
+  }, [
+    state.isLoading,
+    state.earliestRelease,
+    state.excludeNewest,
+    state.onlyRecent10,
+    state.excludedReleases,
+    state.classFormat,
+    state.searchBothFormats
+  ])
+
+  // The slots this class format is built from
+  const trackTypes = getTrackTypes(state.classFormat)
 
   // Get filtered tracks based on current filters
   const getFilteredTracks = () => {
@@ -239,6 +287,13 @@ export function PlaylistProvider({ children }) {
       allReleases: state.releases,
       excludedReleases: state.excludedReleases
     })
+  }
+
+  // What search and browse look through: the slots you can actually use,
+  // widened to the other format's tracks when you've asked to see them.
+  const getSearchTracks = () => {
+    const allowed = new Set(state.searchBothFormats ? ALL_TRACK_TYPES : getFormatTrackTypes(state.classFormat))
+    return getFilteredTracks().filter(track => allowed.has(track['Track No#']))
   }
 
   // Get themed filtered tracks
@@ -257,7 +312,8 @@ export function PlaylistProvider({ children }) {
     if (state.themeTags.length === 0 && state.instructorTags.length === 0 && state.selectedGenres.length === 0) {
       return []
     }
-    return filterByTheme(state.tracks, {
+    const allowed = new Set(state.searchBothFormats ? ALL_TRACK_TYPES : getFormatTrackTypes(state.classFormat))
+    return filterByTheme(state.tracks.filter(t => allowed.has(t['Track No#'])), {
       themeTags: state.themeTags,
       instructorTags: state.instructorTags,
       genres: state.selectedGenres
@@ -276,6 +332,14 @@ export function PlaylistProvider({ children }) {
 
     setOnlyRecent10: (only) => {
       dispatch({ type: ActionTypes.SET_ONLY_RECENT_10, payload: only })
+    },
+
+    setClassFormat: (format) => {
+      dispatch({ type: ActionTypes.SET_CLASS_FORMAT, payload: format })
+    },
+
+    setSearchBothFormats: (value) => {
+      dispatch({ type: ActionTypes.SET_SEARCH_BOTH_FORMATS, payload: value })
     },
 
     setExcludedReleases: (releases) => {
@@ -320,7 +384,7 @@ export function PlaylistProvider({ children }) {
     generateRandomPlaylist: () => {
       const filteredTracks = getFilteredTracks()
       const usedTitles = []
-      const newPlaylist = TRACK_TYPES.map(trackType => {
+      const newPlaylist = trackTypes.map(trackType => {
         const track = pickRandomTrack(filteredTracks, trackType, usedTitles)
         if (track) {
           usedTitles.push(track['Song Title'])
@@ -342,7 +406,7 @@ export function PlaylistProvider({ children }) {
       }).map(filters => filterByTheme(baseFiltered, filters))
 
       const usedTitles = []
-      const newPlaylist = TRACK_TYPES.map(trackType => {
+      const newPlaylist = trackTypes.map(trackType => {
         let track = null
         for (const pool of pools) {
           track = pickRandomTrack(pool, trackType, usedTitles)
@@ -359,7 +423,7 @@ export function PlaylistProvider({ children }) {
 
     randomizeTrack: (position) => {
       const filteredTracks = getFilteredTracks()
-      const trackType = TRACK_TYPES[position]
+      const trackType = trackTypes[position]
       const currentTrack = state.playlist[position]
       const excludeTitles = currentTrack ? [currentTrack['Song Title']] : []
 
@@ -378,7 +442,7 @@ export function PlaylistProvider({ children }) {
 
     randomizeTrackThemed: (position) => {
       const themedTracks = getThemedTracks()
-      const trackType = TRACK_TYPES[position]
+      const trackType = trackTypes[position]
       const currentTrack = state.playlist[position]
       const excludeTitles = currentTrack ? [currentTrack['Song Title']] : []
 
@@ -402,7 +466,9 @@ export function PlaylistProvider({ children }) {
   const value = {
     state,
     actions,
+    trackTypes,
     getFilteredTracks,
+    getSearchTracks,
     getThemedTracks,
     getAllThemedTracks
   }

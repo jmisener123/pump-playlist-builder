@@ -189,9 +189,9 @@ export function makeTrackKey(track) {
 }
 
 /**
- * Track position labels
+ * Track position labels for the 55-minute class: one track per body part.
  */
-export const TRACK_TYPES = [
+export const TRACK_TYPES_55 = [
   "1 - Warmup",
   "2 - Squats",
   "3 - Chest",
@@ -205,10 +205,145 @@ export const TRACK_TYPES = [
 ]
 
 /**
- * Get the index for a track type
+ * Track position labels for the 45-minute class, which replaces four tracks
+ * with two combos: triceps/biceps and lunges/shoulders.
  */
-export function getTrackIndex(trackType) {
-  return TRACK_TYPES.indexOf(trackType)
+export const TRACK_TYPES_45 = [
+  "1 - Warmup",
+  "2 - Squats",
+  "3 - Chest",
+  "4 - Back",
+  "11 - Triceps/Biceps",
+  "12 - Lunges/Shoulders",
+  "9 - Core",
+  "10 - Cooldown"
+]
+
+/**
+ * Default export kept for the 55-minute class, which is what most instructors
+ * teach and what the builder starts on.
+ */
+export const TRACK_TYPES = TRACK_TYPES_55
+
+/**
+ * The slots unique to the 45-minute class.
+ */
+export const COMBO_TRACK_TYPES = TRACK_TYPES_45.filter(t => !TRACK_TYPES_55.includes(t))
+
+/**
+ * Functional Strength tracks (R118-122) are taught in place of Core in the
+ * 45-minute class, so they're an alternative to that slot rather than a slot
+ * of their own. They're deliberately kept out of random fills - you have to
+ * go looking for one.
+ */
+export const FUNCTIONAL_STRENGTH_TYPES = ['13 - Functional Strength', '14 - Functional Strength']
+
+/**
+ * Extra Track No# values a slot will accept, by class format.
+ */
+const SLOT_ALTERNATES = {
+  '45': { '9 - Core': FUNCTIONAL_STRENGTH_TYPES }
+}
+
+/**
+ * Slot names that differ from the track's own body part, because the slot
+ * covers more than one kind of track.
+ */
+const SLOT_NAMES = {
+  '45': { '9 - Core': 'Core / Functional Strength' }
+}
+
+/**
+ * Les Mills only started releasing combo tracks at this release, so a catalog
+ * that stops short of it can't build a 45-minute class.
+ */
+export const COMBO_FIRST_RELEASE = 103
+
+export const CLASS_FORMATS = [
+  { id: '55', label: '55 min', detail: '10 tracks' },
+  { id: '45', label: '45 min', detail: '8 tracks, combos' }
+]
+
+/**
+ * Slot list for a class format, defaulting to the 55-minute class.
+ */
+export function getTrackTypes(format) {
+  return String(format) === '45' ? TRACK_TYPES_45 : TRACK_TYPES_55
+}
+
+/**
+ * Every Track No# a slot can be filled from: the slot itself plus any
+ * alternates this format allows.
+ */
+export function getSlotTrackTypes(trackType, format) {
+  return [trackType, ...(SLOT_ALTERNATES[String(format)]?.[trackType] || [])]
+}
+
+/**
+ * Every Track No# a format can use, slots and alternates alike.
+ */
+export function getFormatTrackTypes(format) {
+  return getTrackTypes(format).flatMap(type => getSlotTrackTypes(type, format))
+}
+
+/**
+ * Every track type either format uses, in 55-minute order with the 45-minute
+ * extras appended. Used when searching across both formats.
+ */
+export const ALL_TRACK_TYPES = [...TRACK_TYPES_55, ...COMBO_TRACK_TYPES, ...FUNCTIONAL_STRENGTH_TYPES]
+
+/**
+ * The slot a track belongs in for a given format, resolving alternates, so a
+ * Functional Strength track lands in the 45-minute Core slot. -1 when the
+ * format has no place for it.
+ */
+export function getTrackIndex(trackType, format) {
+  const types = getTrackTypes(format)
+  const direct = types.indexOf(trackType)
+  if (direct !== -1) return direct
+  return types.findIndex(type => getSlotTrackTypes(type, format).includes(trackType))
+}
+
+/**
+ * The class formats a track type can be used in, e.g. ['55'] for
+ * "5 - Triceps", ['55', '45'] for "2 - Squats", ['45'] for a combo or
+ * Functional Strength track.
+ */
+export function getTrackTypeFormats(trackType) {
+  return ['55', '45'].filter(format => getFormatTrackTypes(format).includes(trackType))
+}
+
+/**
+ * Short label marking a track that only fits the other format, e.g. "45 min
+ * only". Null when the slot works in the format you're building.
+ */
+export function formatOnlyLabel(trackType, format) {
+  const formats = getTrackTypeFormats(trackType)
+  if (formats.length !== 1 || formats[0] === String(format)) return null
+  return `${formats[0]} min only`
+}
+
+/**
+ * Slot label numbered by where it falls in the class you're teaching, rather
+ * than by its spreadsheet number: the combo tracks are logged as 11 and 12,
+ * but a 45-minute class runs them fifth and sixth, so it reads
+ * "5 - Triceps/Biceps" through to "8 - Cooldown".
+ *
+ * A slot from the other format keeps its own format's numbering, so a combo
+ * track turning up in a 55-minute search still reads as the 45-minute class's
+ * fifth track rather than its eleventh.
+ */
+export function formatTrackType(trackType, format) {
+  let slotFormat = String(format)
+  let index = getTrackIndex(trackType, slotFormat)
+  if (index === -1) {
+    slotFormat = getTrackTypeFormats(trackType)[0]
+    if (!slotFormat) return trackType
+    index = getTrackIndex(trackType, slotFormat)
+  }
+  if (index === -1) return trackType
+  const name = SLOT_NAMES[slotFormat]?.[trackType] || getBodyPart(trackType)
+  return `${index + 1} - ${name}`
 }
 
 /**

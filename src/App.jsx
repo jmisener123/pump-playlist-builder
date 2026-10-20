@@ -13,8 +13,9 @@ import { StepHeading } from './components/ui/StepHeading'
 
 function PlaylistApp() {
   const { state, actions } = usePlaylist()
-  const { playlist } = usePlaylistBuilder()
+  const { playlist, trackTypes } = usePlaylistBuilder()
   const filledCount = playlist.filter(Boolean).length
+  const slotCount = trackTypes.length
   const [mobileTab, setMobileTab] = useState('playlist')
   const [searchFocusRequest, setSearchFocusRequest] = useState(0)
   // Sits where the mobile tab bar naturally starts; used to detect when the
@@ -111,7 +112,7 @@ function PlaylistApp() {
           <StepHeading
             number={2}
             title="Build your playlist"
-            hint="Fill all ten slots randomly, or by search, theme, or music genre."
+            hint={`Fill all ${slotCount} slots randomly, or by search, theme, or music genre.`}
           />
 
           {/* Mobile: Search and Themes are tools that feed one destination,
@@ -163,7 +164,7 @@ function PlaylistApp() {
                         ? 'bg-flare-600 text-white'
                         : 'bg-ink-100 dark:bg-ink-800 text-ink-400'}`}
                 >
-                  {filledCount}/10
+                  {filledCount}/{slotCount}
                 </span>
               </button>
             </div>

@@ -1,13 +1,13 @@
 import { usePlaylist } from '../context/PlaylistContext'
 import { usePlaylistData } from './usePlaylistData'
-import { calculateTotalDuration, TRACK_TYPES, formatThemeLabel, formatTrackRelease } from '../utils/trackUtils'
+import { calculateTotalDuration, formatThemeLabel, formatTrackRelease, formatTrackType } from '../utils/trackUtils'
 
 /**
  * Hook for playlist building operations
  */
 export function usePlaylistBuilder() {
   const { state, actions } = usePlaylist()
-  const { filteredTracks, themedTracks, getTracksForSlot, getThemedTracksForSlot } = usePlaylistData()
+  const { filteredTracks, themedTracks, trackTypes, getTracksForSlot, getThemedTracksForSlot } = usePlaylistData()
 
   // Get current playlist
   const playlist = state.playlist
@@ -18,7 +18,7 @@ export function usePlaylistBuilder() {
   // Check if playlist has any tracks
   const hasAnyTracks = playlist.some(track => track !== null)
 
-  // Check if playlist is complete (all 10 slots filled)
+  // Check if playlist is complete (every slot in this format filled)
   const isComplete = playlist.every(track => track !== null)
 
   // Generate random playlist
@@ -43,7 +43,7 @@ export function usePlaylistBuilder() {
 
   // Clear entire playlist
   const clearPlaylist = () => {
-    actions.setPlaylist(Array(10).fill(null))
+    actions.setPlaylist(Array(trackTypes.length).fill(null))
     actions.setThemeFilters({ themeTags: [], instructorTags: [], selectedGenres: [] })
   }
 
@@ -72,13 +72,14 @@ export function usePlaylistBuilder() {
     if (!hasAnyTracks) return ''
 
     const theme = formatThemeLabel(state)
-    let text = `${theme ? `${theme} ` : ''}Pump Playlist - Total Time: ${totalDuration}\n`
+    const format = state.classFormat === '45' ? '45-Minute ' : ''
+    let text = `${theme ? `${theme} ` : ''}${format}Pump Playlist - Total Time: ${totalDuration}\n`
 
     playlist.forEach((track, index) => {
       if (track) {
-        text += `${formatTrackRelease(track, { short: false })} - ${track['Track No#']}: ${track['Song Title']} — ${track.Artist} (${track.Duration})\n`
+        text += `${formatTrackRelease(track, { short: false })} - ${formatTrackType(track['Track No#'], state.classFormat)}: ${track['Song Title']} — ${track.Artist} (${track.Duration})\n`
       } else {
-        text += `${TRACK_TYPES[index]}: [Empty]\n`
+        text += `${formatTrackType(trackTypes[index], state.classFormat)}: [Empty]\n`
       }
     })
 
@@ -111,6 +112,6 @@ export function usePlaylistBuilder() {
     getSwapOptions,
     getExportText,
     copyToClipboard,
-    trackTypes: TRACK_TYPES
+    trackTypes
   }
 }

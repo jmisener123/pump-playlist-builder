@@ -11,15 +11,17 @@ import { MoveFilterBar } from '../ui/MoveFilterBar'
 import { ChoreoBrowser } from '../ChoreoBrowser'
 import { formatTrackRelease } from '../../utils/trackUtils'
 
-export function TrackSearch({ position, trackType, onSelect, onClose }) {
+export function TrackSearch({ position, trackType, slotTypes, trackTypeLabel, onSelect, onClose }) {
   const { filteredTracks } = usePlaylistData()
   const [searchTerm, setSearchTerm] = useState('')
   const { filters, toggleFilter, removeFilter, clearFilters } = useMoveFilters()
 
+  const types = slotTypes && slotTypes.length > 0 ? slotTypes : [trackType]
+
   // Newest first, matching the themed swap lists.
   const positionTracks = useMemo(() => {
-    return [...getTracksForPosition(filteredTracks, trackType)].sort((a, b) => b.SortKey - a.SortKey)
-  }, [filteredTracks, trackType])
+    return [...getTracksForPosition(filteredTracks, types)].sort((a, b) => b.SortKey - a.SortKey)
+  }, [filteredTracks, types.join('|')])
 
   const query = useMemo(() => buildMoveQuery(filters, searchTerm), [filters, searchTerm])
   const hasQuery = query.trim().length > 0
@@ -39,7 +41,7 @@ export function TrackSearch({ position, trackType, onSelect, onClose }) {
     onClose()
   }
 
-  const title = `Browse ${trackType} Tracks (${positionTracks.length})`
+  const title = `Browse ${trackTypeLabel || trackType} Tracks (${positionTracks.length})`
 
   return (
     <Modal
@@ -61,7 +63,7 @@ export function TrackSearch({ position, trackType, onSelect, onClose }) {
           <ChoreoBrowser
             tracks={positionTracks}
             onPick={toggleFilter}
-            slot={trackType}
+            slot={types}
             activeIds={filters.map(f => f.id)}
           />
           <p className="eyebrow mt-2 tabular">

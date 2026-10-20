@@ -22,6 +22,7 @@ Questions/feedback? [Click here to contact me](https://jessicamisener.com/contac
 
 ## Features
 - 🎵 Three methods to build your playlist
+- ⏱️ Build for a 55-minute class or a 45-minute one, which swaps in the triceps/biceps and lunges/shoulders combo tracks (Release 103 up) and offers Functional Strength in place of Core
 - 🗂️ Choose your catalog by release range, and exclude any individual releases you don’t want in your results
 - ✨ Tag-based emoji support for quick visual scanning
 - 🔁 Alternate suggestions if a track doesn’t match your vibe
