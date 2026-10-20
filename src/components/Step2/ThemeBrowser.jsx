@@ -39,8 +39,18 @@ export function ThemeBrowser({ themeLabel, onSelect, onClose }) {
     }))
   }, [allThemedTracks, visibleTypes])
 
-  const ownedCount = allThemedTracks.filter(t => ownedSet.has(t)).length
-  const outsideCount = allThemedTracks.length - ownedCount
+  // "Usable" means two things: inside your release range, and in a slot the
+  // format you're building actually has. A combo track you own is still no
+  // use while you're teaching a 55-minute class.
+  const isUsable = (track) =>
+    ownedSet.has(track) && !formatOnlyLabel(track['Track No#'], classFormat)
+
+  const usableCount = allThemedTracks.filter(isUsable).length
+  const unusableCount = allThemedTracks.length - usableCount
+  const otherFormatCount = allThemedTracks.filter(
+    t => formatOnlyLabel(t['Track No#'], classFormat)
+  ).length
+  const outsideCount = allThemedTracks.filter(t => !ownedSet.has(t)).length
 
   return (
     <Modal
@@ -52,10 +62,11 @@ export function ThemeBrowser({ themeLabel, onSelect, onClose }) {
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="eyebrow tabular">
-            {ownedCount} in your releases
-            {outsideCount > 0 && ` · ${outsideCount} outside`}
+            {usableCount} you can use
+            {outsideCount > 0 && ` · ${outsideCount} outside your releases`}
+            {otherFormatCount > 0 && ` · ${otherFormatCount} other format`}
           </p>
-          {outsideCount > 0 && (
+          {unusableCount > 0 && (
             <label className="flex items-center gap-1.5 text-xs text-ink-600 dark:text-ink-300 cursor-pointer">
               <input
                 type="checkbox"
@@ -70,7 +81,7 @@ export function ThemeBrowser({ themeLabel, onSelect, onClose }) {
 
         <div className="space-y-4">
           {groups.map(({ type, tracks }) => {
-            const shown = ownedOnly ? tracks.filter(t => ownedSet.has(t)) : tracks
+            const shown = ownedOnly ? tracks.filter(isUsable) : tracks
             if (shown.length === 0) return null
             const otherFormat = formatOnlyLabel(type, classFormat)
 
@@ -137,10 +148,10 @@ export function ThemeBrowser({ themeLabel, onSelect, onClose }) {
           })}
         </div>
 
-        {outsideCount > 0 && !ownedOnly && (
+        {unusableCount > 0 && !ownedOnly && (
           <p className="text-[11px] text-ink-400 dark:text-ink-500">
-            Dimmed tracks sit outside your release range — lower your earliest
-            release in Step 1 to use them.
+            {outsideCount > 0 && 'Dimmed tracks sit outside your release range — lower your earliest release in Step 1 to use them. '}
+            {otherFormatCount > 0 && `Tracks marked "45 min only" or "55 min only" belong to the other class format — switch format in Step 1 to use them.`}
           </p>
         )}
       </div>
