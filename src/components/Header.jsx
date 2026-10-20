@@ -17,8 +17,8 @@ const FEATURED_ORDER = [
   'Positive Vibes',
 ]
 
-export function Header({ onSearchClick, onThemeSelect }) {
-  const { availableTags } = usePlaylistData()
+export function Header({ onSearchClick, onThemeSelect, onBrowseThemes }) {
+  const { availableTags, releases } = usePlaylistData()
 
   // Only advertise themes that actually exist in the loaded catalog, so this
   // line stays true as the data changes instead of hardcoding names.
@@ -62,8 +62,18 @@ export function Header({ onSearchClick, onThemeSelect }) {
           The fastest way to plan your next Pump class.
         </p>
 
+        <p className="text-sm text-ink-500 dark:text-ink-400 mt-2 max-w-2xl">
+          Pick the releases you own, choose a vibe, and get a full class playlist in
+          seconds — or search{' '}
+          {releases.length > 0 && (
+            <span className="tabular whitespace-nowrap">{releases.length.toLocaleString()} releases</span>
+          )}{' '}
+          by song, artist, theme, or move.
+        </p>
+
         {shown.length > 0 && (
           <p className="text-sm text-ink-500 dark:text-ink-400 mt-2">
+            <span className="eyebrow mr-2 align-middle">Start with a theme</span>
             {shown.map((tag, i) => (
               <span key={tag} className="whitespace-nowrap inline-block py-0.5">
                 <button
@@ -86,7 +96,15 @@ export function Header({ onSearchClick, onThemeSelect }) {
             {remaining > 0 && (
               <span className="whitespace-nowrap inline-block py-0.5">
                 <span className="mx-1.5 text-ink-300 dark:text-ink-700">·</span>
-                <span>and more themes</span>
+                <button
+                  type="button"
+                  onClick={() => onBrowseThemes && onBrowseThemes()}
+                  className="hover:text-accent underline decoration-ink-200 dark:decoration-ink-700
+                             underline-offset-2 hover:decoration-current transition-colors"
+                  title="Browse all themes"
+                >
+                  and {remaining} more themes
+                </button>
               </span>
             )}
           </p>

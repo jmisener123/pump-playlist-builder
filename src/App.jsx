@@ -64,6 +64,17 @@ function PlaylistApp() {
     setSearchFocusRequest((n) => n + 1)
   }
 
+  const scrollToThemesPanel = () => {
+    // Both the desktop and mobile themes panels exist in the DOM at once (one
+    // is hidden by CSS), so scroll whichever is actually visible.
+    requestAnimationFrame(() => {
+      const panel = Array.from(
+        document.querySelectorAll('[data-themes-panel]')
+      ).find((el) => el.offsetParent !== null)
+      panel?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+  }
+
   // Masthead theme links jump straight into the themes UI with that one filter
   // applied. Instructor tags (difficulty/length) live in a different slice of
   // state than theme tags, so route on which list the tag belongs to.
@@ -75,14 +86,14 @@ function PlaylistApp() {
       selectedGenres: [],
     })
     setMobileTab('themes')
-    // Both the desktop and mobile themes panels exist in the DOM at once (one
-    // is hidden by CSS), so scroll whichever is actually visible.
-    requestAnimationFrame(() => {
-      const panel = Array.from(
-        document.querySelectorAll('[data-themes-panel]')
-      ).find((el) => el.offsetParent !== null)
-      panel?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    })
+    scrollToThemesPanel()
+  }
+
+  // "and N more themes" opens the themes UI with nothing pre-filtered.
+  const handleBrowseThemes = () => {
+    actions.setThemeFilters({ themeTags: [], instructorTags: [], selectedGenres: [] })
+    setMobileTab('themes')
+    scrollToThemesPanel()
   }
 
   if (state.isLoading) {
@@ -102,6 +113,7 @@ function PlaylistApp() {
         <Header
           onSearchClick={handleSearchClick}
           onThemeSelect={handleThemeSelect}
+          onBrowseThemes={handleBrowseThemes}
         />
 
         <section className="mb-10">
