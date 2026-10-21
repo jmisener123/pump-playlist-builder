@@ -95,6 +95,10 @@ export function ContactModal({ isOpen, onClose }) {
             Spotted a track that looks off, hit a bug, or have an idea? Send it over.
           </p>
 
+          <p className="text-sm text-ink-500 dark:text-ink-400">
+            Please note: I'm unable to provide notes or music for any tracks.
+          </p>
+
           <div>
             <label htmlFor="contact-topic" className="eyebrow block mb-1.5">What's this about?</label>
             <select
