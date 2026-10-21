@@ -68,7 +68,7 @@ export function Header({ onSearchClick, onThemeSelect, onBrowseThemes }) {
           {allTracks.length > 0 && (
             <span className="tabular whitespace-nowrap">{allTracks.length.toLocaleString()} tracks</span>
           )}{' '}
-          by song, artist, theme, or move.
+          by song, artist, or move.
         </p>
 
         {shown.length > 0 && (
