@@ -4,7 +4,7 @@ import { THEME_TAGS, INSTRUCTOR_TAGS, sortThemesBySeason } from '../utils/themes
 import { TAG_EMOJIS, getTagDisplayName } from '../utils/trackUtils'
 
 // How many themes to name before collapsing the rest into a count.
-const TEASER_COUNT = 4
+const TEASER_COUNT = 3
 
 // Seasonal themes lead while in season (and are skipped otherwise); this sets
 // the order of the evergreen ones that fill in behind them. Anything not
@@ -62,13 +62,9 @@ export function Header({ onSearchClick, onThemeSelect, onBrowseThemes }) {
           The fastest way to plan your next Pump class.
         </p>
 
-        <p className="text-sm text-ink-500 dark:text-ink-400 mt-2 max-w-2xl">
-          Pick the releases you own, choose a vibe, and get a full class playlist in
-          seconds.
-        </p>
-
-        <p className="text-sm text-ink-500 dark:text-ink-400 mt-2 max-w-2xl">
-          Already know what you want? Search{' '}
+        <p className="text-sm text-ink-500 dark:text-ink-400 mt-1.5 max-w-xl">
+          Pick your releases, choose a vibe, and get a full playlist in seconds — or
+          search{' '}
           {allTracks.length > 0 && (
             <span className="tabular whitespace-nowrap">{allTracks.length.toLocaleString()} tracks</span>
           )}{' '}
@@ -76,42 +72,38 @@ export function Header({ onSearchClick, onThemeSelect, onBrowseThemes }) {
         </p>
 
         {shown.length > 0 && (
-          <p className="text-sm text-ink-500 dark:text-ink-400 mt-2">
-            <span className="eyebrow mr-2 align-middle">Start with a theme</span>
-            {shown.map((tag, i) => (
-              <span key={tag} className="whitespace-nowrap inline-block py-0.5">
-                <button
-                  type="button"
-                  onClick={() => onThemeSelect && onThemeSelect(tag)}
-                  className="hover:text-accent underline decoration-ink-200 dark:decoration-ink-700
-                             underline-offset-2 hover:decoration-current transition-colors"
-                  title={`Fill your playlist with ${getTagDisplayName(tag)} tracks`}
-                >
-                  {TAG_EMOJIS[tag] && (
-                    <span aria-hidden="true" className="mr-1">{TAG_EMOJIS[tag]}</span>
-                  )}
-                  {getTagDisplayName(tag)}
-                </button>
-                {i < shown.length - 1 && (
-                  <span className="mx-1.5 text-ink-300 dark:text-ink-700">·</span>
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm
+                          text-ink-500 dark:text-ink-400">
+            <span className="eyebrow w-full sm:w-auto">Start with a theme</span>
+            {shown.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => onThemeSelect && onThemeSelect(tag)}
+                className="whitespace-nowrap hover:text-accent underline decoration-ink-200
+                           dark:decoration-ink-700 underline-offset-4 hover:decoration-current
+                           transition-colors"
+                title={`Fill your playlist with ${getTagDisplayName(tag)} tracks`}
+              >
+                {TAG_EMOJIS[tag] && (
+                  <span aria-hidden="true" className="mr-1">{TAG_EMOJIS[tag]}</span>
                 )}
-              </span>
+                {getTagDisplayName(tag)}
+              </button>
             ))}
             {remaining > 0 && (
-              <span className="whitespace-nowrap inline-block py-0.5">
-                <span className="mx-1.5 text-ink-300 dark:text-ink-700">·</span>
-                <button
-                  type="button"
-                  onClick={() => onBrowseThemes && onBrowseThemes()}
-                  className="hover:text-accent underline decoration-ink-200 dark:decoration-ink-700
-                             underline-offset-2 hover:decoration-current transition-colors"
-                  title="Browse all themes"
-                >
-                  and {remaining} more themes
-                </button>
-              </span>
+              <button
+                type="button"
+                onClick={() => onBrowseThemes && onBrowseThemes()}
+                className="whitespace-nowrap hover:text-accent underline decoration-ink-200
+                           dark:decoration-ink-700 underline-offset-4 hover:decoration-current
+                           transition-colors"
+                title="Browse all themes"
+              >
+                +{remaining} more
+              </button>
             )}
-          </p>
+          </div>
         )}
       </div>
     </header>
