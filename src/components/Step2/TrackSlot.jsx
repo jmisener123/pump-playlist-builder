@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { formatTrackRelease } from '../../utils/trackUtils'
+import { formatTrackLine, formatTrackRelease } from '../../utils/trackUtils'
+import { copyText } from '../../utils/clipboard'
+import { useToast } from '../../context/ToastContext'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
 
@@ -70,6 +72,8 @@ export function TrackSlot({
 }) {
   const isEmpty = !track
   const [showThemedDropdown, setShowThemedDropdown] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const showToast = useToast()
 
   const hasThemedOptions = themedOptions.length > 0
   const noThemedTrackAvailable = hasThemeFilters && !hasThemedOptions
@@ -87,6 +91,24 @@ export function TrackSlot({
   const themedListItems = track
     ? [...themedOptions, { ...track, isCurrent: true }].sort((a, b) => b.SortKey - a.SortKey)
     : themedOptions
+
+  // Plain text for pasting somewhere else — "what are my Halloween triceps
+  // options?" answered in one line per track, current pick included.
+  const handleCopyList = async () => {
+    const heading = [activeThemeText, trackType].filter(Boolean).join(' \u2014 ')
+    const text = [
+      `${heading} (${themedListItems.length})`,
+      ...themedListItems.map(formatTrackLine)
+    ].join('\n')
+
+    if (!await copyText(text)) {
+      showToast('Copy failed', 'Try again')
+      return
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+    showToast('List copied \u2713', `${themedListItems.length} tracks`)
+  }
 
   return (
     <div className={`border-b border-ink-200 dark:border-ink-800 last:border-b-0 px-3 py-2.5 ${isEmpty ? 'bg-ink-50/60 dark:bg-ink-900/40' : ''}`}>
@@ -219,43 +241,58 @@ export function TrackSlot({
           {/* Other tracks matching the active theme, shown inline so they can
               be scanned and swapped in with one tap. */}
           {showThemedDropdown && hasThemedOptions && (
-            <ul className="mt-2 border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800 max-h-64 overflow-y-auto">
-              {themedListItems.map((t) => (
-                <li key={`${t.Release}_${t['Song Title']}`}>
-                  {t.isCurrent ? (
-                    <div
-                      aria-current="true"
-                      className="flex items-center justify-between gap-3 px-3 py-2 bg-ink-50 dark:bg-ink-800/60"
-                    >
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-ink-900 dark:text-ink-100 break-words">
-                          {t['Song Title']}
+            <div className="mt-2">
+              <div className="flex items-center justify-between gap-2 pb-1">
+                <span className="display-sm text-[11px] text-ink-400 dark:text-ink-500 tabular">
+                  {themedListItems.length} {themedListItems.length === 1 ? 'option' : 'options'} for this track
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyList}
+                  className="display-sm text-[11px] text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors shrink-0"
+                  title="Copy this list as plain text to paste elsewhere"
+                >
+                  {copied ? 'Copied \u2713' : 'Copy list to clipboard'}
+                </button>
+              </div>
+              <ul className="border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800 max-h-64 overflow-y-auto">
+                {themedListItems.map((t) => (
+                  <li key={`${t.Release}_${t['Song Title']}`}>
+                    {t.isCurrent ? (
+                      <div
+                        aria-current="true"
+                        className="flex items-center justify-between gap-3 px-3 py-2 bg-ink-50 dark:bg-ink-800/60"
+                      >
+                        <span className="min-w-0">
+                          <span className="block text-sm font-semibold text-ink-900 dark:text-ink-100 break-words">
+                            {t['Song Title']}
+                          </span>
+                          <TrackMeta track={t} />
                         </span>
-                        <TrackMeta track={t} />
-                      </span>
-                      <span className="display-sm text-[11px] text-accent shrink-0">Current</span>
-                    </div>
-                  ) : (
-                  <button
-                    onClick={() => {
-                      onThemedSwap(t)
-                      setShowThemedDropdown(false)
-                    }}
-                    className="w-full flex items-center justify-between gap-3 px-3 py-2 text-left
-                               hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
-                  >
-                    <span className="min-w-0">
-                      <span className="block text-sm font-semibold text-ink-900 dark:text-ink-100 break-words">
-                        {t['Song Title']}
-                      </span>
-                      <TrackMeta track={t} />
-                    </span>
-                    <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400 shrink-0">Swap</span>
-                  </button>
-                  )}
-                </li>
-              ))}
-            </ul>
+                        <span className="display-sm text-[11px] text-accent shrink-0">Current</span>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          onThemedSwap(t)
+                          setShowThemedDropdown(false)
+                        }}
+                        className="w-full flex items-center justify-between gap-3 px-3 py-2 text-left
+                                   hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
+                      >
+                        <span className="min-w-0">
+                          <span className="block text-sm font-semibold text-ink-900 dark:text-ink-100 break-words">
+                            {t['Song Title']}
+                          </span>
+                          <TrackMeta track={t} />
+                        </span>
+                        <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400 shrink-0">Swap</span>
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       )}

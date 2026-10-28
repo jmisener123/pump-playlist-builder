@@ -382,6 +382,15 @@ export function formatTrackRelease(track, { short = true } = {}) {
 }
 
 /**
+ * One track as a plain-text line — "R128 — Song — Artist (5:21)" — for
+ * lists you paste somewhere outside the app, like a group chat.
+ */
+export function formatTrackLine(track) {
+  const parts = [formatTrackRelease(track), track['Song Title'], track.Artist].filter(Boolean)
+  return `${parts.join(' \u2014 ')} (${track.Duration})`
+}
+
+/**
  * Human label for the active theme filters, e.g. "🎃 Halloween • EDM".
  * Genres have no emoji; pass `emoji: false` for a plain-text label.
  */
