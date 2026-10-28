@@ -114,6 +114,7 @@ function PlaylistApp() {
           onSearchClick={handleSearchClick}
           onThemeSelect={handleThemeSelect}
           onBrowseThemes={handleBrowseThemes}
+          slotCount={slotCount}
         />
 
         <section className="mb-10">

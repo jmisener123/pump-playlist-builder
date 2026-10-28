@@ -17,7 +17,7 @@ const FEATURED_ORDER = [
   'Positive Vibes',
 ]
 
-export function Header({ onSearchClick, onThemeSelect, onBrowseThemes }) {
+export function Header({ onSearchClick, onThemeSelect, onBrowseThemes, slotCount }) {
   const { availableTags, allTracks } = usePlaylistData()
 
   // Only advertise themes that actually exist in the loaded catalog, so this
@@ -63,18 +63,18 @@ export function Header({ onSearchClick, onThemeSelect, onBrowseThemes }) {
         </p>
 
         <p className="text-sm text-ink-500 dark:text-ink-400 mt-1.5 max-w-xl">
-          Pick your releases, choose a vibe, and get a full playlist in seconds — or
-          search{' '}
+          Pick your releases and fill all {slotCount} slots in one tap — or build it
+          yourself from{' '}
           {allTracks.length > 0 && (
             <span className="tabular whitespace-nowrap">{allTracks.length.toLocaleString()} tracks</span>
           )}{' '}
-          by song, artist, or move.
+          by search, theme, or genre.
         </p>
 
         {shown.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm
                           text-ink-500 dark:text-ink-400">
-            <span className="eyebrow w-full sm:w-auto">Start with a theme</span>
+            <span className="eyebrow w-full sm:w-auto">Or jump to a theme</span>
             {shown.map((tag) => (
               <button
                 key={tag}
