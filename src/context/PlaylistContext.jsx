@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react'
 import { loadPlaylistDataAsync, filterTracks, filterByTheme, pickRandomTrack } from '../data/loadPlaylistData'
 import { getTrackTypes, getFormatTrackTypes, ALL_TRACK_TYPES, relaxedThemeFilters } from '../utils/trackUtils'
+import { decodePlaylist, readShareParams, clearShareParams } from '../utils/shareLink'
 
 // Action types
 const ActionTypes = {
@@ -17,7 +18,8 @@ const ActionTypes = {
   SET_SEARCH_MODAL: 'SET_SEARCH_MODAL',
   SET_ACTIVE_TAB: 'SET_ACTIVE_TAB',
   SET_THEME_FILTERS: 'SET_THEME_FILTERS',
-  SET_LOADING: 'SET_LOADING'
+  SET_LOADING: 'SET_LOADING',
+  DISMISS_SHARED_NOTICE: 'DISMISS_SHARED_NOTICE'
 }
 
 const CATALOG_STORAGE_KEY = 'pump.catalogSettings.v1'
@@ -122,6 +124,8 @@ const initialState = {
   searchBothFormats: false,
   // True when catalog settings were restored from a previous visit
   hasSavedCatalog: false,
+  // True when this visit opened someone else's shared playlist
+  isSharedPlaylist: false,
 
   // Playlist (Step 2)
   playlist: Array(getTrackTypes('55').length).fill(null),
@@ -141,13 +145,16 @@ const initialState = {
 function playlistReducer(state, action) {
   switch (action.type) {
     case ActionTypes.SET_TRACKS: {
-      const { releases, saved, savedPlaylist } = action.payload
+      const { releases, saved, savedPlaylist, share } = action.payload
       const savedIsValid = saved && releases.includes(String(saved.earliestRelease))
       // Drop any saved exclusions for releases that no longer exist.
       const savedExcluded = savedIsValid && Array.isArray(saved.excludedReleases)
         ? saved.excludedReleases.map(String).filter(r => releases.includes(r))
         : []
-      const classFormat = savedIsValid && saved.classFormat === '45' ? '45' : state.classFormat
+      const savedFormat = savedIsValid && saved.classFormat === '45' ? '45' : state.classFormat
+      // A shared link decides the format, since its slots were built for it.
+      const shared = share ? decodePlaylist(share.encoded, action.payload.tracks) : null
+      const classFormat = shared ? shared.classFormat : savedFormat
       return {
         ...state,
         tracks: action.payload.tracks,
@@ -161,8 +168,12 @@ function playlistReducer(state, action) {
         excludedReleases: savedExcluded,
         classFormat,
         searchBothFormats: savedIsValid ? !!saved.searchBothFormats : state.searchBothFormats,
-        playlist: restorePlaylist(savedPlaylist, action.payload.tracks, classFormat),
+        playlist: shared ? shared.playlist : restorePlaylist(savedPlaylist, action.payload.tracks, classFormat),
+        themeTags: shared ? share.themeTags : state.themeTags,
+        instructorTags: shared ? share.instructorTags : state.instructorTags,
+        selectedGenres: shared ? share.selectedGenres : state.selectedGenres,
         hasSavedCatalog: !!savedIsValid,
+        isSharedPlaylist: !!shared,
         isLoading: false
       }
     }
@@ -263,6 +274,12 @@ function playlistReducer(state, action) {
         isLoading: action.payload
       }
 
+    case ActionTypes.DISMISS_SHARED_NOTICE:
+      return {
+        ...state,
+        isSharedPlaylist: false
+      }
+
     default:
       return state
   }
@@ -298,6 +315,8 @@ export function PlaylistProvider({ children }) {
         }
       })
 
+      const share = readShareParams()
+
       dispatch({
         type: ActionTypes.SET_TRACKS,
         payload: {
@@ -307,9 +326,14 @@ export function PlaylistProvider({ children }) {
           genres: Array.from(genreSet).sort(),
           availableTags: Array.from(tagSet).sort(),
           saved: loadSavedCatalog(),
-          savedPlaylist: loadSavedPlaylist()
+          savedPlaylist: loadSavedPlaylist(),
+          share
         }
       })
+
+      // Take the playlist out of the URL so later edits are what a refresh
+      // brings back, not the original link.
+      if (share) clearShareParams()
     }
 
     loadData()
@@ -529,6 +553,10 @@ export function PlaylistProvider({ children }) {
 
     setPlaylist: (playlist) => {
       dispatch({ type: ActionTypes.SET_PLAYLIST, payload: playlist })
+    },
+
+    dismissSharedNotice: () => {
+      dispatch({ type: ActionTypes.DISMISS_SHARED_NOTICE })
     }
   }
 

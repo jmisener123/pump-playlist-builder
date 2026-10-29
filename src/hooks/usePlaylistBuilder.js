@@ -1,6 +1,8 @@
 import { usePlaylist } from '../context/PlaylistContext'
 import { usePlaylistData } from './usePlaylistData'
 import { calculateTotalDuration, formatThemeLabel, formatTrackRelease, formatTrackType } from '../utils/trackUtils'
+import { buildShareUrl } from '../utils/shareLink'
+import { copyText } from '../utils/clipboard'
 
 /**
  * Hook for playlist building operations
@@ -98,6 +100,22 @@ export function usePlaylistBuilder() {
     }
   }
 
+  // A link that reopens this playlist, theme and all, in someone else's browser
+  const getShareUrl = () => buildShareUrl({
+    playlist,
+    classFormat: state.classFormat,
+    tracks: state.tracks,
+    themeTags: state.themeTags,
+    instructorTags: state.instructorTags,
+    selectedGenres: state.selectedGenres
+  })
+
+  const copyShareLink = async () => {
+    const url = getShareUrl()
+    if (!url) return false
+    return copyText(url)
+  }
+
   return {
     playlist,
     totalDuration,
@@ -112,6 +130,8 @@ export function usePlaylistBuilder() {
     getSwapOptions,
     getExportText,
     copyToClipboard,
+    getShareUrl,
+    copyShareLink,
     trackTypes
   }
 }

@@ -9,16 +9,26 @@ import { TrackSearch } from './TrackSearch'
 import { PlaylistExport } from './PlaylistExport'
 import { ThemeBrowser } from './ThemeBrowser'
 import { formatThemeLabel, formatTrackType, getTagDisplayName, getThemeMatch } from '../../utils/trackUtils'
+import { useToast } from '../../context/ToastContext'
 
 export function PlaylistBuilder({ mode = 'random' }) {
-  const { state } = usePlaylist()
-  const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, generateRandom, hasAnyTracks } = usePlaylistBuilder()
+  const { state, actions } = usePlaylist()
+  const { playlist, setTrack, clearTrack, clearPlaylist, randomizeTrack, generateRandom, hasAnyTracks, copyShareLink } = usePlaylistBuilder()
   const { getTracksForSlot, getThemedTracksForSlot, getRelaxedTracksForSlot, getSlotTypes, allThemedTracks, trackTypes } = usePlaylistData()
+  const showToast = useToast()
   const [searchPosition, setSearchPosition] = useState(null)
   const [showThemeBrowser, setShowThemeBrowser] = useState(false)
   // Both bulk actions destroy hand-picked tracks with no undo, so they swap
   // the row in place for a confirmation instead of firing immediately.
   const [pending, setPending] = useState(null)
+  const [shareLabel, setShareLabel] = useState('Share')
+
+  const handleShare = async () => {
+    const copied = await copyShareLink()
+    setShareLabel(copied ? 'Link copied' : 'Copy failed')
+    showToast(copied ? 'Share link copied' : 'Could not copy link', copied ? 'Paste it anywhere' : undefined)
+    setTimeout(() => setShareLabel('Share'), 2000)
+  }
 
   const filledCount = playlist.filter(Boolean).length
 
@@ -141,6 +151,14 @@ export function PlaylistBuilder({ mode = 'random' }) {
             ) : (
               <div className="flex items-center gap-3 shrink-0 ml-auto">
                 <button
+                  onClick={handleShare}
+                  className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
+                  title="Copy a link that opens this playlist for someone else"
+                >
+                  {shareLabel}
+                </button>
+                <span aria-hidden="true" className="text-ink-200 dark:text-ink-700">|</span>
+                <button
                   onClick={() => setPending('refill')}
                   className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
                   title="Replace every slot, including tracks you picked yourself"
@@ -158,6 +176,21 @@ export function PlaylistBuilder({ mode = 'random' }) {
               </div>
             )
           )}
+        </div>
+      )}
+
+      {state.isSharedPlaylist && (
+        <div className="flex items-start gap-3 px-3 py-2.5 border-b border-ink-200 dark:border-ink-800 bg-flare-600/10 dark:bg-flare-400/10">
+          <p className="text-xs text-ink-600 dark:text-ink-300 flex-1">
+            <span className="display-sm text-ink-950 dark:text-paper">This playlist was shared with you.</span>{' '}
+            It's yours now: swap any track, refill it, or start from scratch.
+          </p>
+          <button
+            onClick={actions.dismissSharedNotice}
+            className="display-sm text-[11px] text-ink-400 hover:text-ink-950 dark:hover:text-paper shrink-0"
+          >
+            Got it
+          </button>
         </div>
       )}
 
