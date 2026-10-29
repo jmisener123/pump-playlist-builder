@@ -92,7 +92,8 @@ export function ContactModal({ isOpen, onClose }) {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <p className="text-sm text-ink-500 dark:text-ink-400">
-            Spotted a track that looks off, hit a bug, or have an idea? Send it over.
+            Hi, I'm Jessica — I built this site. Spotted a track that looks off, hit a bug,
+            or have an idea? Send it over.
           </p>
 
           <p className="text-sm text-ink-500 dark:text-ink-400">
