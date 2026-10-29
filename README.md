@@ -28,6 +28,7 @@ Questions/feedback? [Click here to contact me](https://jessicamisener.com/contac
 - 🔁 Alternate suggestions if a track doesn’t match your vibe
 - 🔍 Search by song title, artist, or choreography (beta) — browse moves by track, or type “rotator raises”, and rule one out with “chest -pushups”. Move tags are most accurate from Release 89 up.
 - 📋 Copy/paste your playlist for easy exporting
+- 💾 Your playlist and catalog settings are saved in your browser, so a refresh or a closed tab doesn't lose your work
 - 💬 Built-in contact form in the footer (set `VITE_WEB3FORMS_KEY` to enable; otherwise it links out to the contact page)
 - ⚡ Migrated site from Python to React for faster loading/ better mobile UI using Claude Code
 

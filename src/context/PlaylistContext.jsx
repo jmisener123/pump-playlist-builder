@@ -21,6 +21,7 @@ const ActionTypes = {
 }
 
 const CATALOG_STORAGE_KEY = 'pump.catalogSettings.v1'
+const PLAYLIST_STORAGE_KEY = 'pump.playlist.v1'
 
 function loadSavedCatalog() {
   try {
@@ -37,6 +38,67 @@ function saveCatalog(settings) {
   } catch {
     // Storage may be unavailable (private mode, quota); settings just won't persist.
   }
+}
+
+/**
+ * Identity of a track in the catalog. Stored instead of the whole object so a
+ * saved playlist picks up corrected data on the next visit rather than
+ * resurrecting a stale copy of the row.
+ */
+function trackKey(track) {
+  if (!track) return null
+  return [track.Release, track['Track No#'], track['Song Title'], track.Version ?? '']
+    .map(v => String(v ?? '').trim())
+    .join('|')
+}
+
+function loadSavedPlaylist() {
+  try {
+    const raw = localStorage.getItem(PLAYLIST_STORAGE_KEY)
+    const parsed = raw ? JSON.parse(raw) : null
+    return Array.isArray(parsed) ? parsed : null
+  } catch {
+    return null
+  }
+}
+
+function savePlaylist(playlist, trackTypes) {
+  try {
+    const entries = playlist
+      .map((track, i) => (track ? { type: trackTypes[i], key: trackKey(track) } : null))
+      .filter(entry => entry && entry.type && entry.key)
+    if (entries.length === 0) {
+      localStorage.removeItem(PLAYLIST_STORAGE_KEY)
+      return
+    }
+    localStorage.setItem(PLAYLIST_STORAGE_KEY, JSON.stringify(entries))
+  } catch {
+    // Storage may be unavailable (private mode, quota); the playlist just won't persist.
+  }
+}
+
+/**
+ * Rebuild a saved playlist against the freshly loaded catalog. Slots are keyed
+ * by track type rather than index so a saved 55-minute playlist still lands in
+ * the right rows of a 45-minute one, and vice versa.
+ */
+function restorePlaylist(saved, tracks, format) {
+  const types = getTrackTypes(format)
+  const empty = Array(types.length).fill(null)
+  if (!saved || saved.length === 0) return empty
+
+  const byKey = new Map()
+  tracks.forEach(track => {
+    const key = trackKey(track)
+    if (key && !byKey.has(key)) byKey.set(key, track)
+  })
+
+  const savedByType = new Map()
+  saved.forEach(entry => {
+    if (entry && entry.type && !savedByType.has(entry.type)) savedByType.set(entry.type, entry.key)
+  })
+
+  return types.map(type => byKey.get(savedByType.get(type)) || null)
 }
 
 // Initial state
@@ -79,12 +141,13 @@ const initialState = {
 function playlistReducer(state, action) {
   switch (action.type) {
     case ActionTypes.SET_TRACKS: {
-      const { releases, saved } = action.payload
+      const { releases, saved, savedPlaylist } = action.payload
       const savedIsValid = saved && releases.includes(String(saved.earliestRelease))
       // Drop any saved exclusions for releases that no longer exist.
       const savedExcluded = savedIsValid && Array.isArray(saved.excludedReleases)
         ? saved.excludedReleases.map(String).filter(r => releases.includes(r))
         : []
+      const classFormat = savedIsValid && saved.classFormat === '45' ? '45' : state.classFormat
       return {
         ...state,
         tracks: action.payload.tracks,
@@ -96,11 +159,9 @@ function playlistReducer(state, action) {
         excludeNewest: savedIsValid ? !!saved.excludeNewest : state.excludeNewest,
         onlyRecent10: savedIsValid ? !!saved.onlyRecent10 : state.onlyRecent10,
         excludedReleases: savedExcluded,
-        classFormat: savedIsValid && saved.classFormat === '45' ? '45' : state.classFormat,
+        classFormat,
         searchBothFormats: savedIsValid ? !!saved.searchBothFormats : state.searchBothFormats,
-        playlist: savedIsValid && saved.classFormat === '45'
-          ? Array(getTrackTypes('45').length).fill(null)
-          : state.playlist,
+        playlist: restorePlaylist(savedPlaylist, action.payload.tracks, classFormat),
         hasSavedCatalog: !!savedIsValid,
         isLoading: false
       }
@@ -245,7 +306,8 @@ export function PlaylistProvider({ children }) {
           releases,
           genres: Array.from(genreSet).sort(),
           availableTags: Array.from(tagSet).sort(),
-          saved: loadSavedCatalog()
+          saved: loadSavedCatalog(),
+          savedPlaylist: loadSavedPlaylist()
         }
       })
     }
@@ -276,6 +338,13 @@ export function PlaylistProvider({ children }) {
 
   // The slots this class format is built from
   const trackTypes = getTrackTypes(state.classFormat)
+
+  // Persist the playlist itself, so a refresh or a closed tab doesn't wipe out
+  // tracks that were picked by hand.
+  useEffect(() => {
+    if (state.isLoading) return
+    savePlaylist(state.playlist, trackTypes)
+  }, [state.isLoading, state.playlist, trackTypes])
 
   // Get filtered tracks based on current filters
   const getFilteredTracks = () => {
