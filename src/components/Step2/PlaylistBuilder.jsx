@@ -21,13 +21,13 @@ export function PlaylistBuilder({ mode = 'random' }) {
   // Both bulk actions destroy hand-picked tracks with no undo, so they swap
   // the row in place for a confirmation instead of firing immediately.
   const [pending, setPending] = useState(null)
-  const [shareLabel, setShareLabel] = useState('Share')
+  const [shareLabel, setShareLabel] = useState('Share your playlist')
 
   const handleShare = async () => {
     const copied = await copyShareLink()
     setShareLabel(copied ? 'Link copied' : 'Copy failed')
     showToast(copied ? 'Share link copied' : 'Could not copy link', copied ? 'Paste it anywhere' : undefined)
-    setTimeout(() => setShareLabel('Share'), 2000)
+    setTimeout(() => setShareLabel('Share your playlist'), 2000)
   }
 
   const filledCount = playlist.filter(Boolean).length
@@ -125,7 +125,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
           </div>
           {hasAnyTracks && (
             pending ? (
-              <div className="flex items-center gap-2 shrink-0 ml-auto">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 ml-auto">
                 <span className="display-sm text-[11px] text-ink-500 dark:text-ink-400">
                   {pending === 'refill' ? 'Replace' : 'Clear'} all {filledCount}?
                 </span>
@@ -149,15 +149,19 @@ export function PlaylistBuilder({ mode = 'random' }) {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3 shrink-0 ml-auto">
-                <button
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 ml-auto">
+                <Button
+                  variant={shareLabel === 'Share your playlist' ? 'outline' : 'accent'}
+                  size="sm"
                   onClick={handleShare}
-                  className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
+                  className="gap-1.5"
                   title="Copy a link that opens this playlist for someone else"
                 >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" />
+                  </svg>
                   {shareLabel}
-                </button>
-                <span aria-hidden="true" className="text-ink-200 dark:text-ink-700">|</span>
+                </Button>
                 <button
                   onClick={() => setPending('refill')}
                   className="display-sm text-[11px] text-ink-400 hover:text-flare dark:hover:text-flare-400 transition-colors"
