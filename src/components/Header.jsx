@@ -63,7 +63,7 @@ export function Header({ onSearchClick, onThemeSelect, onBrowseThemes, slotCount
         </p>
 
         <p className="text-sm text-ink-500 dark:text-ink-400 mt-1.5 max-w-xl">
-          Pick your releases and fill all {slotCount} slots in one tap — or build it
+          Pick your releases and fill all {slotCount} slots in one tap, or build it
           yourself from{' '}
           {allTracks.length > 0 && (
             <span className="tabular whitespace-nowrap">{allTracks.length.toLocaleString()} tracks</span>

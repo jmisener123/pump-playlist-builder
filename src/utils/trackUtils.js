@@ -111,9 +111,9 @@ export function getTagDisplayName(tag) {
 
 /**
  * How well a track answers the active theme filters:
- *   'exact'   — satisfies every active filter category
- *   'partial' — satisfies some but not all of them
- *   'off'     — satisfies none
+ *   'exact'   - satisfies every active filter category
+ *   'partial' - satisfies some but not all of them
+ *   'off'     - satisfies none
  * Returns null when no filters are active, so callers can skip the badge.
  *
  * Derived from the track rather than stored on the playlist, so a hand-picked
@@ -382,12 +382,12 @@ export function formatTrackRelease(track, { short = true } = {}) {
 }
 
 /**
- * One track as a plain-text line — "R128 — Song — Artist (5:21)" — for
+ * One track as a plain-text line, "R128 - Song - Artist (5:21)", for
  * lists you paste somewhere outside the app, like a group chat.
  */
 export function formatTrackLine(track) {
   const parts = [formatTrackRelease(track), track['Song Title'], track.Artist].filter(Boolean)
-  return `${parts.join(' \u2014 ')} (${track.Duration})`
+  return `${parts.join(' - ')} (${track.Duration})`
 }
 
 /**

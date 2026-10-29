@@ -92,10 +92,10 @@ export function TrackSlot({
     ? [...themedOptions, { ...track, isCurrent: true }].sort((a, b) => b.SortKey - a.SortKey)
     : themedOptions
 
-  // Plain text for pasting somewhere else — "what are my Halloween triceps
+  // Plain text for pasting somewhere else - "what are my Halloween triceps
   // options?" answered in one line per track, current pick included.
   const handleCopyList = async () => {
-    const heading = [activeThemeText, trackType].filter(Boolean).join(' \u2014 ')
+    const heading = [activeThemeText, trackType].filter(Boolean).join(' - ')
     const text = [
       `${heading} (${themedListItems.length})`,
       ...themedListItems.map(formatTrackLine)
@@ -230,7 +230,7 @@ export function TrackSlot({
             </div>
           </div>
 
-          {/* Action Buttons — collapsed by default */}
+          {/* Action Buttons - collapsed by default */}
           {showActions && (
             <div className="flex flex-wrap items-center gap-1 mt-2 pt-2 border-t border-ink-100 dark:border-ink-800">
               <button onClick={onRandom} className="btn-quiet">Random</button>

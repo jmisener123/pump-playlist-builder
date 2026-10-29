@@ -79,7 +79,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
 
   // Honest summary before you scroll: how much of this playlist is actually
   // on theme, given slots the theme couldn't fill. With several filters
-  // stacked, "on theme" would overstate it — name the real bar instead.
+  // stacked, "on theme" would overstate it - name the real bar instead.
   const themeMatches = playlist.map(track =>
     hasThemeFilters ? getThemeMatch(track, state) : null
   )
@@ -89,7 +89,7 @@ export function PlaylistBuilder({ mode = 'random' }) {
   const matchSummaryLabel = activeFilterGroups > 1 ? 'match all filters' : 'on theme'
 
   // Explain the compromise once, above the list, instead of repeating a
-  // sentence on every badged row — the badges mark which rows, this says why.
+  // sentence on every badged row - the badges mark which rows, this says why.
   const compromisedCount = themeMatches.filter(m => m === 'partial' || m === 'off').length
   const themeName = getActiveThemeText().length <= 24 ? getActiveThemeText() : 'theme'
 

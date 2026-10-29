@@ -189,7 +189,7 @@ export function QuickGenerate({ onPlaylistGenerated, autoFill = false }) {
 
   return (
     <div>
-      {/* Mobile: themes only — random fill lives in the playlist panel */}
+      {/* Mobile: themes only - random fill lives in the playlist panel */}
       <div className="lg:hidden panel p-4">
         <ThemeSection />
       </div>

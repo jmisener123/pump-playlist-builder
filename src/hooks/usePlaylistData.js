@@ -57,7 +57,7 @@ export function usePlaylistData() {
 
   // Closest-match tracks for a slot the exact theme can't fill: loosen the
   // filters a step at a time and return the first pool that has something.
-  // Never falls all the way back to the unfiltered catalog — that's Browse.
+  // Never falls all the way back to the unfiltered catalog - that's Browse.
   const getRelaxedTracksForSlot = (position) => {
     const trackType = trackTypes[position]
     if (!trackType) return []

@@ -77,7 +77,7 @@ export function usePlaylistBuilder() {
 
     playlist.forEach((track, index) => {
       if (track) {
-        text += `${formatTrackRelease(track, { short: false })} - ${formatTrackType(track['Track No#'], state.classFormat)}: ${track['Song Title']} — ${track.Artist} (${track.Duration})\n`
+        text += `${formatTrackRelease(track, { short: false })} - ${formatTrackType(track['Track No#'], state.classFormat)}: ${track['Song Title']} - ${track.Artist} (${track.Duration})\n`
       } else {
         text += `${formatTrackType(trackTypes[index], state.classFormat)}: [Empty]\n`
       }

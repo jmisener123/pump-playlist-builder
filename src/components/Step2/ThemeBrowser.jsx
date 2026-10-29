@@ -8,7 +8,7 @@ import { copyText } from '../../utils/clipboard'
 import { ALL_TRACK_TYPES, formatTrackLine, formatTrackRelease, formatTrackType, getTrackIndex, formatOnlyLabel } from '../../utils/trackUtils'
 
 /**
- * Every track matching the active theme, across all releases — including the
+ * Every track matching the active theme, across all releases - including the
  * ones outside your catalog. Grouped by slot so it reads as "what could this
  * theme look like", and so an in-range pick can drop straight into place.
  */
