@@ -245,11 +245,14 @@ export function TrackSlot({
               be scanned and swapped in with one tap. */}
           {showThemedDropdown && hasThemedOptions && (
             <div className="mt-2">
-              <div className="flex items-center justify-between gap-2 pb-1">
+              {/* Wraps onto its own line on narrow screens: forcing the count
+                  and both actions onto one row squeezed the label into a
+                  four-line column and pushed the copy button off-screen. */}
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 pb-1">
                 <span className="display-sm text-[11px] text-ink-400 dark:text-ink-500 tabular">
                   {themedListItems.length} {themedListItems.length === 1 ? 'option' : 'options'} for this track
                 </span>
-                <div className="flex items-center gap-3 shrink-0">
+                <div className="flex items-center gap-3 ml-auto">
                   {/* A scrolling list can't be screenshotted in one shot, so
                       allow the box to grow to its full height. */}
                   {themedListItems.length > 5 && (
@@ -257,20 +260,20 @@ export function TrackSlot({
                       type="button"
                       onClick={() => setExpandedList(!expandedList)}
                       aria-expanded={expandedList}
-                      className="display-sm text-[11px] text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors"
+                      className="display-sm text-[11px] text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors whitespace-nowrap"
                       title={expandedList ? 'Collapse the list back to a scrolling box' : 'Show every option at once so the whole list fits in a screenshot'}
                     >
-                      {expandedList ? 'Collapse list' : 'Expand to show all'}
+                      {expandedList ? 'Collapse' : 'Expand all'}
                       <span aria-hidden="true" className="ml-1">{expandedList ? '\u25B4' : '\u25BE'}</span>
                     </button>
                   )}
                   <button
                     type="button"
                     onClick={handleCopyList}
-                    className="display-sm text-[11px] text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors"
+                    className="display-sm text-[11px] text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors whitespace-nowrap"
                     title="Copy this list as plain text to paste elsewhere"
                   >
-                    {copied ? 'Copied \u2713' : 'Copy list to clipboard'}
+                    {copied ? 'Copied \u2713' : 'Copy list'}
                   </button>
                 </div>
               </div>
