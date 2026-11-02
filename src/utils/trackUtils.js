@@ -391,6 +391,39 @@ export function formatTrackLine(track) {
 }
 
 /**
+ * The artist worth searching a streaming service for. Les Mills commissions
+ * its own recordings, so a cover is credited to the session act with the real
+ * one in brackets - "NYCC (original: AC/DC)". The session act isn't on
+ * streaming, so search the original artist instead and let the instructor
+ * pick whichever version turns up.
+ */
+export function getSearchArtist(artist) {
+  if (!artist) return ''
+  const cover = /\(\s*original:\s*([^)]+)\)/i.exec(artist)
+  return (cover ? cover[1] : artist).trim()
+}
+
+/**
+ * Search terms for one track: title plus the artist most likely to find it.
+ */
+export function getTrackSearchQuery(track) {
+  if (!track) return ''
+  return [track['Song Title'], getSearchArtist(track.Artist)].filter(Boolean).join(' ')
+}
+
+/**
+ * Where a track can be looked up. These are plain search URLs rather than a
+ * real playlist export: the class recordings are licensed through Les Mills
+ * and mostly aren't in these catalogs, so an automated transfer would quietly
+ * substitute the wrong version. A search lets you see what actually exists.
+ */
+export const MUSIC_SERVICES = [
+  { id: 'apple', name: 'Apple Music', searchUrl: (q) => `https://music.apple.com/search?term=${encodeURIComponent(q)}` },
+  { id: 'spotify', name: 'Spotify', searchUrl: (q) => `https://open.spotify.com/search/${encodeURIComponent(q)}` },
+  { id: 'youtube', name: 'YouTube', searchUrl: (q) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}` },
+]
+
+/**
  * Human label for the active theme filters, e.g. "🎃 Halloween • EDM".
  * Genres have no emoji; pass `emoji: false` for a plain-text label.
  */
