@@ -1,9 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useLayoutEffect } from 'react'
 import { formatTrackLine, formatTrackRelease } from '../../utils/trackUtils'
 import { copyText } from '../../utils/clipboard'
 import { useToast } from '../../context/ToastContext'
 import { TagList } from '../ui/TagPill'
 import { Button } from '../ui/Button'
+
+// Most themed lists are short (median ~6), so the box shows about ten rows
+// before it starts scrolling - that fits a typical list whole, and in a
+// screenshot, without a tap. Genre filters can run past 100 tracks, which is
+// why there is still a cap and an expand toggle rather than no limit.
+const COLLAPSED_LIST_CLASS = 'max-h-[35rem] overflow-y-auto'
 
 /**
  * Wraps instead of truncating so long artist names stay readable on narrow
@@ -73,6 +79,8 @@ export function TrackSlot({
   const isEmpty = !track
   const [showThemedDropdown, setShowThemedDropdown] = useState(false)
   const [expandedList, setExpandedList] = useState(false)
+  const [listOverflows, setListOverflows] = useState(false)
+  const listRef = useRef(null)
   const [copied, setCopied] = useState(false)
   const showToast = useToast()
 
@@ -92,6 +100,20 @@ export function TrackSlot({
   const themedListItems = track
     ? [...themedOptions, { ...track, isCurrent: true }].sort((a, b) => b.SortKey - a.SortKey)
     : themedOptions
+
+  // Offer the expand toggle based on whether the box actually clips, not on a
+  // row count: rows wrap to two lines for long artist names, so a ten-item
+  // list can overflow while a ten-item list of short titles does not.
+  // Measurement is skipped while expanded, where nothing clips by definition
+  // and the toggle has to stay put to collapse again.
+  useLayoutEffect(() => {
+    if (expandedList) return
+    const el = listRef.current
+    const measure = () => setListOverflows(!!el && el.scrollHeight > el.clientHeight + 1)
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [expandedList, showThemedDropdown, themedListItems.length])
 
   // Plain text for pasting somewhere else - "what are my Halloween triceps
   // options?" answered in one line per track, current pick included.
@@ -255,7 +277,7 @@ export function TrackSlot({
                 <div className="flex items-center gap-3 ml-auto">
                   {/* A scrolling list can't be screenshotted in one shot, so
                       allow the box to grow to its full height. */}
-                  {themedListItems.length > 5 && (
+                  {(listOverflows || expandedList) && (
                     <button
                       type="button"
                       onClick={() => setExpandedList(!expandedList)}
@@ -277,7 +299,7 @@ export function TrackSlot({
                   </button>
                 </div>
               </div>
-              <ul className={`border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800 ${expandedList ? '' : 'max-h-64 overflow-y-auto'}`}>
+              <ul ref={listRef} className={`border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800 ${expandedList ? '' : COLLAPSED_LIST_CLASS}`}>
                 {themedListItems.map((t) => (
                   <li key={`${t.Release}_${t['Song Title']}`}>
                     {t.isCurrent ? (
