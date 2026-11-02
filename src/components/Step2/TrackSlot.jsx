@@ -72,6 +72,7 @@ export function TrackSlot({
 }) {
   const isEmpty = !track
   const [showThemedDropdown, setShowThemedDropdown] = useState(false)
+  const [expandedList, setExpandedList] = useState(false)
   const [copied, setCopied] = useState(false)
   const showToast = useToast()
 
@@ -189,7 +190,9 @@ export function TrackSlot({
               {hasThemedOptions && (
                 <button
                   onClick={() => {
-                    setShowThemedDropdown(!showThemedDropdown)
+                    const next = !showThemedDropdown
+                    setShowThemedDropdown(next)
+                    if (!next) setExpandedList(false)
                     setShowActions(false)
                   }}
                   aria-expanded={showThemedDropdown}
@@ -246,16 +249,32 @@ export function TrackSlot({
                 <span className="display-sm text-[11px] text-ink-400 dark:text-ink-500 tabular">
                   {themedListItems.length} {themedListItems.length === 1 ? 'option' : 'options'} for this track
                 </span>
-                <button
-                  type="button"
-                  onClick={handleCopyList}
-                  className="display-sm text-[11px] text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors shrink-0"
-                  title="Copy this list as plain text to paste elsewhere"
-                >
-                  {copied ? 'Copied \u2713' : 'Copy list to clipboard'}
-                </button>
+                <div className="flex items-center gap-3 shrink-0">
+                  {/* A scrolling list can't be screenshotted in one shot, so
+                      allow the box to grow to its full height. */}
+                  {themedListItems.length > 5 && (
+                    <button
+                      type="button"
+                      onClick={() => setExpandedList(!expandedList)}
+                      aria-expanded={expandedList}
+                      className="display-sm text-[11px] text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors"
+                      title={expandedList ? 'Collapse the list back to a scrolling box' : 'Show every option at once so the whole list fits in a screenshot'}
+                    >
+                      {expandedList ? 'Collapse list' : 'Expand to show all'}
+                      <span aria-hidden="true" className="ml-1">{expandedList ? '\u25B4' : '\u25BE'}</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleCopyList}
+                    className="display-sm text-[11px] text-ink-500 hover:text-flare dark:text-ink-400 dark:hover:text-flare-400 transition-colors"
+                    title="Copy this list as plain text to paste elsewhere"
+                  >
+                    {copied ? 'Copied \u2713' : 'Copy list to clipboard'}
+                  </button>
+                </div>
               </div>
-              <ul className="border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800 max-h-64 overflow-y-auto">
+              <ul className={`border border-ink-200 dark:border-ink-800 rounded divide-y divide-ink-100 dark:divide-ink-800 ${expandedList ? '' : 'max-h-64 overflow-y-auto'}`}>
                 {themedListItems.map((t) => (
                   <li key={`${t.Release}_${t['Song Title']}`}>
                     {t.isCurrent ? (
